@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spin & Win — EVORA Rewards</title>
+  <meta name="theme-color" content="#11100e">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+
+    :root {
+      --black: #11100e;
+      --dark: #191815;
+      --gold: #c9a45b;
+      --gold-light: #e5cb92;
+      --cream: #f7f3eb;
+      --muted: #aaa49a;
+      --white: #fff;
+      --border: rgba(255,255,255,.10);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "DM Sans", sans-serif;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 50% 35%, rgba(201,164,91,.13), transparent 32%),
+        var(--black);
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font-family: inherit;
+    }
+
+    .topbar {
+      height: 70px;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(17,16,14,.78);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .logo {
+      font-weight: 700;
+      letter-spacing: .2em;
+      font-size: 18px;
+    }
+
+    .logo span {
+      color: var(--gold);
+    }
+
+    .back {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .page {
+      width: min(100%, 850px);
+      margin: auto;
+      padding: 55px 20px 100px;
+    }
+
+    .heading {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .eyebrow {
+      color: var(--gold-light);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .25em;
+      margin-bottom: 13px;
+    }
+
+    h1 {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(42px, 10vw, 65px);
+      line-height: 1;
+      margin-bottom: 15px;
+    }
+
+    .heading p {
+      color: var(--muted);
+      max-width: 480px;
+      margin: auto;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 35px;
+      align-items: center;
+    }
+
+    /* WHEEL */
+
+    .wheel-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .wheel-wrap {
+      width: min(78vw, 390px);
+      aspect-ratio: 1;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .pointer {
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+
+      width: 0;
+      height: 0;
+      border-left: 16px solid transparent;
+      border-right: 16px solid transparent;
+      border-top: 0;
+      border-bottom: 30px solid var(--gold-light);
+
+      filter: drop-shadow(0 4px 7px rgba(0,0,0,.5));
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      position: relative;
+      border: 8px solid #29261f;
+      box-shadow:
+        0 0 0 2px rgba(201,164,91,.35),
+        0 25px 70px rgba(0,0,0,.45);
+
+      background:
+        conic-gradient(
+          #c9a45b 0deg 51.43deg,
+          #292722 51.43deg 102.86deg,
+          #c9a45b 102.86deg 154.29deg,
+          #292722 154.29deg 205.72deg,
+          #c9a45b 205.72deg 257.15deg,
+          #292722 257.15deg 308.58deg,
+          #c9a45b 308.58deg 360deg
+        );
+
+      transition: transform 5s cubic-bezier(.12,.72,.12,1);
+    }
+
+    .wheel::before {
+      content: "";
+      position: absolute;
+      inset: 13px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.22);
+    }
+
+    .wheel::after {
+      content: "";
+      position: absolute;
+      inset: 45%;
+      border-radius: 50%;
+      background: var(--black);
+      border: 3px solid var(--gold-light);
+      box-shadow: 0 0 0 7px rgba(17,16,14,.35);
+    }
+
+    .labels {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .label {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 105px;
+      text-align: center;
+      transform-origin: 0 0;
+      margin-left: -52px;
+      margin-top: -10px;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.2;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+
+    .l1 { transform: rotate(25.7deg) translateY(-143px); }
+    .l2 { transform: rotate(77.1deg) translateY(-143px); }
+    .l3 { transform: rotate(128.6deg) translateY(-143px); }
+    .l4 { transform: rotate(180deg) translateY(-143px); }
+    .l5 { transform: rotate(231.4deg) translateY(-143px); }
+    .l6 { transform: rotate(282.9deg) translateY(-143px); }
+    .l7 { transform: rotate(334.3deg) translateY(-143px); }
+
+    .spin-button {
+      margin-top: 35px;
+      width: 190px;
+      height: 52px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--gold);
+      color: #17130d;
+      font-weight: 800;
+      letter-spacing: .08em;
+      font-size: 12px;
+      box-shadow: 0 12px 35px rgba(201,164,91,.15);
+      transition: .25s;
+    }
+
+    .spin-button:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+    }
+
+    .spin-button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* FORM */
+
+    .card {
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--border);
+      border-radius: 25px;
+      padding: 28px;
+    }
+
+    .card-title {
+      font-family: "Playfair Display", serif;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .card-description {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .field label {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+    }
+
+    .field input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      outline: none;
+      background: rgba(255,255,255,.04);
+      color: white;
+      padding: 0 15px;
+      font-size: 13px;
+    }
+
+    .field input:focus {
+      border-color: rgba(201,164,91,.7);
+    }
+
+    .info {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 14px;
+      background: rgba(201,164,91,.07);
+      border: 1px solid rgba(201,164,91,.18);
+    }
+
+    .info-title {
+      color: var(--gold-light);
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .info p {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    /* RESULT */
+
+    .result-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(12px);
+    }
+
+    .result-overlay.show {
+      display: flex;
+    }
+
+    .result {
+      width: min(100%, 430px);
+      padding: 40px 28px;
+      text-align: center;
+      border-radius: 28px;
+      background: #1c1a16;
+      border: 1px solid rgba(201,164,91,.35);
+      box-shadow: 0 30px 100px rgba(0,0,0,.6);
+      animation: resultIn .45s ease;
+    }
+
+    @keyframes resultIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .result-icon {
+      font-size: 42px;
+      color: var(--gold-light);
+      margin-bottom: 15px;
+    }
+
+    .result small {
+      color: var(--gold);
+      font-size: 10px;
+      letter-spacing: .2em;
+      font-weight: 700;
+    }
+
+    .result h2 {
+      font-family: "Playfair Display", serif;
+      font-size: 35px;
+      margin: 10px 0;
+    }
+
+    .result p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .reward-code {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px dashed rgba(201,164,91,.5);
+      border-radius: 14px;
+      color: var(--gold-light);
+      font-weight: 800;
+      letter-spacing: .12em;
+    }
+
+    .close-button {
+      margin-top: 25px;
+      border: 1px solid var(--border);
+      color: white;
+      background: transparent;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        max-width: 500px;
+        width: 100%;
+        margin: auto;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .page {
+        padding-top: 40px;
+      }
+
+      .wheel-wrap {
+        width: min(88vw, 360px);
+      }
+
+      .label {
+        font-size: 8px;
+      }
+
+      .l1, .l2, .l3, .l4, .l5, .l6, .l7 {
+        transform-origin: 0 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <a href="../index.html" class="back">← Back</a>
+
+    <div class="logo">
+      EVO<span>RA</span>
+    </div>
+
+    <div style="width:50px"></div>
+  </header>
+
+
+  <main class="page">
+
+    <div class="heading">
+
+      <div class="eyebrow">
+        EVORA REWARDS
+      </div>
+
+      <h1>
+        Spin & Win
+      </h1>
+
+      <p>
+        Satu pembelian, satu kesempatan.
+        Putar roda dan lihat hadiah spesial yang menunggumu.
+      </p>
+
+    </div>
+
+
+    <div class="layout">
+
+
+      <!-- WHEEL -->
+
+      <div class="wheel-area">
+
+        <div class="wheel-wrap">
+
+          <div class="pointer"></div>
+
+          <div class="wheel" id="wheel">
+
+            <div class="labels">
+
+              <div class="label l1">
+                POCKET<br>20ML
+              </div>
+
+              <div class="label l2">
+                DISKON<br>RP5.000
+              </div>
+
+              <div class="label l3">
+                DISKON<br>RP10.000
+              </div>
+
+              <div class="label l4">
+                DISKON<br>20%
+              </div>
+
+              <div class="label l5">
+                DISKON<br>10%
+              </div>
+
+              <div class="label l6">
+                EMAS<br>0.0001G
+              </div>
+
+              <div class="label l7">
+                PARFUM<br>30ML
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <button
+          class="spin-button"
+          id="spinButton"
+          onclick="spinWheel()"
+        >
+          SPIN SEKARANG
+        </button>
+
+      </div>
+
+
+      <!-- CUSTOMER -->
+
+      <div class="card">
+
+        <h2 class="card-title">
+          Claim your spin.
+        </h2>
+
+        <p class="card-description">
+          Masukkan nomor HP dan kode kartu yang terdapat
+          di dalam box EVORA.
+        </p>
+
+
+        <div class="field">
+
+          <label>
+            Nomor HP
+          </label>
+
+          <input
+            type="tel"
+            id="phone"
+            placeholder="08xxxxxxxxxx"
+            autocomplete="tel"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Kode Kartu
+          </label>
+
+          <input
+            type="text"
+            id="cardCode"
+            placeholder="Masukkan kode kartu"
+            autocomplete="off"
+          >
+
+        </div>
+
+
+        <div class="info">
+
+          <div class="info-title">
+            1 KARTU = 1 SPIN
+          </div>
+
+          <p>
+            Sistem akan memvalidasi kartu kamu sebelum
+            memberikan kesempatan spin.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- RESULT -->
+
+  <div
+    class="result-overlay"
+    id="resultOverlay"
+  >
+
+    <div class="result">
+
+      <div class="result-icon">
+        ✦
+      </div>
+
+      <small>
+        CONGRATULATIONS
+      </small>
+
+      <h2 id="resultTitle">
+        Kamu Menang!
+      </h2>
+
+      <p id="resultText"></p>
+
+      <div
+        class="reward-code"
+        id="rewardCode"
+      ></div>
+
+      <button
+        class="close-button"
+        onclick="closeResult()"
+      >
+        TUTUP
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    /*
+      ==========================================
+      EVORA REWARDS — SPIN FOUNDATION
+      ==========================================
+
+      CATATAN:
+
+      Saat ini sistem masih DEMO.
+
+      Supabase belum dipanggil dari browser.
+
+      Setelah tampilan selesai:
+      - validasi card_codes
+      - 1 kartu = 1 spin
+      - customer berdasarkan nomor HP
+      - penyimpanan spin
+      - reward probability
+      - reward code
+      akan dipindahkan ke Supabase.
+
+      Jangan menggunakan sistem random frontend
+      ini sebagai sistem produksi.
+    */
+
+
+    const wheel =
+      document.getElementById("wheel");
+
+    const spinButton =
+      document.getElementById("spinButton");
+
+
+    let spinning = false;
+
+
+    /*
+      Urutan hadiah:
+
+      0 = Pocket 20ml
+      1 = Diskon 5.000
+      2 = Diskon 10.000
+      3 = Diskon 20%
+      4 = Diskon 10%
+      5 = Emas 0.0001g
+      6 = Parfum 30ml
+    */
+
+    const rewards = [
+
+      {
+        name: "FREE POCKET 20ML",
+        text: "Selamat! Kamu mendapatkan 1 pocket EVORA 20ml."
+      },
+
+      {
+        name: "DISKON RP5.000",
+        text: "Kamu mendapatkan voucher diskon Rp5.000."
+      },
+
+      {
+        name: "DISKON RP10.000",
+        text: "Kamu mendapatkan voucher diskon Rp10.000."
+      },
+
+      {
+        name: "DISKON 20%",
+        text: "Kamu mendapatkan voucher diskon 20%."
+      },
+
+      {
+        name: "DISKON 10%",
+        text: "Kamu mendapatkan voucher diskon 10%."
+      },
+
+      {
+        name: "EMAS 0.0001 GRAM",
+        text: "Selamat! Kamu mendapatkan hadiah emas 0.0001 gram."
+      },
+
+      {
+        name: "PARFUM EVORA 30ML",
+        text: "LUCKY! Kamu mendapatkan 1 botol parfum EVORA 30ml."
+      }
+
+    ];
+
+
+    /*
+      DEMO WEIGHT
+
+      Nanti akan dipindahkan ke server/Supabase.
+
+      Parfum 30ml:
+      1 dari 50 spin.
+
+      Untuk demo:
+      total bobot = 50.
+
+      Parfum = 1
+      Enam hadiah lainnya dibagi sisanya.
+    */
+
+    const weights = [
+      9,
+      9,
+      8,
+      8,
+      8,
+      7,
+      1
+    ];
+
+
+    function getWeightedReward() {
+
+      const total =
+        weights.reduce(
+          (sum, weight) => sum + weight,
+          0
+        );
+
+      let random =
+        Math.random() * total;
+
+      for (
+        let i = 0;
+        i < weights.length;
+        i++
+      ) {
+
+        random -= weights[i];
+
+        if (random < 0) {
+          return i;
+        }
+
+      }
+
+      return 0;
+    }
+
+
+    function spinWheel() {
+
+      if (spinning) return;
+
+
+      const phone =
+        document.getElementById("phone").value.trim();
+
+      const cardCode =
+        document.getElementById("cardCode").value.trim();
+
+
+      if (!phone) {
+
+        alert("Masukkan nomor HP terlebih dahulu.");
+
+        document
+          .getElementById("phone")
+          .focus();
+
+        return;
+      }
+
+
+      if (!cardCode) {
+
+        alert("Masukkan kode kartu terlebih dahulu.");
+
+        document
+          .getElementById("cardCode")
+          .focus();
+
+        return;
+      }
+
+
+      /*
+        DEMO VALIDATION
+
+        Untuk sementara kita hanya memastikan
+        kedua field terisi.
+
+        Validasi asli akan dilakukan Supabase.
+      */
+
+
+      spinning = true;
+
+      spinButton.disabled = true;
+
+      spinButton.textContent =
+        "MEMUTAR...";
+
+
+      const rewardIndex =
+        getWeightedReward();
+
+
+      const segmentAngle =
+        360 / rewards.length;
+
+
+      /*
+        Kita arahkan posisi hadiah ke pointer
+        di bagian atas.
+      */
+
+      const targetAngle =
+        360 - (
+          rewardIndex * segmentAngle
+          + segmentAngle / 2
+        );
+
+
+      const extraRounds =
+        360 * 6;
+
+
+      const finalRotation =
+        extraRounds + targetAngle;
+
+
+      wheel.style.transform =
+        "rotate(" + finalRotation + "deg)";
+
+
+      setTimeout(() => {
+
+        showResult(rewardIndex);
+
+        spinning = false;
+
+        spinButton.disabled = false;
+
+        spinButton.textContent =
+          "SPIN SEKARANG";
+
+      }, 5200);
+
+    }
+
+
+    function showResult(index) {
+
+      const reward =
+        rewards[index];
+
+
+      document
+        .getElementById("resultTitle")
+        .textContent =
+        reward.name;
+
+
+      document
+        .getElementById("resultText")
+        .textContent =
+        reward.text;
+
+
+      const codeBox =
+        document.getElementById("rewardCode");
+
+
+      /*
+        Untuk hadiah voucher,
+        nanti kode akan dibuat Supabase.
+
+        Sekarang belum dibuat karena ini
+        masih tahap UI.
+      */
+
+      if (index >= 1 && index <= 5) {
+
+        codeBox.style.display =
+          "block";
+
+        codeBox.textContent =
+          "KODE AKAN DIBUAT OTOMATIS";
+
+      }
+
+      else {
+
+        codeBox.style.display =
+          "none";
+
+      }
+
+
+      document
+        .getElementById("resultOverlay")
+        .classList.add("show");
+
+    }
+
+
+    function closeResult() {
+
+      document
+        .getElementById("resultOverlay")
+        .classList.remove("show");
+
+    }
+
+  </script>
+
+</body>
+</html>
