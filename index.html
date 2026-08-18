@@ -11,76 +11,6 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- 
-    ========================================================
-    EVORA REWARDS - SQL MIGRATION (JALANKAN DI SUPABASE SQL EDITOR)
-    ========================================================
-    
-    1. evora_login (Aman untuk membuat/mengambil customer)
-    CREATE OR REPLACE FUNCTION evora_login(p_phone text) RETURNS json AS $$
-    DECLARE v_cust record;
-    BEGIN
-      SELECT * INTO v_cust FROM customers WHERE phone = p_phone;
-      IF NOT FOUND THEN
-        INSERT INTO customers (id, phone, progress, total_free_bottles, spin_credits, created_at, updated_at)
-        VALUES (gen_random_uuid(), p_phone, 0, 0, 0, now(), now()) RETURNING * INTO v_cust;
-      END IF;
-      RETURN row_to_json(v_cust);
-    END; $$ LANGUAGE plpgsql SECURITY DEFINER;
-
-    2. claim_evora_card (Transaksi aman anti-race condition)
-    CREATE OR REPLACE FUNCTION claim_evora_card(p_phone text, p_code text) RETURNS json AS $$
-    DECLARE
-      v_cust record; v_card_id uuid; v_new_prog int;
-    BEGIN
-      SELECT * INTO v_cust FROM customers WHERE phone = p_phone;
-      IF NOT FOUND THEN RAISE EXCEPTION 'Customer not found'; END IF;
-      
-      SELECT id INTO v_card_id FROM card_codes WHERE code = p_code AND is_used = false FOR UPDATE SKIP LOCKED;
-      IF v_card_id IS NULL THEN RAISE EXCEPTION 'Invalid or already used code'; END IF;
-
-      UPDATE card_codes SET is_used = true, used_by = v_cust.id, used_at = now() WHERE id = v_card_id;
-      v_new_prog := v_cust.progress + 1;
-      
-      IF v_new_prog >= 10 THEN
-        INSERT INTO redeem_codes (id, customer_id, code, status, created_at) 
-        VALUES (gen_random_uuid(), v_cust.id, 'EVR-FREE-' || upper(substr(md5(random()::text), 1, 6)), 'ACTIVE', now());
-        UPDATE customers SET progress = 0, spin_credits = spin_credits + 1, total_free_bottles = total_free_bottles + 1, updated_at = now() WHERE id = v_cust.id;
-      ELSE
-        UPDATE customers SET progress = v_new_prog, spin_credits = spin_credits + 1, updated_at = now() WHERE id = v_cust.id;
-      END IF;
-      RETURN json_build_object('success', true);
-    END; $$ LANGUAGE plpgsql SECURITY DEFINER;
-
-    3. execute_evora_spin (Penentuan hadiah 100% dari database)
-    CREATE OR REPLACE FUNCTION execute_evora_spin(p_phone text) RETURNS json AS $$
-    DECLARE
-      v_cust record; v_rand numeric; v_running numeric := 0; v_reward record; v_code text := NULL;
-    BEGIN
-      SELECT * INTO v_cust FROM customers WHERE phone = p_phone FOR UPDATE;
-      IF v_cust.spin_credits <= 0 THEN RAISE EXCEPTION 'No credits'; END IF;
-      
-      UPDATE customers SET spin_credits = spin_credits - 1 WHERE id = v_cust.id;
-      v_rand := random() * 100;
-      
-      FOR v_reward IN SELECT * FROM spin_rewards WHERE is_active = true AND stock > 0 ORDER BY probability ASC LOOP
-        v_running := v_running + v_reward.probability;
-        IF v_rand <= v_running THEN EXIT; END IF;
-      END LOOP;
-      
-      IF v_reward IS NULL THEN RAISE EXCEPTION 'No reward available'; END IF;
-      UPDATE spin_rewards SET stock = stock - 1 WHERE id = v_reward.id;
-      INSERT INTO spins (id, customer_id, reward_id, created_at) VALUES (gen_random_uuid(), v_cust.id, v_reward.id, now());
-      
-      IF v_reward.name ILIKE '%diskon%' OR v_reward.name ILIKE '%emas%' OR v_reward.name ILIKE '%parfum%' OR v_reward.name ILIKE '%free%' THEN
-        v_code := 'EVR-' || upper(substr(md5(random()::text), 1, 6));
-        INSERT INTO redeem_codes (id, customer_id, code, status, created_at) VALUES (gen_random_uuid(), v_cust.id, v_code, 'ACTIVE', now());
-      END IF;
-      
-      RETURN json_build_object('reward', v_reward.name, 'code', v_code);
-    END; $$ LANGUAGE plpgsql SECURITY DEFINER;
-    -->
-
     <style>
         :root {
             --black: #0a0a0a;
@@ -109,7 +39,7 @@
             color: var(--white);
             line-height: 1.5;
             overflow-x: hidden;
-            padding-bottom: 80px; /* Space for bottom nav */
+            padding-bottom: 80px;
         }
 
         /* Typography */
@@ -285,7 +215,7 @@
                 #1a1a1a 154.28deg 205.71deg,
                 #111111 205.71deg 257.14deg,
                 #1a1a1a 257.14deg 308.57deg,
-                #d4af37 308.57deg 360deg /* Premium segment for Parfume */
+                #d4af37 308.57deg 360deg 
             );
         }
         .wheel-center {
@@ -308,7 +238,6 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.8) inset;
         }
         
-        /* Wheel Text Position mapping (Visual only) */
         .wheel-text {
             position: absolute;
             top: 50%;
@@ -323,7 +252,7 @@
             padding-left: 30px;
             letter-spacing: 1px;
         }
-        /* Rotations for 7 segments (360/7 = 51.42 deg per segment) */
+        
         .w-1 { transform: translateY(-50%) rotate(25.71deg); }
         .w-2 { transform: translateY(-50%) rotate(77.13deg); }
         .w-3 { transform: translateY(-50%) rotate(128.55deg); }
@@ -370,27 +299,6 @@
             -webkit-mask-size: cover;
         }
 
-        /* List Items */
-        .list-item {
-            border-bottom: 1px solid var(--border);
-            padding: 16px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .list-item:last-child {
-            border-bottom: none;
-        }
-        .badge {
-            background: rgba(212, 175, 55, 0.1);
-            color: var(--gold);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        
         /* Modals */
         .modal-overlay {
             position: fixed;
@@ -423,10 +331,7 @@
             transform: scale(1);
         }
         
-        /* How It Works List */
-        .hiw-step {
-            margin-bottom: 20px;
-        }
+        .hiw-step { margin-bottom: 20px; }
         .hiw-num {
             color: var(--gold);
             font-family: var(--font-heading);
@@ -434,11 +339,9 @@
             margin-bottom: 4px;
         }
         
-        /* Utility */
         .error-msg { color: #ff4444; font-size: 14px; margin-top: -10px; margin-bottom: 15px; display: none; }
         .success-icon { font-size: 48px; color: var(--gold); margin-bottom: 15px; }
 
-        /* Confetti Canvas */
         #confetti {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 1000;
@@ -448,7 +351,6 @@
 <body>
 
     <div class="app-container">
-        
         <!-- Header -->
         <div class="logo-box">
             <div class="logo">EVORA</div>
@@ -529,7 +431,6 @@
             <div class="wheel-container">
                 <div class="wheel-pointer"></div>
                 <div class="wheel" id="wheel-element">
-                    <!-- Segments based on DB Probability config -->
                     <div class="wheel-text w-1">Free 20ML</div>
                     <div class="wheel-text w-2">Diskon 5K</div>
                     <div class="wheel-text w-3">Diskon 10K</div>
@@ -541,31 +442,24 @@
                 <div class="wheel-center">EVORA</div>
             </div>
 
-            <div class="text-center" id="spin-action-area">
-                <!-- Action handled by JS -->
-            </div>
+            <div class="text-center" id="spin-action-area"></div>
         </div>
 
         <!-- 5. REWARDS VIEW -->
         <div id="view-rewards" class="view">
             <h2 class="text-center" style="margin-bottom: 20px;">MY REWARDS</h2>
-            <div id="rewards-list">
-                <!-- Dynamic Content -->
-            </div>
+            <div id="rewards-list"></div>
         </div>
 
         <!-- 6. PROMO VIEW -->
         <div id="view-promo" class="view">
             <h2 class="text-center" style="margin-bottom: 20px;">LATEST FROM EVORA</h2>
-            <div id="promo-list">
-                <!-- Dynamic Content -->
-            </div>
+            <div id="promo-list"></div>
         </div>
 
     </div>
 
     <!-- Modals -->
-    <!-- Claim Success Modal -->
     <div class="modal-overlay" id="modal-success">
         <div class="modal-content">
             <div class="success-icon">✓</div>
@@ -576,7 +470,6 @@
         </div>
     </div>
 
-    <!-- Reward Reveal Modal -->
     <div class="modal-overlay" id="modal-reward">
         <div class="modal-content">
             <h2 class="text-gray" style="font-size: 14px; letter-spacing: 3px; margin-bottom: 10px;">CONGRATULATIONS</h2>
@@ -592,7 +485,6 @@
         </div>
     </div>
 
-    <!-- Free Bottle Modal -->
     <div class="modal-overlay" id="modal-free-bottle">
         <div class="modal-content">
             <div class="success-icon">✨</div>
@@ -603,7 +495,7 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation (Hidden on login) -->
+    <!-- Bottom Navigation -->
     <nav class="bottom-nav" id="bottom-nav" style="display: none;">
         <a class="nav-item active" onclick="app.navigate('dashboard')" id="nav-dashboard">
             <div class="nav-icon" style="mask-image: url('data:image/svg+xml;utf8,<svg viewBox=\'0 0 24 24\' fill=\'black\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\'/></svg>');"></div>
@@ -639,7 +531,7 @@
             progress: 0,
             isSpinning: false,
 
-            // Wheel Configuration (Mapping index to database segment)
+            // Konfigurasi Wheel
             wheelSegments: [
                 { name: 'Free Pocket 20ML' },
                 { name: 'Kode Diskon Rp5.000' },
@@ -659,13 +551,13 @@
             },
 
             navigate: function(viewId) {
-                if (this.isSpinning) return; // Block nav during spin
+                if (this.isSpinning) return; 
 
-                // UI updates
+                // Reset UI View
                 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
                 document.getElementById('view-' + viewId).classList.add('active');
                 
-                // Bottom nav
+                // Atur Navigation Bar
                 if(viewId === 'login') {
                     document.getElementById('bottom-nav').style.display = 'none';
                 } else {
@@ -675,15 +567,17 @@
                     if(activeNav) activeNav.classList.add('active');
                 }
 
-                // Data loading
+                // Routing Data
                 if(viewId === 'dashboard') this.loadDashboard();
                 if(viewId === 'spin') this.loadSpinState();
                 if(viewId === 'rewards') this.loadRewards();
                 if(viewId === 'promo') this.loadPromos();
                 
-                // Reset states
-                document.getElementById('claim-error').style.display = 'none';
-                document.getElementById('claim-code').value = '';
+                // Clear state form
+                const claimErr = document.getElementById('claim-error');
+                const claimInput = document.getElementById('claim-code');
+                if (claimErr) claimErr.style.display = 'none';
+                if (claimInput) claimInput.value = '';
                 window.scrollTo(0,0);
             },
 
@@ -692,14 +586,18 @@
                 const btn = document.getElementById('btn-login');
                 const err = document.getElementById('login-error');
                 
-                if(!phoneInput) { err.textContent = "Masukkan nomor WhatsApp."; err.style.display = 'block'; return; }
+                if(!phoneInput) { 
+                    err.textContent = "Masukkan nomor WhatsApp."; 
+                    err.style.display = 'block'; 
+                    return; 
+                }
                 
                 btn.disabled = true;
                 btn.textContent = "MEMPROSES...";
                 err.style.display = 'none';
 
                 try {
-                    // Call RPC to create/fetch customer
+                    // Eksekusi RPC evora_login
                     const { data, error } = await supabase.rpc('evora_login', { p_phone: phoneInput });
                     if(error) throw error;
                     
@@ -707,7 +605,7 @@
                     localStorage.setItem('evora_phone', phoneInput);
                     this.navigate('dashboard');
                 } catch(e) {
-                    err.textContent = "Terjadi kesalahan. Silakan coba lagi.";
+                    err.textContent = "Terjadi kesalahan koneksi. Silakan coba lagi.";
                     err.style.display = 'block';
                 } finally {
                     btn.disabled = false;
@@ -719,16 +617,17 @@
                 document.getElementById('dash-phone').textContent = this.userPhone;
                 
                 try {
-                    const { data, error } = await supabase.from('customers').select('progress, spin_credits').eq('phone', this.userPhone).single();
-                    if(error) throw error;
+                    // Memanfaatkan RPC login untuk fetch data secara aman (Bypass RLS limits)
+                    const { data, error } = await supabase.rpc('evora_login', { p_phone: this.userPhone });
                     
-                    this.credits = data.spin_credits;
-                    this.progress = data.progress;
+                    if(error || !data) throw error || new Error("Failed to load");
+                    
+                    this.credits = data.spin_credits || 0;
+                    this.progress = data.progress || 0;
                     
                     document.getElementById('dash-credits').textContent = this.credits;
                     document.getElementById('dash-prog-val').textContent = this.progress;
                     
-                    // Animate Bar
                     setTimeout(() => {
                         document.getElementById('dash-prog-bar').style.width = (this.progress * 10) + '%';
                     }, 100);
@@ -737,7 +636,6 @@
                     if (this.progress < 10) {
                         msg.innerHTML = `<span class="text-white">${10 - this.progress} more purchases</span> to unlock your FREE BOTTLE.`;
                     } else {
-                        // Normally handled by RPC during claim, but as fallback display
                         msg.innerHTML = `<span class="text-gold">FREE BOTTLE UNLOCKED!</span>`;
                     }
                 } catch(e) {
@@ -757,21 +655,33 @@
                 err.style.display = 'none';
 
                 try {
+                    // Eksekusi claim (Berkompatibel dengan berbagai versi RPC Return Data)
                     const { data, error } = await supabase.rpc('claim_evora_card', { p_phone: this.userPhone, p_code: codeInput });
                     if(error) throw error;
 
-                    // Success - check if reached 10
-                    this.progress++;
-                    if(this.progress >= 10) {
-                        this.progress = 0;
-                        document.getElementById('modal-free-bottle').classList.add('active');
+                    // Meng-handle return JSON versi terbaru atau fallback jika return RPC kosong
+                    if (data && data.progress !== undefined) {
+                        this.progress = data.progress;
+                        this.credits = data.spin_credits;
+                        if (data.unlocked_bottle) {
+                            document.getElementById('modal-free-bottle').classList.add('active');
+                        } else {
+                            document.getElementById('modal-success').classList.add('active');
+                        }
                     } else {
-                        document.getElementById('modal-success').classList.add('active');
+                        // Manual state update
+                        this.progress++;
+                        this.credits++;
+                        if(this.progress >= 10) {
+                            this.progress = 0;
+                            document.getElementById('modal-free-bottle').classList.add('active');
+                        } else {
+                            document.getElementById('modal-success').classList.add('active');
+                        }
                     }
-                    this.credits++;
 
                 } catch(e) {
-                    err.textContent = e.message.includes('Invalid') ? "Kode kartu tidak ditemukan atau sudah pernah digunakan." : "Sistem sibuk, coba lagi.";
+                    err.textContent = (e.message && e.message.includes('Invalid')) ? "Kode kartu tidak ditemukan atau sudah digunakan." : "Gagal menukar kode, sistem sibuk.";
                     err.style.display = 'block';
                 } finally {
                     btn.disabled = false;
@@ -801,44 +711,48 @@
                 btn.textContent = "MEMUTAR...";
 
                 try {
-                    // Call RPC to determine reward securely
+                    // Memanggil penentu reward dari database
                     const { data, error } = await supabase.rpc('execute_evora_spin', { p_phone: this.userPhone });
-                    if(error) throw error;
+                    if(error || !data) throw error || new Error("Failed");
 
-                    // Update UI credits immediately
                     this.credits--;
                     document.getElementById('spin-credit-display').textContent = this.credits;
 
-                    // Find matching segment index to animate wheel
-                    let targetIndex = this.wheelSegments.findIndex(s => s.name.toLowerCase() === data.reward.toLowerCase());
-                    if(targetIndex === -1) targetIndex = 0; // Fallback visual
+                    // Mendukung return object JSON dari berbagai versi RPC (data.reward / data.reward_name)
+                    const rewardName = data.reward || data.reward_name || "Mistery Reward";
+                    const voucherCode = data.code || data.redeem_code || null;
 
-                    // Calculate rotation: (360 / 7 = 51.42 deg). Target angle to point arrow (top center).
+                    // Cari target index dari Wheel (Kebal terhadap typo DB)
+                    let targetIndex = this.wheelSegments.findIndex(s => s.name.toLowerCase() === rewardName.toLowerCase());
+                    if (targetIndex === -1) {
+                        targetIndex = this.wheelSegments.findIndex(s => rewardName.toLowerCase().includes(s.name.toLowerCase()) || s.name.toLowerCase().includes(rewardName.toLowerCase()));
+                    }
+                    if(targetIndex === -1) targetIndex = 0; // Fallback jika tidak match
+
                     const degPerSegment = 360 / 7;
-                    // Formula to place target segment under top pointer, adding 5 full rotations (1800) for effect
+                    // Formula matematika untuk rotasi (Tambahan 1800 derajat untuk animasi 5 putaran penuh)
                     const spinAngle = 1800 + (360 - (targetIndex * degPerSegment)) - (degPerSegment / 2);
                     
                     const wheel = document.getElementById('wheel-element');
-                    // Reset inline style to allow repeated spins seamlessly
+                    
+                    // Reset animasi wheel
                     wheel.style.transition = 'none';
                     wheel.style.transform = 'rotate(0deg)';
+                    void wheel.offsetWidth; // Force DOM reflow
                     
-                    // Force reflow
-                    void wheel.offsetWidth; 
-                    
-                    // Animate
+                    // Eksekusi Animasi CSS
                     wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.1, 1)';
                     wheel.style.transform = `rotate(${spinAngle}deg)`;
 
-                    // Wait for animation
+                    // Waktu eksekusi popup
                     setTimeout(() => {
-                        this.showRewardModal(data.reward, data.code);
+                        this.showRewardModal(rewardName, voucherCode);
                         this.isSpinning = false;
-                        this.loadSpinState(); // Refresh buttons
+                        this.loadSpinState();
                     }, 5200);
 
                 } catch(e) {
-                    alert("Gagal melakukan spin. Pastikan kredit Anda cukup.");
+                    alert("Gagal melakukan spin. Pastikan kredit Anda cukup atau refresh halaman.");
                     btn.disabled = false;
                     btn.textContent = "PUTAR SEKARANG";
                     this.isSpinning = false;
@@ -863,15 +777,13 @@
                 list.innerHTML = '<p class="text-center text-gray">Loading rewards...</p>';
 
                 try {
-                    // Fetch Customer ID first
-                    const { data: cust, error: custErr } = await supabase.from('customers').select('id').eq('phone', this.userPhone).single();
-                    if(custErr) throw custErr;
+                    // Gunakan RPC login untuk mendapat id customer secara aman
+                    const { data: cust, error: custErr } = await supabase.rpc('evora_login', { p_phone: this.userPhone });
+                    if(custErr || !cust) throw custErr;
 
-                    // Fetch Redeem Codes
                     const { data: codes, error: codeErr } = await supabase.from('redeem_codes').select('*').eq('customer_id', cust.id).order('created_at', { ascending: false });
                     
                     let html = '';
-                    
                     if(codes && codes.length > 0) {
                         codes.forEach(c => {
                             const date = new Date(c.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -900,7 +812,7 @@
                     }
                     list.innerHTML = html;
                 } catch(e) {
-                    list.innerHTML = '<p class="text-center text-gray">Gagal memuat reward.</p>';
+                    list.innerHTML = '<p class="text-center text-gray">Gagal memuat reward history.</p>';
                 }
             },
 
@@ -910,8 +822,7 @@
 
                 try {
                     const { data, error } = await supabase.from('promos').select('*').eq('is_active', true).order('created_at', { ascending: false });
-                    if(error) throw error;
-
+                    
                     if(data && data.length > 0) {
                         let html = '';
                         data.forEach(p => {
@@ -938,7 +849,7 @@
                 document.getElementById(id).classList.remove('active');
             },
 
-            // Simple Confetti Logic
+            // Confetti Engine 
             fireConfetti: function() {
                 const canvas = document.getElementById('confetti');
                 const ctx = canvas.getContext('2d');
@@ -974,7 +885,7 @@
             }
         };
 
-        // Initialize App
+        // Inisialisasi Apps setelah load document
         document.addEventListener('DOMContentLoaded', () => app.init());
     </script>
 </body>
