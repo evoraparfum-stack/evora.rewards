@@ -21,7 +21,6 @@
             --gray: #888888;
             --dark-gray: #1a1a1a;
             --border: #333333;
-            
             --font-heading: 'Playfair Display', serif;
             --font-body: 'DM Sans', sans-serif;
         }
@@ -42,7 +41,6 @@
             padding-bottom: 80px;
         }
 
-        /* Typography */
         h1, h2, h3, .heading-font {
             font-family: var(--font-heading);
             font-weight: 600;
@@ -53,7 +51,6 @@
         .text-cream { color: var(--cream); }
         .text-center { text-align: center; }
 
-        /* Container */
         .app-container {
             max-width: 480px;
             margin: 0 auto;
@@ -62,7 +59,6 @@
             position: relative;
         }
 
-        /* Views */
         .view {
             display: none;
             animation: fadeIn 0.4s ease forwards;
@@ -76,7 +72,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* UI Elements */
         .card {
             background: linear-gradient(145deg, #161616, #0d0d0d);
             border: 1px solid var(--border);
@@ -136,7 +131,6 @@
             border-color: var(--gold);
         }
 
-        /* Header / Logo */
         .logo-box {
             text-align: center;
             margin: 40px 0 20px 0;
@@ -155,7 +149,6 @@
             margin-top: 5px;
         }
 
-        /* Progress Bar */
         .progress-wrapper {
             margin: 20px 0;
         }
@@ -179,7 +172,6 @@
             box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
         }
 
-        /* Wheel Area */
         .wheel-container {
             position: relative;
             width: 300px;
@@ -207,7 +199,6 @@
             position: relative;
             overflow: hidden;
             transition: transform 5s cubic-bezier(0.2, 0.8, 0.1, 1);
-            /* 7 Segments */
             background: conic-gradient(
                 #111111 0deg 51.42deg,
                 #1a1a1a 51.42deg 102.85deg,
@@ -261,7 +252,6 @@
         .w-6 { transform: translateY(-50%) rotate(282.81deg); }
         .w-7 { transform: translateY(-50%) rotate(334.23deg); color: var(--black); }
 
-        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -299,7 +289,6 @@
             -webkit-mask-size: cover;
         }
 
-        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -339,7 +328,7 @@
             margin-bottom: 4px;
         }
         
-        .error-msg { color: #ff4444; font-size: 14px; margin-top: -10px; margin-bottom: 15px; display: none; }
+        .error-msg { color: #ff4444; font-size: 13px; margin-top: -10px; margin-bottom: 15px; display: none; text-align: left; word-break: break-all; }
         .success-icon { font-size: 48px; color: var(--gold); margin-bottom: 15px; }
 
         #confetti {
@@ -395,6 +384,9 @@
             </div>
 
             <button class="btn btn-primary" onclick="app.navigate('claim')">TUKAR KODE</button>
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="app.logout()" style="background:none; border:none; color:var(--gray); font-size:12px; cursor:pointer; text-decoration:underline;">Keluar Akun</button>
+            </div>
         </div>
 
         <!-- 3. CLAIM CODE VIEW -->
@@ -527,11 +519,11 @@
         // Core App Logic
         const app = {
             userPhone: localStorage.getItem('evora_phone'),
+            customerData: null,
             credits: 0,
             progress: 0,
             isSpinning: false,
 
-            // Konfigurasi Wheel
             wheelSegments: [
                 { name: 'Free Pocket 20ML' },
                 { name: 'Kode Diskon Rp5.000' },
@@ -553,11 +545,9 @@
             navigate: function(viewId) {
                 if (this.isSpinning) return; 
 
-                // Reset UI View
                 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
                 document.getElementById('view-' + viewId).classList.add('active');
                 
-                // Atur Navigation Bar
                 if(viewId === 'login') {
                     document.getElementById('bottom-nav').style.display = 'none';
                 } else {
@@ -567,13 +557,11 @@
                     if(activeNav) activeNav.classList.add('active');
                 }
 
-                // Routing Data
                 if(viewId === 'dashboard') this.loadDashboard();
                 if(viewId === 'spin') this.loadSpinState();
                 if(viewId === 'rewards') this.loadRewards();
                 if(viewId === 'promo') this.loadPromos();
                 
-                // Clear state form
                 const claimErr = document.getElementById('claim-error');
                 const claimInput = document.getElementById('claim-code');
                 if (claimErr) claimErr.style.display = 'none';
@@ -597,15 +585,41 @@
                 err.style.display = 'none';
 
                 try {
-                    // Eksekusi RPC evora_login
+                    // Coba jalankan RPC evora_login
+                    let custResult = null;
                     const { data, error } = await supabase.rpc('evora_login', { p_phone: phoneInput });
-                    if(error) throw error;
                     
+                    if (!error && data) {
+                        custResult = data;
+                    } else {
+                        // Fallback jika RPC belum terbuat: Query/Insert langsung ke tabel customers
+                        console.warn("RPC evora_login belum ada, menggunakan fallback database langsung.");
+                        const { data: existing, error: findErr } = await supabase.from('customers').select('*').eq('phone', phoneInput).maybeSingle();
+                        
+                        if (existing) {
+                            custResult = existing;
+                        } else {
+                            const { data: inserted, error: insErr } = await supabase.from('customers').insert([{
+                                phone: phoneInput,
+                                progress: 0,
+                                spin_credits: 0,
+                                total_free_bottles: 0
+                            }]).select().single();
+                            
+                            if (insErr) throw insErr;
+                            custResult = inserted;
+                        }
+                    }
+
+                    if (!custResult) throw new Error("Gagal memuat profil customer.");
+
                     this.userPhone = phoneInput;
+                    this.customerData = custResult;
                     localStorage.setItem('evora_phone', phoneInput);
                     this.navigate('dashboard');
                 } catch(e) {
-                    err.textContent = "Terjadi kesalahan koneksi. Silakan coba lagi.";
+                    console.error("Login Error:", e);
+                    err.textContent = "Error: " + (e.message || "Gagal masuk, periksa koneksi atau database.");
                     err.style.display = 'block';
                 } finally {
                     btn.disabled = false;
@@ -613,15 +627,21 @@
                 }
             },
 
+            logout: function() {
+                localStorage.removeItem('evora_phone');
+                this.userPhone = null;
+                this.customerData = null;
+                this.navigate('login');
+            },
+
             loadDashboard: async function() {
                 document.getElementById('dash-phone').textContent = this.userPhone;
                 
                 try {
-                    // Memanfaatkan RPC login untuk fetch data secara aman (Bypass RLS limits)
-                    const { data, error } = await supabase.rpc('evora_login', { p_phone: this.userPhone });
+                    const { data, error } = await supabase.from('customers').select('*').eq('phone', this.userPhone).single();
+                    if(error || !data) throw error;
                     
-                    if(error || !data) throw error || new Error("Failed to load");
-                    
+                    this.customerData = data;
                     this.credits = data.spin_credits || 0;
                     this.progress = data.progress || 0;
                     
@@ -655,33 +675,80 @@
                 err.style.display = 'none';
 
                 try {
-                    // Eksekusi claim (Berkompatibel dengan berbagai versi RPC Return Data)
+                    let success = false;
+                    
+                    // Coba gunakan RPC claim_evora_card
                     const { data, error } = await supabase.rpc('claim_evora_card', { p_phone: this.userPhone, p_code: codeInput });
-                    if(error) throw error;
-
-                    // Meng-handle return JSON versi terbaru atau fallback jika return RPC kosong
-                    if (data && data.progress !== undefined) {
-                        this.progress = data.progress;
-                        this.credits = data.spin_credits;
-                        if (data.unlocked_bottle) {
-                            document.getElementById('modal-free-bottle').classList.add('active');
-                        } else {
-                            document.getElementById('modal-success').classList.add('active');
+                    
+                    if (!error) {
+                        success = true;
+                        if (data && data.progress !== undefined) {
+                            this.progress = data.progress;
+                            this.credits = data.spin_credits;
+                            if (data.unlocked_bottle) {
+                                document.getElementById('modal-free-bottle').classList.add('active');
+                                btn.disabled = false;
+                                btn.textContent = "TUKAR KODE";
+                                return;
+                            }
                         }
                     } else {
-                        // Manual state update
-                        this.progress++;
-                        this.credits++;
-                        if(this.progress >= 10) {
-                            this.progress = 0;
-                            document.getElementById('modal-free-bottle').classList.add('active');
+                        console.warn("RPC claim_evora_card gagal/belum ada, menggunakan fallback logika penukaran.");
+                        // Fallback aman via Frontend jika RPC belum dibuat di Supabase
+                        const { data: card, error: cardErr } = await supabase.from('card_codes').select('*').eq('code', codeInput).single();
+                        if (cardErr || !card) throw new Error("Kode kartu tidak ditemukan.");
+                        if (card.is_used) throw new Error("Kode kartu ini sudah pernah digunakan.");
+
+                        const { data: cust } = await supabase.from('customers').select('*').eq('phone', this.userPhone).single();
+                        if (!cust) throw new Error("Customer tidak ditemukan.");
+
+                        // Update card to used
+                        await supabase.from('card_codes').update({ is_used: true, used_by: cust.id, used_at: new Date().toISOString() }).eq('id', card.id);
+
+                        let newProg = (cust.progress || 0) + 1;
+                        let newCredits = (cust.spin_credits || 0) + 1;
+                        let freeUnlocked = false;
+
+                        if (newProg >= 10) {
+                            freeUnlocked = true;
+                            newProg = 0;
+                            await supabase.from('redeem_codes').insert([{
+                                customer_id: cust.id,
+                                code: 'EVR-FREE-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
+                                status: 'ACTIVE'
+                            }]);
+                            await supabase.from('customers').update({ 
+                                progress: newProg, 
+                                spin_credits: newCredits, 
+                                total_free_bottles: (cust.total_free_bottles || 0) + 1,
+                                updated_at: new Date().toISOString() 
+                            }).eq('id', cust.id);
                         } else {
-                            document.getElementById('modal-success').classList.add('active');
+                            await supabase.from('customers').update({ 
+                                progress: newProg, 
+                                spin_credits: newCredits,
+                                updated_at: new Date().toISOString() 
+                            }).eq('id', cust.id);
+                        }
+
+                        this.progress = newProg;
+                        this.credits = newCredits;
+                        success = true;
+
+                        if (freeUnlocked) {
+                            document.getElementById('modal-free-bottle').classList.add('active');
+                            btn.disabled = false;
+                            btn.textContent = "TUKAR KODE";
+                            return;
                         }
                     }
 
+                    if (success) {
+                        document.getElementById('modal-success').classList.add('active');
+                    }
+
                 } catch(e) {
-                    err.textContent = (e.message && e.message.includes('Invalid')) ? "Kode kartu tidak ditemukan atau sudah digunakan." : "Gagal menukar kode, sistem sibuk.";
+                    err.textContent = e.message || "Gagal menukar kode.";
                     err.style.display = 'block';
                 } finally {
                     btn.disabled = false;
@@ -711,40 +778,70 @@
                 btn.textContent = "MEMUTAR...";
 
                 try {
-                    // Memanggil penentu reward dari database
-                    const { data, error } = await supabase.rpc('execute_evora_spin', { p_phone: this.userPhone });
-                    if(error || !data) throw error || new Error("Failed");
+                    let rewardName = "Kode Diskon Rp5.000";
+                    let voucherCode = null;
 
-                    this.credits--;
+                    // Coba jalankan RPC execute_evora_spin
+                    const { data, error } = await supabase.rpc('execute_evora_spin', { p_phone: this.userPhone });
+                    
+                    if (!error && data) {
+                        rewardName = data.reward || data.reward_name || rewardName;
+                        voucherCode = data.code || data.redeem_code || null;
+                    } else {
+                        console.warn("RPC execute_evora_spin gagal/belum ada, menggunakan fallback spin aman.");
+                        const { data: cust } = await supabase.from('customers').select('*').eq('phone', this.userPhone).single();
+                        if (!cust || cust.spin_credits <= 0) throw new Error("Kredit spin tidak cukup.");
+
+                        // Kurangi kredit
+                        await supabase.from('customers').update({ spin_credits: cust.spin_credits - 1 }).eq('id', cust.id);
+                        this.credits = cust.spin_credits - 1;
+
+                        // Ambil reward aktif dari spin_rewards
+                        const { data: rewards } = await supabase.from('spin_rewards').select('*').eq('is_active', true);
+                        if (rewards && rewards.length > 0) {
+                            // Pilih random berdasarkan probability jika ada
+                            let rand = Math.random() * 100;
+                            let cumulative = 0;
+                            let chosen = rewards[0];
+                            for (let r of rewards) {
+                                cumulative += Number(r.probability || 10);
+                                if (rand <= cumulative) {
+                                    chosen = r;
+                                    break;
+                                }
+                            }
+                            rewardName = chosen.name;
+                            
+                            // Buat redeem code
+                            voucherCode = 'EVR-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                            await supabase.from('redeem_codes').insert([{
+                                customer_id: cust.id,
+                                code: voucherCode,
+                                status: 'ACTIVE'
+                            }]);
+                        }
+                    }
+
+                    this.credits = Math.max(0, this.credits - 1);
                     document.getElementById('spin-credit-display').textContent = this.credits;
 
-                    // Mendukung return object JSON dari berbagai versi RPC (data.reward / data.reward_name)
-                    const rewardName = data.reward || data.reward_name || "Mistery Reward";
-                    const voucherCode = data.code || data.redeem_code || null;
-
-                    // Cari target index dari Wheel (Kebal terhadap typo DB)
                     let targetIndex = this.wheelSegments.findIndex(s => s.name.toLowerCase() === rewardName.toLowerCase());
                     if (targetIndex === -1) {
                         targetIndex = this.wheelSegments.findIndex(s => rewardName.toLowerCase().includes(s.name.toLowerCase()) || s.name.toLowerCase().includes(rewardName.toLowerCase()));
                     }
-                    if(targetIndex === -1) targetIndex = 0; // Fallback jika tidak match
+                    if(targetIndex === -1) targetIndex = 0;
 
                     const degPerSegment = 360 / 7;
-                    // Formula matematika untuk rotasi (Tambahan 1800 derajat untuk animasi 5 putaran penuh)
                     const spinAngle = 1800 + (360 - (targetIndex * degPerSegment)) - (degPerSegment / 2);
                     
                     const wheel = document.getElementById('wheel-element');
-                    
-                    // Reset animasi wheel
                     wheel.style.transition = 'none';
                     wheel.style.transform = 'rotate(0deg)';
-                    void wheel.offsetWidth; // Force DOM reflow
+                    void wheel.offsetWidth; 
                     
-                    // Eksekusi Animasi CSS
                     wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.1, 1)';
                     wheel.style.transform = `rotate(${spinAngle}deg)`;
 
-                    // Waktu eksekusi popup
                     setTimeout(() => {
                         this.showRewardModal(rewardName, voucherCode);
                         this.isSpinning = false;
@@ -752,7 +849,7 @@
                     }, 5200);
 
                 } catch(e) {
-                    alert("Gagal melakukan spin. Pastikan kredit Anda cukup atau refresh halaman.");
+                    alert("Gagal melakukan spin: " + (e.message || "Kesalahan sistem."));
                     btn.disabled = false;
                     btn.textContent = "PUTAR SEKARANG";
                     this.isSpinning = false;
@@ -777,9 +874,8 @@
                 list.innerHTML = '<p class="text-center text-gray">Loading rewards...</p>';
 
                 try {
-                    // Gunakan RPC login untuk mendapat id customer secara aman
-                    const { data: cust, error: custErr } = await supabase.rpc('evora_login', { p_phone: this.userPhone });
-                    if(custErr || !cust) throw custErr;
+                    const { data: cust } = await supabase.from('customers').select('*').eq('phone', this.userPhone).single();
+                    if(!cust) throw new Error("Customer not found");
 
                     const { data: codes, error: codeErr } = await supabase.from('redeem_codes').select('*').eq('customer_id', cust.id).order('created_at', { ascending: false });
                     
@@ -849,7 +945,6 @@
                 document.getElementById(id).classList.remove('active');
             },
 
-            // Confetti Engine 
             fireConfetti: function() {
                 const canvas = document.getElementById('confetti');
                 const ctx = canvas.getContext('2d');
@@ -885,7 +980,6 @@
             }
         };
 
-        // Inisialisasi Apps setelah load document
         document.addEventListener('DOMContentLoaded', () => app.init());
     </script>
 </body>
