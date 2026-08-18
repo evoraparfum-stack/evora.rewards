@@ -1,1362 +1,878 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>EVORA Rewards</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --black: #0d0d0d;
-      --gold: #c9a227;
-      --gold-light: #f5e7ad;
-      --bg: #f6f5f1;
-      --gray: #747474;
-      --border: #e4e4e4;
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(
-          circle at 50% 0%,
-          rgba(201,162,39,.15),
-          transparent 38%
-        ),
-        linear-gradient(
-          180deg,
-          #faf9f5 0%,
-          #f4f4f2 100%
-        );
-
-      color: var(--black);
-
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
-    }
-
-    .container {
-      width: min(100%, 540px);
-      margin: auto;
-      padding: 38px 18px 55px;
-    }
-
-    /* =========================
-       BRAND
-    ========================= */
-
-    .brand {
-      text-align: center;
-      margin-bottom: 34px;
-    }
-
-    .brand-logo {
-      width: 82px;
-      height: 82px;
-
-      margin: auto;
-
-      border-radius: 50%;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: #111;
-      color: white;
-
-      font-size: 29px;
-      font-weight: 900;
-
-      letter-spacing: 1px;
-
-      box-shadow:
-        0 18px 45px rgba(0,0,0,.16);
-    }
-
-    .brand h1 {
-      margin-top: 20px;
-
-      font-size: clamp(30px, 8vw, 42px);
-
-      font-weight: 900;
-
-      letter-spacing: -1.8px;
-    }
-
-    .brand p {
-      margin-top: 8px;
-
-      color: var(--gray);
-
-      font-size: 15px;
-    }
-
-    /* =========================
-       CARD
-    ========================= */
-
-    .card {
-      background: rgba(255,255,255,.94);
-
-      border:
-        1px solid rgba(0,0,0,.06);
-
-      border-radius: 30px;
-
-      padding: 25px;
-
-      box-shadow:
-        0 25px 70px rgba(0,0,0,.09);
-
-      backdrop-filter: blur(20px);
-    }
-
-    .title {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .title h2 {
-      font-size: 25px;
-      font-weight: 850;
-    }
-
-    .title p {
-      margin-top: 8px;
-
-      color: var(--gray);
-
-      font-size: 14px;
-
-      line-height: 1.55;
-    }
-
-    /* =========================
-       FORM
-    ========================= */
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    .field label {
-      display: block;
-
-      margin-bottom: 8px;
-
-      font-size: 14px;
-      font-weight: 750;
-    }
-
-    input {
-      width: 100%;
-      height: 56px;
-
-      border: 1px solid #dedede;
-
-      border-radius: 17px;
-
-      background: #fafafa;
-
-      padding: 0 17px;
-
-      font-size: 17px;
-
-      outline: none;
-
-      transition: .2s;
-    }
-
-    input:focus {
-      border-color: var(--gold);
-
-      background: white;
-
-      box-shadow:
-        0 0 0 4px rgba(201,162,39,.11);
-    }
-
-    input:disabled {
-      opacity: .65;
-    }
-
-    /* =========================
-       BUTTON
-    ========================= */
-
-    .btn {
-      width: 100%;
-      height: 57px;
-
-      border: none;
-
-      border-radius: 17px;
-
-      cursor: pointer;
-
-      font-size: 16px;
-
-      font-weight: 850;
-
-      letter-spacing: .2px;
-
-      transition: .2s;
-    }
-
-    .btn-primary {
-      background: #111;
-      color: white;
-
-      box-shadow:
-        0 12px 28px rgba(0,0,0,.18);
-    }
-
-    .btn-primary:active {
-      transform: scale(.985);
-    }
-
-    .btn:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
-
-    /* =========================
-       STATUS
-    ========================= */
-
-    .status {
-      display: none;
-
-      margin-top: 16px;
-
-      padding: 14px 16px;
-
-      border-radius: 15px;
-
-      font-size: 13px;
-
-      line-height: 1.5;
-    }
-
-    .status.show {
-      display: block;
-    }
-
-    .status.error {
-      background: #fff0f0;
-      color: #a21b1b;
-    }
-
-    .status.success {
-      background: #effaf1;
-      color: #17652a;
-    }
-
-    /* =========================
-       SPIN AREA
-    ========================= */
-
-    .spin-area {
-      display: none;
-
-      margin-top: 26px;
-
-      text-align: center;
-    }
-
-    .spin-area.show {
-      display: block;
-    }
-
-    .wheel-wrap {
-      position: relative;
-
-      width: min(84vw, 380px);
-      height: min(84vw, 380px);
-
-      margin:
-        15px auto
-        28px;
-    }
-
-    .pointer {
-      position: absolute;
-
-      z-index: 10;
-
-      top: -8px;
-      left: 50%;
-
-      transform:
-        translateX(-50%);
-
-      width: 0;
-      height: 0;
-
-      border-left:
-        17px solid transparent;
-
-      border-right:
-        17px solid transparent;
-
-      border-top:
-        34px solid #111;
-
-      filter:
-        drop-shadow(
-          0 4px 5px
-          rgba(0,0,0,.25)
-        );
-    }
-
-    .wheel {
-      position: absolute;
-
-      inset: 0;
-
-      border-radius: 50%;
-
-      border:
-        9px solid #111;
-
-      box-shadow:
-        0 22px 55px rgba(0,0,0,.2),
-        inset 0 0 0 3px
-        rgba(255,255,255,.65);
-
-      transition:
-        transform
-        5.2s
-        cubic-bezier(.12,.78,.1,1);
-
-      overflow: hidden;
-    }
-
-    .wheel-center {
-      position: absolute;
-
-      z-index: 8;
-
-      width: 76px;
-      height: 76px;
-
-      left: 50%;
-      top: 50%;
-
-      transform:
-        translate(-50%, -50%);
-
-      border-radius: 50%;
-
-      background: white;
-
-      border:
-        7px solid #111;
-
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-
-      font-size: 12px;
-
-      font-weight: 900;
-
-      letter-spacing: 1px;
-
-      box-shadow:
-        0 7px 20px rgba(0,0,0,.22);
-    }
-
-    /* =========================
-       RESULT
-    ========================= */
-
-    .result {
-      display: none;
-
-      margin-top: 22px;
-
-      padding: 27px 18px;
-
-      border-radius: 24px;
-
-      background:
-        linear-gradient(
-          145deg,
-          #fffaf0,
-          #ffffff
-        );
-
-      border:
-        1px solid
-        rgba(201,162,39,.35);
-
-      animation:
-        resultPop .5s ease;
-    }
-
-    .result.show {
-      display: block;
-    }
-
-    @keyframes resultPop {
-      from {
-        opacity: 0;
-        transform: scale(.9);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .result-icon {
-      font-size: 50px;
-    }
-
-    .result h3 {
-      margin-top: 10px;
-
-      font-size: 26px;
-
-      font-weight: 900;
-    }
-
-    .result p {
-      margin-top: 9px;
-
-      color: var(--gray);
-
-      font-size: 14px;
-
-      line-height: 1.55;
-    }
-
-    .result-code {
-      margin-top: 17px;
-
-      padding: 13px;
-
-      background: #f5f5f5;
-
-      border-radius: 13px;
-
-      font-weight: 800;
-
-      font-size: 13px;
-    }
-
-    /* =========================
-       FOOTER
-    ========================= */
-
-    .footer {
-      text-align: center;
-
-      margin-top: 27px;
-
-      color: #999;
-
-      font-size: 11px;
-    }
-
-    /* =========================
-       LOADING
-    ========================= */
-
-    .loading {
-      display: none;
-
-      margin-top: 15px;
-
-      text-align: center;
-
-      color: var(--gray);
-
-      font-size: 13px;
-    }
-
-    .loading.show {
-      display: block;
-    }
-
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width: 430px) {
-
-      .container {
-        padding:
-          28px 14px 45px;
-      }
-
-      .card {
-        padding: 21px 17px;
-        border-radius: 25px;
-      }
-
-      .brand h1 {
-        font-size: 32px;
-      }
-
-      .title h2 {
-        font-size: 23px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVORA Rewards - Scent of Confidence</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
 <body>
+    <main class="auth-container">
+        <div class="auth-box">
+            <h1 class="brand-title">EVORA</h1>
+            <p class="brand-tagline">SCENT OF CONFIDENCE</p>
+            
+            <div class="welcome-text">
+                <h2>WELCOME TO EVORA REWARDS</h2>
+                <p>Your rewards are waiting.</p>
+            </div>
 
-  <div class="container">
-
-    <!-- BRAND -->
-
-    <div class="brand">
-
-      <div class="brand-logo">
-        EV
-      </div>
-
-      <h1>
-        EVORA REWARDS
-      </h1>
-
-      <p>
-        Spin your chance. Discover your reward.
-      </p>
-
-    </div>
-
-
-    <!-- MAIN CARD -->
-
-    <div class="card">
-
-      <div class="title">
-
-        <h2>
-          🎁 EVORA Rewards
-        </h2>
-
-        <p>
-          Masukkan nomor WhatsApp dan kode kartu
-          EVORA untuk mendapatkan kesempatan spin.
-        </p>
-
-      </div>
-
-
-      <!-- PHONE -->
-
-      <div class="field">
-
-        <label for="phone">
-          Nomor WhatsApp
-        </label>
-
-        <input
-          id="phone"
-          type="tel"
-          inputmode="numeric"
-          autocomplete="tel"
-          placeholder="Contoh: 081234567890"
-        >
-
-      </div>
-
-
-      <!-- CARD CODE -->
-
-      <div class="field">
-
-        <label for="cardCode">
-          Kode Kartu
-        </label>
-
-        <input
-          id="cardCode"
-          type="text"
-          autocomplete="off"
-          autocapitalize="characters"
-          placeholder="Contoh: EVR-XXXXXXXXXX"
-        >
-
-      </div>
-
-
-      <!-- START -->
-
-      <button
-        id="startBtn"
-        class="btn btn-primary"
-        onclick="startReward()"
-      >
-        MULAI REWARDS
-      </button>
-
-
-      <!-- LOADING -->
-
-      <div
-        id="loading"
-        class="loading"
-      >
-        Memeriksa kartu dan menyiapkan hadiah...
-      </div>
-
-
-      <!-- STATUS -->
-
-      <div
-        id="status"
-        class="status"
-      ></div>
-
-
-      <!-- SPIN -->
-
-      <div
-        id="spinArea"
-        class="spin-area"
-      >
-
-        <div class="wheel-wrap">
-
-          <div class="pointer"></div>
-
-          <div
-            id="wheel"
-            class="wheel"
-          ></div>
-
-          <div class="wheel-center">
-            EVORA
-          </div>
-
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <label for="phone">Nomor WhatsApp</label>
+                    <input type="tel" id="phone" placeholder="Contoh: 08123456789" required>
+                </div>
+                <button type="submit" class="btn-primary" id="loginBtn">MASUK</button>
+            </form>
         </div>
-
-
-        <button
-          id="spinBtn"
-          class="btn btn-primary"
-          onclick="animateResult()"
-          disabled
-        >
-          PUTAR SEKARANG
-        </button>
-
-
-        <!-- RESULT -->
-
-        <div
-          id="result"
-          class="result"
-        >
-
-          <div class="result-icon">
-            🎉
-          </div>
-
-          <h3 id="resultTitle">
-            Selamat!
-          </h3>
-
-          <p id="resultDescription">
-          </p>
-
-          <div
-            id="resultCode"
-            class="result-code"
-            style="display:none;"
-          ></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="footer">
-      EVORA Rewards · One card, one chance
-    </div>
-
-  </div>
-
-
-  <script>
-
-    /* =====================================================
-       SUPABASE CONFIG
-    ===================================================== */
-
-    const SUPABASE_URL =
-      "https://bkwcgdlwdbccbuczhtac.supabase.co";
-
-    const SUPABASE_KEY =
-      "sb_publishable_dp2VMN6xlQVY1SsxXrUPkg_Wi5BXoYs";
-
-
-    const {
-      createClient
-    } = supabase;
-
-
-    const db =
-      createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
-
-
-    /* =====================================================
-       STATE
-    ===================================================== */
-
-    let rewardData = null;
-
-    let spinning = false;
-
-    let rotation = 0;
-
-
-    /*
-      Ini hanya untuk VISUAL wheel.
-
-      Urutan harus sama dengan urutan
-      reward yang kita buat di database.
-    */
-
-    const rewardNames = [
-      "Free Pocket 20ML",
-      "Kode Diskon Rp5.000",
-      "Kode Diskon Rp10.000",
-      "Diskon 20%",
-      "Diskon 10%",
-      "Emas 0,0001g",
-      "Parfum 30ML"
-    ];
-
-
-    /* =====================================================
-       ELEMENT
-    ===================================================== */
-
-    const phone =
-      document.getElementById("phone");
-
-    const cardCode =
-      document.getElementById("cardCode");
-
-    const startBtn =
-      document.getElementById("startBtn");
-
-    const spinBtn =
-      document.getElementById("spinBtn");
-
-    const loading =
-      document.getElementById("loading");
-
-    const status =
-      document.getElementById("status");
-
-    const spinArea =
-      document.getElementById("spinArea");
-
-    const wheel =
-      document.getElementById("wheel");
-
-    const result =
-      document.getElementById("result");
-
-    const resultTitle =
-      document.getElementById("resultTitle");
-
-    const resultDescription =
-      document.getElementById("resultDescription");
-
-    const resultCode =
-      document.getElementById("resultCode");
-
-
-    /* =====================================================
-       WHEEL VISUAL
-    ===================================================== */
-
-    function createWheel() {
-
-      const colors = [
-        "#111111",
-        "#c9a227",
-        "#222222",
-        "#e0c65a",
-        "#111111",
-        "#d8bc4c",
-        "#333333"
-      ];
-
-
-      const segment =
-        360 / rewardNames.length;
-
-
-      let gradient = "";
-
-
-      rewardNames.forEach(
-        (name, index) => {
-
-          const start =
-            index * segment;
-
-          const end =
-            (index + 1) * segment;
-
-
-          gradient +=
-            `${colors[index]} ${start}deg ${end}deg`;
-
-
-          if (
-            index <
-            rewardNames.length - 1
-          ) {
-            gradient += ", ";
-          }
-
-        }
-      );
-
-
-      wheel.style.background =
-        `conic-gradient(${gradient})`;
-    }
-
-
-    createWheel();
-
-
-    /* =====================================================
-       HELPERS
-    ===================================================== */
-
-    function normalizePhone(value) {
-
-      return value
-        .replace(/\D/g, "")
-        .trim();
-
-    }
-
-
-    function normalizeCode(value) {
-
-      return value
-        .trim()
-        .toUpperCase();
-
-    }
-
-
-    function showStatus(
-      message,
-      type = "error"
-    ) {
-
-      status.textContent =
-        message;
-
-      status.className =
-        "status show " + type;
-
-    }
-
-
-    function hideStatus() {
-
-      status.textContent =
-        "";
-
-      status.className =
-        "status";
-
-    }
-
-
-    function setLoading(
-      active
-    ) {
-
-      loading.classList.toggle(
-        "show",
-        active
-      );
-
-      startBtn.disabled =
-        active;
-
-    }
-
-
-    /* =====================================================
-       START REWARD
-    ===================================================== */
-
-    async function startReward() {
-
-      hideStatus();
-
-
-      const phoneValue =
-        normalizePhone(
-          phone.value
-        );
-
-
-      const codeValue =
-        normalizeCode(
-          cardCode.value
-        );
-
-
-      if (!phoneValue) {
-
-        showStatus(
-          "Masukkan nomor WhatsApp terlebih dahulu."
-        );
-
-        return;
-      }
-
-
-      if (!codeValue) {
-
-        showStatus(
-          "Masukkan kode kartu terlebih dahulu."
-        );
-
-        return;
-      }
-
-
-      setLoading(true);
-
-
-      try {
-
-        /*
-          ==================================================
-          PENTING
-
-          Website TIDAK lagi mengakses:
-
-          customers
-          card_codes
-          spins
-          spin_rewards
-
-          secara langsung.
-
-          Semuanya diproses oleh RPC.
-          ==================================================
-        */
-
-
-        const {
-          data,
-          error
-        } = await db.rpc(
-          "start_evora_spin",
-          {
-            p_phone:
-              phoneValue,
-
-            p_code:
-              codeValue
-          }
-        );
-
-
-        if (error) {
-
-          console.error(
-            "RPC ERROR:",
-            error
-          );
-
-          throw new Error(
-            error.message ||
-            "Gagal memproses reward."
-          );
-        }
-
-
-        if (
-          !data ||
-          data.success !== true
-        ) {
-
-          throw new Error(
-            "Reward gagal diproses."
-          );
-        }
-
-
-        /*
-          Simpan hasil.
-
-          Hadiah SUDAH ditentukan
-          oleh database pada tahap ini.
-        */
-
-        rewardData =
-          data;
-
-
-        /*
-          Kunci input.
-        */
-
-        phone.disabled =
-          true;
-
-        cardCode.disabled =
-          true;
-
-        startBtn.style.display =
-          "none";
-
-
-        /*
-          Tampilkan wheel.
-        */
-
-        spinArea.classList.add(
-          "show"
-        );
-
-
-        spinBtn.disabled =
-          false;
-
-
-        showStatus(
-          "Kartu valid. Putar wheel untuk melihat hadiah kamu!",
-          "success"
-        );
-
-
-      } catch (error) {
-
-        console.error(error);
-
-
-        let message =
-          error.message ||
-          "Terjadi kesalahan.";
-
-
-        /*
-          Pesan lebih ramah.
-        */
-
-        if (
-          message
-            .toLowerCase()
-            .includes("sudah pernah")
-        ) {
-
-          message =
-            "Kode kartu ini sudah pernah digunakan.";
-
-        }
-
-
-        if (
-          message
-            .toLowerCase()
-            .includes("tidak ditemukan")
-        ) {
-
-          message =
-            "Kode kartu tidak ditemukan. Periksa kembali kode kamu.";
-
-        }
-
-
-        showStatus(
-          message
-        );
-
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    }
-
-
-    /* =====================================================
-       FIND REWARD INDEX
-    ===================================================== */
-
-    function getRewardIndex(
-      rewardName
-    ) {
-
-      const normalized =
-        rewardName
-          .toLowerCase()
-          .trim();
-
-
-      /*
-        Cari berdasarkan nama
-        yang paling cocok.
-      */
-
-      const exact =
-        rewardNames.findIndex(
-          name =>
-            name
-              .toLowerCase()
-              .trim() === normalized
-        );
-
-
-      if (exact !== -1) {
-        return exact;
-      }
-
-
-      /*
-        Fallback untuk variasi penulisan.
-      */
-
-      if (
-        normalized.includes("pocket")
-      ) {
-        return 0;
-      }
-
-
-      if (
-        normalized.includes("5000")
-      ) {
-        return 1;
-      }
-
-
-      if (
-        normalized.includes("10.000") ||
-        normalized.includes("10000")
-      ) {
-        return 2;
-      }
-
-
-      if (
-        normalized.includes("20%")
-      ) {
-        return 3;
-      }
-
-
-      if (
-        normalized.includes("10%")
-      ) {
-        return 4;
-      }
-
-
-      if (
-        normalized.includes("emas")
-      ) {
-        return 5;
-      }
-
-
-      if (
-        normalized.includes("30ml")
-      ) {
-        return 6;
-      }
-
-
-      return 0;
-    }
-
-
-    /* =====================================================
-       ANIMATE RESULT
-    ===================================================== */
-
-    async function animateResult() {
-
-      if (
-        spinning ||
-        !rewardData
-      ) {
-        return;
-      }
-
-
-      spinning = true;
-
-      spinBtn.disabled =
-        true;
-
-
-      hideStatus();
-
-
-      result.classList.remove(
-        "show"
-      );
-
-
-      /*
-        Hadiah sudah ditentukan
-        oleh database.
-
-        Sekarang hanya animasi visual.
-      */
-
-      const rewardName =
-        rewardData.reward_name;
-
-
-      const rewardIndex =
-        getRewardIndex(
-          rewardName
-        );
-
-
-      const segment =
-        360 / rewardNames.length;
-
-
-      /*
-        Posisi tengah segment.
-      */
-
-      const target =
-        360 -
-        (
-          rewardIndex * segment
-          + segment / 2
-        );
-
-
-      /*
-        Tambahkan 6 putaran penuh
-        supaya animasinya terasa seperti
-        spin wheel sungguhan.
-      */
-
-      rotation +=
-        360 * 6 +
-        target;
-
-
-      wheel.style.transform =
-        `rotate(${rotation}deg)`;
-
-
-      /*
-        Tunggu animasi selesai.
-      */
-
-      await new Promise(
-        resolve =>
-          setTimeout(
-            resolve,
-            5400
-          )
-      );
-
-
-      /*
-        Tampilkan hadiah.
-      */
-
-      resultTitle.textContent =
-        rewardData.reward_name;
-
-
-      resultDescription.textContent =
-        rewardData.reward_description ||
-        "Selamat! Kamu mendapatkan hadiah dari EVORA Rewards.";
-
-
-      /*
-        Kalau nanti function kita
-        mengembalikan kode voucher,
-        bagian ini siap digunakan.
-      */
-
-      if (
-        rewardData.redeem_code
-      ) {
-
-        resultCode.textContent =
-          "Kode: " +
-          rewardData.redeem_code;
-
-        resultCode.style.display =
-          "block";
-
-      } else {
-
-        resultCode.style.display =
-          "none";
-
-      }
-
-
-      result.classList.add(
-        "show"
-      );
-
-
-      spinBtn.textContent =
-        "REWARD BERHASIL";
-
-
-      showStatus(
-        "Selamat! Hadiah kamu berhasil didapatkan.",
-        "success"
-      );
-
-
-      spinning =
-        false;
-
-    }
-
-
-  </script>
-
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 </html>
+
+==================================================
+📁 File: css/style.css
+==================================================
+:root {
+    --black: #000000;
+    --off-white: #FDFBF7;
+    --cream: #F5EEDB;
+    --gold: #D4AF37;
+    --dark-gold: #AA8C2C;
+    --gray: #888888;
+    --light-gray: #EAEAEA;
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--black);
+    color: var(--off-white);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+}
+
+.brand-title {
+    font-size: 3rem;
+    letter-spacing: 4px;
+    text-align: center;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+}
+
+.brand-tagline {
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 3rem;
+}
+
+/* Authentication */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: radial-gradient(circle at center, #1a1a1a 0%, var(--black) 100%);
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.welcome-text h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-text p {
+    color: var(--gray);
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: 1px solid var(--gray);
+    color: var(--off-white);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: var(--gold);
+}
+
+/* Buttons */
+.btn-primary {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--gold);
+    color: var(--black);
+    border: none;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--dark-gold);
+}
+
+.btn-outline {
+    width: 100%;
+    padding: 1rem;
+    background-color: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    font-family: var(--font-body);
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+/* Dashboard Layout */
+.app-container {
+    padding: 2rem 1.5rem 6rem 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    color: var(--gold);
+    letter-spacing: 2px;
+}
+
+.header p {
+    color: var(--gray);
+}
+
+/* Cards */
+.premium-card {
+    background: linear-gradient(145deg, #111, #0a0a0a);
+    border: 1px solid #222;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.premium-card h3 {
+    font-size: 1rem;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.spin-count {
+    font-size: 3rem;
+    color: var(--gold);
+    font-family: var(--font-heading);
+    margin-bottom: 0.5rem;
+}
+
+/* Progress Bar */
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background: #222;
+    margin: 1rem 0;
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--gold);
+    width: 0%;
+    transition: width 1s ease;
+}
+
+.progress-text {
+    font-size: 1.5rem;
+    color: var(--off-white);
+    font-family: var(--font-heading);
+}
+
+.progress-note {
+    font-size: 0.85rem;
+    color: var(--gray);
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    border-top: 1px solid #222;
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.nav-item {
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: color 0.3s;
+}
+
+.nav-item.active {
+    color: var(--gold);
+}
+
+/* Spin Wheel */
+.wheel-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 2rem auto;
+}
+
+.wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid var(--gold);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+    position: relative;
+    overflow: hidden;
+    transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    background: conic-gradient(
+        #111 0deg 51.42deg,
+        #1a1a1a 51.42deg 102.84deg,
+        #111 102.84deg 154.26deg,
+        #1a1a1a 154.26deg 205.68deg,
+        #111 205.68deg 257.1deg,
+        #1a1a1a 257.1deg 308.52deg,
+        #111 308.52deg 360deg
+    );
+}
+
+.wheel::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: var(--black);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 25px solid var(--gold);
+    z-index: 20;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.wheel-segment-text {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    transform-origin: bottom right;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    padding-left: 20px;
+    writing-mode: vertical-rl;
+}
+
+/* Modals */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: #111;
+    border: 1px solid var(--gold);
+    padding: 3rem 2rem;
+    text-align: center;
+    max-width: 90%;
+    width: 350px;
+}
+
+.modal-title {
+    color: var(--gold);
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 2px;
+}
+
+.modal-reward {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Lists */
+.reward-list {
+    list-style: none;
+    margin-top: 1rem;
+}
+
+.reward-item {
+    background: #111;
+    border-left: 3px solid var(--gold);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.reward-title {
+    font-weight: bold;
+    color: var(--off-white);
+}
+
+.reward-code {
+    color: var(--gold);
+    font-family: monospace;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+.reward-status {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+}
+
+==================================================
+📁 File: js/config.js
+==================================================
+// Konfigurasi Supabase
+const SUPABASE_URL = 'https://bkwcgdlwdbccbuczhtac.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_dp2VMN6xlQVY1SsxXrUPkg_Wi5BXoYs';
+
+==================================================
+📁 File: js/supabase.js
+==================================================
+// Initialize Supabase Client
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+==================================================
+📁 File: js/auth.js
+==================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
+    
+    // Check if already logged in
+    const phone = localStorage.getItem('evora_phone');
+    if (phone && window.location.pathname.endsWith('index.html')) {
+        window.location.href = 'pages/dashboard.html';
+    }
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const phoneInput = document.getElementById('phone').value;
+            const btn = document.getElementById('loginBtn');
+            
+            if(!phoneInput) return;
+
+            btn.textContent = "MEMPROSES...";
+            btn.disabled = true;
+
+            try {
+                // Call RPC to login/register customer securely
+                const { data, error } = await supabase.rpc('evora_login', { p_phone: phoneInput });
+                
+                if (error) throw error;
+
+                // Save to local session
+                localStorage.setItem('evora_phone', phoneInput);
+                
+                // Redirect
+                window.location.href = 'pages/dashboard.html';
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan sistem. Silakan coba lagi.");
+                btn.textContent = "MASUK";
+                btn.disabled = false;
+            }
+        });
+    }
+});
+
+// Guard for protected pages
+function requireAuth() {
+    const phone = localStorage.getItem('evora_phone');
+    if (!phone) {
+        window.location.href = '../index.html';
+        return null;
+    }
+    return phone;
+}
+
+function logout() {
+    localStorage.removeItem('evora_phone');
+    window.location.href = '../index.html';
+}
+
+==================================================
+📁 File: pages/dashboard.html
+==================================================
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - EVORA Rewards</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>EVORA REWARDS</h1>
+            <p>Welcome back.</p>
+        </div>
+
+        <div class="premium-card">
+            <h3>SPIN CREDITS</h3>
+            <div class="spin-count" id="spinCredits">0</div>
+            <p class="progress-note">SPINS AVAILABLE</p>
+            <button class="btn-primary" onclick="window.location.href='spin.html'" style="margin-top: 1rem;">SPIN SEKARANG</button>
+        </div>
+
+        <div class="premium-card">
+            <h3>LOYALTY PROGRESS</h3>
+            <div class="progress-text"><span id="progressCount">0</span> / 10</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p class="progress-note" id="progressNote">10 purchases to unlock your FREE BOTTLE.</p>
+        </div>
+        
+        <button class="btn-outline" onclick="window.location.href='claim.html'">TUKAR KODE KARTU</button>
+
+        <div style="margin-top: 2rem; text-align: center;">
+            <a href="#" onclick="logout()" style="color: var(--gray); text-decoration: none; font-size: 0.8rem;">LOGOUT</a>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item active">HOME</a>
+        <a href="spin.html" class="nav-item">SPIN</a>
+        <a href="rewards.html" class="nav-item">REWARDS</a>
+        <a href="promo.html" class="nav-item">PROMO</a>
+    </nav>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>
+
+==================================================
+📁 File: js/dashboard.js
+==================================================
+document.addEventListener('DOMContentLoaded', async () => {
+    const phone = requireAuth();
+    if (!phone) return;
+
+    try {
+        // Use RPC to get fresh dashboard data
+        const { data, error } = await supabase.rpc('get_customer_dashboard', { p_phone: phone });
+        
+        if (error) {
+            // Fallback if RPC not yet created, fetch directly (if RLS allows, but prompt says use RPC. We assume RPC is run).
+            console.error("Dashboard RPC Error:", error);
+            // Temporary direct fetch for robust testing if RPC fails during dev
+            const res = await supabase.from('customers').select('progress, spin_credits').eq('phone', phone).single();
+            if(res.data) updateUI(res.data);
+            return;
+        }
+
+        updateUI(data);
+
+    } catch (err) {
+        console.error(err);
+    }
+});
+
+function updateUI(data) {
+    document.getElementById('spinCredits').textContent = data.spin_credits || 0;
+    
+    const progress = data.progress || 0;
+    document.getElementById('progressCount').textContent = progress;
+    document.getElementById('progressBar').style.width = (progress * 10) + '%';
+    
+    const remaining = 10 - progress;
+    if(remaining > 0) {
+        document.getElementById('progressNote').textContent = `${remaining} more purchases to unlock your FREE BOTTLE.`;
+    } else {
+        document.getElementById('progressNote').textContent = `FREE BOTTLE UNLOCKED! Check Rewards.`;
+        document.getElementById('progressNote').style.color = "var(--gold)";
+    }
+}
+
+==================================================
+📁 File: pages/claim.html
+==================================================
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tukar Kode - EVORA Rewards</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>TUKAR KODE</h1>
+            <p>Enter the code found inside your EVORA box.</p>
+        </div>
+
+        <div class="premium-card">
+            <form id="claimForm">
+                <div class="input-group">
+                    <label for="code">KODE KARTU</label>
+                    <input type="text" id="code" placeholder="Contoh: EVR-ABCD-1234" required style="text-transform: uppercase;">
+                </div>
+                <button type="submit" class="btn-primary" id="claimBtn">TUKAR KODE</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Success -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <h2 class="modal-title">✓ CODE VERIFIED</h2>
+            <p class="modal-reward">+1 PURCHASE<br>+1 SPIN CREDIT</p>
+            <button class="btn-primary" onclick="window.location.href='spin.html'">SPIN SEKARANG</button>
+            <button class="btn-outline" onclick="document.getElementById('successModal').classList.remove('active')">TUTUP</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">HOME</a>
+        <a href="spin.html" class="nav-item">SPIN</a>
+        <a href="rewards.html" class="nav-item">REWARDS</a>
+        <a href="promo.html" class="nav-item">PROMO</a>
+    </nav>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/claim.js"></script>
+</body>
+</html>
+
+==================================================
+📁 File: js/claim.js
+==================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const phone = requireAuth();
+    if (!phone) return;
+
+    const claimForm = document.getElementById('claimForm');
+    
+    claimForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const codeInput = document.getElementById('code').value.toUpperCase().trim();
+        const btn = document.getElementById('claimBtn');
+        
+        btn.textContent = "MEMVERIFIKASI...";
+        btn.disabled = true;
+
+        try {
+            // Call highly secure RPC
+            const { data, error } = await supabase.rpc('claim_evora_card', { 
+                p_phone: phone,
+                p_code: codeInput 
+            });
+            
+            if (error) {
+                if(error.message.includes("Invalid")) {
+                    alert("Kode kartu tidak ditemukan atau sudah pernah digunakan.");
+                } else {
+                    alert("Gagal menukar kode: " + error.message);
+                }
+                btn.textContent = "TUKAR KODE";
+                btn.disabled = false;
+                return;
+            }
+
+            // Success
+            document.getElementById('successModal').classList.add('active');
+            document.getElementById('code').value = '';
+            
+        } catch (err) {
+            console.error(err);
+            alert("Terjadi kesalahan sistem.");
+        } finally {
+            btn.textContent = "TUKAR KODE";
+            btn.disabled = false;
+        }
+    });
+});
+
+==================================================
+📁 File: pages/spin.html
+==================================================
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin Wheel - EVORA Rewards</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>SPIN & WIN</h1>
+            <p>Credits: <span id="spinCreditsDisplay" style="color:var(--gold); font-weight:bold;">0</span></p>
+        </div>
+
+        <div class="wheel-container">
+            <div class="wheel-pointer"></div>
+            <div class="wheel" id="wheel">
+                <!-- Segments rendered via CSS conic-gradient -->
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="btn-primary" id="spinBtn" style="max-width: 250px;">PUTAR SEKARANG</button>
+            <p id="noSpinMsg" style="display:none; color: var(--gray); margin-top:1rem;">NO SPINS AVAILABLE</p>
+            <button class="btn-outline" id="tukarBtn" style="display:none; max-width: 250px; margin: 1rem auto;" onclick="window.location.href='claim.html'">TUKAR KODE</button>
+        </div>
+    </div>
+
+    <!-- Modal Reward -->
+    <div class="modal" id="rewardModal">
+        <div class="modal-content">
+            <h2 class="modal-title">CONGRATULATIONS</h2>
+            <p>YOU WON</p>
+            <p class="modal-reward" id="rewardNameText" style="color: var(--gold); font-weight: bold; font-size: 1.5rem;"></p>
+            <p id="voucherCodeText" style="font-family: monospace; letter-spacing: 2px; margin-bottom: 1rem;"></p>
+            <button class="btn-primary" onclick="window.location.href='rewards.html'">LIHAT REWARD SAYA</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">HOME</a>
+        <a href="spin.html" class="nav-item active">SPIN</a>
+        <a href="rewards.html" class="nav-item">REWARDS</a>
+        <a href="promo.html" class="nav-item">PROMO</a>
+    </nav>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/spin.js"></script>
+</body>
+</html>
+
+==================================================
+📁 File: js/spin.js
+==================================================
+document.addEventListener('DOMContentLoaded', async () => {
+    const phone = requireAuth();
+    if (!phone) return;
+
+    const spinBtn = document.getElementById('spinBtn');
+    const wheel = document.getElementById('wheel');
+    const creditsDisplay = document.getElementById('spinCreditsDisplay');
+    let currentCredits = 0;
+    
+    // Order of segments on the visual wheel (7 segments)
+    const segments = [
+        "Free Pocket 20ML", 
+        "Kode Diskon Rp5.000", 
+        "Kode Diskon Rp10.000", 
+        "Diskon 20%", 
+        "Diskon 10%", 
+        "Emas 0,0001g", 
+        "Parfum 30ML"
+    ];
+
+    // Fetch initial credits
+    try {
+        const { data } = await supabase.from('customers').select('spin_credits').eq('phone', phone).single();
+        if(data) {
+            currentCredits = data.spin_credits;
+            creditsDisplay.textContent = currentCredits;
+            checkCredits();
+        }
+    } catch(e) {}
+
+    function checkCredits() {
+        if(currentCredits <= 0) {
+            spinBtn.style.display = 'none';
+            document.getElementById('noSpinMsg').style.display = 'block';
+            document.getElementById('tukarBtn').style.display = 'block';
+        } else {
+            spinBtn.style.display = 'inline-block';
+            document.getElementById('noSpinMsg').style.display = 'none';
+            document.getElementById('tukarBtn').style.display = 'none';
+        }
+    }
+
+    spinBtn.addEventListener('click', async () => {
+        if (currentCredits <= 0) return;
+        
+        spinBtn.disabled = true;
+        spinBtn.textContent = "MEMUTAR...";
+
+        try {
+            // CALL DATABASE RPC to determine reward
+            const { data, error } = await supabase.rpc('execute_evora_spin', { p_phone: phone });
+            
+            if (error) throw error;
+
+            // Database gave us the result safely. Now we animate.
+            const rewardName = data.reward_name;
+            const voucherCode = data.redeem_code;
+            
+            // Find index to rotate to
+            let targetIndex = segments.findIndex(s => s.toLowerCase() === rewardName.toLowerCase());
+            if(targetIndex === -1) targetIndex = 0; // fallback visual
+            
+            // Calculate angle (segment is 360/7 = 51.42 degrees)
+            // Add 5 full rotations (1800 deg) for effect
+            const degreesPerSegment = 360 / 7;
+            const stopAngle = (360 - (targetIndex * degreesPerSegment)) - (degreesPerSegment / 2) + 1800;
+            
+            // Spin animation
+            wheel.style.transform = `rotate(${stopAngle}deg)`;
+
+            // Wait for animation to finish (4s matching CSS transition)
+            setTimeout(() => {
+                document.getElementById('rewardNameText').textContent = rewardName.toUpperCase();
+                if(voucherCode) {
+                    document.getElementById('voucherCodeText').textContent = voucherCode;
+                }
+                
+                if(rewardName.includes("Parfum")) {
+                    document.querySelector('.modal-title').textContent = "LUCKY YOU!";
+                }
+
+                document.getElementById('rewardModal').classList.add('active');
+                
+                // Update local state
+                currentCredits--;
+                creditsDisplay.textContent = currentCredits;
+                checkCredits();
+                
+                spinBtn.disabled = false;
+                spinBtn.textContent = "PUTAR SEKARANG";
+                
+                // Reset wheel visual for next spin seamlessly
+                wheel.style.transition = 'none';
+                const resetAngle = stopAngle % 360;
+                wheel.style.transform = `rotate(${resetAngle}deg)`;
+                setTimeout(() => {
+                    wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+                }, 50);
+
+            }, 4000);
+
+        } catch (err) {
+            console.error(err);
+            alert("Gagal melakukan spin. " + err.message);
+            spinBtn.disabled = false;
+            spinBtn.textContent = "PUTAR SEKARANG";
+        }
+    });
+});
