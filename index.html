@@ -2,33 +2,38 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
 
 <title>EVORA Rewards</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link
+href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+rel="stylesheet"
+>
 
 <style>
 
 :root{
-    --black:#070707;
-    --black2:#0d0d0d;
-    --card:#111111;
-    --card2:#151515;
-    --white:#ffffff;
-    --cream:#f4f0e8;
+    --black:#080808;
+    --black2:#101010;
+    --black3:#151515;
     --gold:#d4af37;
-    --gold2:#b89428;
-    --gold3:#f0cf63;
-    --gray:#858585;
-    --gray2:#555555;
+    --gold2:#f0ca4d;
+    --white:#ffffff;
+    --gray:#8d8d8d;
+    --gray2:#b5b5b5;
     --border:#292929;
-    --green:#62c77a;
-    --red:#e56b6b;
+    --green:#62d28f;
+    --red:#ff6868;
 
     --heading:'Playfair Display',serif;
     --body:'DM Sans',sans-serif;
@@ -42,18 +47,22 @@
 }
 
 html{
-    background:#070707;
+    background:#000;
 }
 
 body{
     background:
-        radial-gradient(circle at 50% -10%,rgba(212,175,55,.12),transparent 30%),
-        var(--black);
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(212,175,55,.09),
+            transparent 35%
+        ),
+        #080808;
     color:var(--white);
     font-family:var(--body);
     min-height:100vh;
+    padding-bottom:95px;
     overflow-x:hidden;
-    padding-bottom:100px;
 }
 
 button,
@@ -67,18 +76,68 @@ button{
 
 .app{
     width:100%;
-    max-width:500px;
-    min-height:100vh;
+    max-width:520px;
     margin:auto;
+    min-height:100vh;
     padding:20px 18px 120px;
 }
 
 /* =========================
-   GLOBAL
+   HEADER
 ========================= */
 
-.hidden{
-    display:none!important;
+.logo-area{
+    text-align:center;
+    padding-top:45px;
+    margin-bottom:55px;
+}
+
+.logo{
+    font-family:var(--heading);
+    font-size:54px;
+    font-weight:600;
+    letter-spacing:7px;
+    line-height:1;
+}
+
+.tagline{
+    margin-top:13px;
+    color:var(--gold);
+    font-size:11px;
+    letter-spacing:5px;
+}
+
+/* =========================
+   VIEW
+========================= */
+
+.view{
+    display:none;
+    animation:fadeUp .35s ease;
+}
+
+.view.active{
+    display:block;
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(12px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* =========================
+   TEXT
+========================= */
+
+.heading{
+    font-family:var(--heading);
 }
 
 .center{
@@ -89,56 +148,80 @@ button{
     color:var(--gold);
 }
 
-.muted{
+.gray{
     color:var(--gray);
 }
 
-.heading{
+/* =========================
+   LOGIN
+========================= */
+
+.login-title{
+    text-align:center;
+    margin-bottom:32px;
+}
+
+.login-title h1{
     font-family:var(--heading);
+    font-size:39px;
+    line-height:1.15;
 }
 
-.page{
-    display:none;
-    animation:pageIn .35s ease;
-}
-
-.page.active{
-    display:block;
-}
-
-@keyframes pageIn{
-    from{
-        opacity:0;
-        transform:translateY(12px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+.login-title p{
+    color:var(--gray);
+    margin-top:16px;
+    font-size:16px;
 }
 
 .card{
     background:
-        linear-gradient(145deg,#151515,#0d0d0d);
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.045),
+            rgba(255,255,255,.015)
+        );
     border:1px solid var(--border);
-    border-radius:20px;
-    padding:20px;
-    margin-bottom:16px;
+    border-radius:22px;
+    padding:25px;
+    margin-bottom:18px;
     box-shadow:
-        0 15px 40px rgba(0,0,0,.28),
-        inset 0 1px 0 rgba(255,255,255,.025);
+        0 20px 50px rgba(0,0,0,.35);
+}
+
+.input{
+    width:100%;
+    height:58px;
+    border:1px solid #303030;
+    border-radius:14px;
+    background:#080808;
+    color:#fff;
+    padding:0 17px;
+    font-size:16px;
+    outline:none;
+    margin-bottom:14px;
+}
+
+.input:focus{
+    border-color:var(--gold);
+    box-shadow:
+        0 0 0 3px rgba(212,175,55,.08);
+}
+
+.input::placeholder{
+    color:#666;
 }
 
 .btn{
     width:100%;
-    min-height:54px;
-    border-radius:13px;
+    min-height:57px;
     border:none;
-    font-weight:700;
+    border-radius:14px;
+    padding:14px 18px;
     font-size:13px;
-    letter-spacing:1.5px;
+    font-weight:700;
+    letter-spacing:2px;
     text-transform:uppercase;
-    transition:.25s;
+    transition:.2s ease;
 }
 
 .btn:active{
@@ -146,25 +229,31 @@ button{
 }
 
 .btn-primary{
-    background:linear-gradient(135deg,var(--gold3),var(--gold));
     color:#080808;
-    box-shadow:0 8px 25px rgba(212,175,55,.18);
+    background:
+        linear-gradient(
+            135deg,
+            #e8c54b,
+            #c79e29
+        );
+    box-shadow:
+        0 10px 30px rgba(212,175,55,.15);
 }
 
 .btn-primary:hover{
-    filter:brightness(1.05);
+    filter:brightness(1.08);
 }
 
 .btn-outline{
     background:transparent;
     color:var(--gold);
-    border:1px solid rgba(212,175,55,.55);
+    border:1px solid var(--gold);
 }
 
 .btn-dark{
-    background:#191919;
-    color:white;
-    border:1px solid #2c2c2c;
+    background:#1b1b1b;
+    color:#fff;
+    border:1px solid #303030;
 }
 
 .btn:disabled{
@@ -172,376 +261,125 @@ button{
     cursor:not-allowed;
 }
 
-.logo{
-    font-family:var(--heading);
-    font-weight:600;
-    font-size:44px;
-    letter-spacing:5px;
-}
-
-.tagline{
-    color:var(--gold);
-    font-size:10px;
-    letter-spacing:4px;
-    margin-top:4px;
-}
-
-.logo-area{
-    text-align:center;
-    padding-top:25px;
-    padding-bottom:30px;
-}
-
-/* =========================
-   LOGIN
-========================= */
-
-.login-page{
-    padding-top:25px;
-}
-
-.login-hero{
-    text-align:center;
-    margin:45px 0 30px;
-}
-
-.login-hero h1{
-    font-family:var(--heading);
-    font-size:34px;
-    line-height:1.15;
-    margin-bottom:12px;
-}
-
-.login-hero p{
-    color:var(--gray);
-    font-size:15px;
-}
-
-.login-card{
-    padding:24px;
-}
-
-.input{
-    width:100%;
-    height:58px;
-    background:#0b0b0b;
-    border:1px solid #303030;
-    border-radius:13px;
-    padding:0 17px;
-    color:white;
-    font-size:16px;
-    outline:none;
-    margin-bottom:12px;
-}
-
-.input:focus{
-    border-color:var(--gold);
-}
-
 .error{
-    color:var(--red);
-    font-size:12px;
-    margin-bottom:12px;
     display:none;
+    color:var(--red);
+    font-size:13px;
+    line-height:1.5;
+    padding:12px 14px;
+    background:rgba(255,70,70,.07);
+    border:1px solid rgba(255,70,70,.2);
+    border-radius:10px;
+    margin-bottom:14px;
+    word-break:break-word;
 }
 
 .login-note{
-    margin-top:18px;
     color:#666;
-    font-size:11px;
-    text-align:center;
+    font-size:12px;
     line-height:1.6;
+    text-align:center;
+    margin-top:18px;
 }
 
 /* =========================
-   HEADER
-========================= */
-
-.page-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin:10px 0 25px;
-}
-
-.page-header-title{
-    font-family:var(--heading);
-    font-size:28px;
-}
-
-.header-profile{
-    width:43px;
-    height:43px;
-    border-radius:50%;
-    border:1px solid rgba(212,175,55,.5);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--gold);
-    font-family:var(--heading);
-    font-size:17px;
-}
-
-/* =========================
-   HOME
+   DASHBOARD
 ========================= */
 
 .welcome{
-    margin-bottom:20px;
+    margin-bottom:25px;
 }
 
-.welcome small{
+.welcome h2{
+    font-family:var(--heading);
+    font-size:30px;
+}
+
+.welcome p{
     color:var(--gray);
-    font-size:12px;
+    margin-top:6px;
+    font-size:14px;
 }
 
-.welcome h1{
-    font-family:var(--heading);
-    font-size:31px;
-    margin-top:3px;
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
 }
 
-.hero-card{
-    position:relative;
-    overflow:hidden;
-    padding:24px;
-    min-height:185px;
-    background:
-        radial-gradient(circle at 100% 0%,rgba(212,175,55,.22),transparent 45%),
-        linear-gradient(145deg,#181818,#0c0c0c);
+.stat{
+    background:var(--black2);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:20px;
 }
 
-.hero-card:after{
-    content:"EVORA";
-    position:absolute;
-    right:-18px;
-    bottom:-22px;
-    font-family:var(--heading);
-    font-size:75px;
-    color:rgba(255,255,255,.025);
-    pointer-events:none;
-}
-
-.hero-label{
-    color:var(--gold);
+.stat-label{
+    color:#777;
     font-size:10px;
-    letter-spacing:3px;
+    letter-spacing:2px;
     text-transform:uppercase;
 }
 
-.hero-card h2{
+.stat-value{
     font-family:var(--heading);
-    font-size:28px;
-    margin:10px 0 7px;
-    max-width:280px;
+    font-size:34px;
+    color:var(--gold);
+    margin-top:8px;
 }
 
-.hero-card p{
-    color:var(--gray);
-    font-size:13px;
-    max-width:280px;
-}
-
-.hero-btn{
-    margin-top:20px;
-    width:auto;
-    padding:0 22px;
-    min-height:44px;
-}
-
-/* credit */
-
-.credit-card{
+.progress-title{
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
 }
 
-.credit-left small{
-    color:var(--gray);
-    font-size:10px;
+.progress-title span:first-child{
+    font-size:12px;
+    color:#888;
     letter-spacing:2px;
 }
 
-.credit-number{
-    font-family:var(--heading);
-    font-size:43px;
-    color:var(--gold);
-    line-height:1;
-    margin-top:6px;
-}
-
-.credit-right{
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    border:1px solid rgba(212,175,55,.45);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--gold);
-    font-size:25px;
-}
-
-/* progress */
-
-.section-title{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:14px;
-}
-
-.section-title h3{
-    font-family:var(--heading);
-    font-size:19px;
-}
-
-.section-title span{
-    color:var(--gold);
-    font-size:11px;
-}
-
 .progress-number{
-    font-family:var(--heading);
-    font-size:32px;
-    margin-bottom:10px;
-}
-
-.progress-number span{
     color:var(--gold);
+    font-family:var(--heading);
+    font-size:20px;
 }
 
 .progress-bg{
     width:100%;
-    height:8px;
-    background:#252525;
-    border-radius:20px;
+    height:9px;
+    background:#242424;
+    border-radius:99px;
     overflow:hidden;
 }
 
 .progress-fill{
-    width:0%;
     height:100%;
-    background:linear-gradient(90deg,var(--gold2),var(--gold3));
-    border-radius:20px;
-    transition:1s ease;
+    width:0;
+    background:
+        linear-gradient(
+            90deg,
+            #9d7b20,
+            #e5c347
+        );
+    border-radius:99px;
+    transition:width .7s ease;
 }
 
-.progress-info{
-    color:var(--gray);
-    font-size:12px;
-    margin-top:11px;
+.progress-message{
+    color:#888;
+    font-size:13px;
+    margin-top:13px;
+    line-height:1.5;
 }
 
-/* quick actions */
-
-.quick-grid{
+.action-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.quick-btn{
-    padding:17px 14px;
-    border-radius:15px;
-    background:#111;
-    border:1px solid var(--border);
-    color:white;
-    text-align:left;
-}
-
-.quick-btn .icon{
-    font-size:20px;
-    margin-bottom:9px;
-}
-
-.quick-btn strong{
-    display:block;
-    font-size:13px;
-}
-
-.quick-btn span{
-    display:block;
-    color:#777;
-    font-size:10px;
-    margin-top:3px;
-}
-
-/* level */
-
-.level-card{
-    position:relative;
-}
-
-.level-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.level-name{
-    font-family:var(--heading);
-    font-size:23px;
-}
-
-.level-badge{
-    border:1px solid rgba(212,175,55,.5);
-    color:var(--gold);
-    padding:6px 10px;
-    border-radius:30px;
-    font-size:9px;
-    letter-spacing:1px;
-}
-
-.level-line{
-    height:5px;
-    background:#252525;
-    border-radius:20px;
-    margin-top:16px;
-    overflow:hidden;
-}
-
-.level-line div{
-    height:100%;
-    background:var(--gold);
-    width:0;
-    transition:1s;
-}
-
-/* latest reward */
-
-.reward-mini{
-    display:flex;
-    align-items:center;
-    gap:13px;
-}
-
-.reward-mini-icon{
-    width:46px;
-    height:46px;
-    border-radius:13px;
-    background:rgba(212,175,55,.1);
-    border:1px solid rgba(212,175,55,.25);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--gold);
-    font-size:20px;
-}
-
-.reward-mini-info{
-    flex:1;
-}
-
-.reward-mini-info strong{
-    display:block;
-    font-size:13px;
-}
-
-.reward-mini-info span{
-    color:var(--gray);
-    font-size:10px;
+    gap:12px;
+    margin-top:14px;
 }
 
 /* =========================
@@ -550,155 +388,188 @@ button{
 
 .spin-header{
     text-align:center;
-    margin-bottom:15px;
+    margin-bottom:20px;
 }
 
-.spin-header h1{
+.spin-header h2{
     font-family:var(--heading);
-    font-size:33px;
+    font-size:38px;
 }
 
 .spin-header p{
-    color:var(--gray);
-    font-size:13px;
-    margin-top:4px;
+    margin-top:10px;
+    color:#777;
 }
 
 .spin-credit{
     color:var(--gold);
     font-family:var(--heading);
-    font-size:20px;
+    font-size:22px;
 }
 
+/* wheel */
+
 .wheel-wrap{
-    position:relative;
     width:330px;
-    height:330px;
-    margin:30px auto 25px;
+    height:350px;
+    margin:10px auto 15px;
+    position:relative;
 }
 
 .pointer{
     position:absolute;
-    top:-6px;
+    z-index:20;
+    top:0;
     left:50%;
     transform:translateX(-50%);
-    z-index:20;
     width:0;
     height:0;
-    border-left:16px solid transparent;
-    border-right:16px solid transparent;
-    border-top:34px solid white;
-    filter:drop-shadow(0 3px 5px rgba(0,0,0,.7));
+    border-left:17px solid transparent;
+    border-right:17px solid transparent;
+    border-top:0;
+    border-bottom:31px solid #fff;
+    filter:
+        drop-shadow(0 4px 5px rgba(0,0,0,.8));
 }
 
 .wheel{
     position:absolute;
-    inset:0;
+    width:310px;
+    height:310px;
+    left:10px;
+    top:28px;
     border-radius:50%;
-    border:6px solid #a9851f;
+    border:5px solid var(--gold);
+    overflow:hidden;
     background:
         conic-gradient(
             from 0deg,
+
             #171717 0deg 51.428deg,
-            #0e0e0e 51.428deg 102.856deg,
+            #0d0d0d 51.428deg 102.856deg,
+
             #171717 102.856deg 154.284deg,
-            #0e0e0e 154.284deg 205.712deg,
+            #0d0d0d 154.284deg 205.712deg,
+
             #171717 205.712deg 257.14deg,
-            #0e0e0e 257.14deg 308.568deg,
-            #b99322 308.568deg 360deg
+            #0d0d0d 257.14deg 308.568deg,
+
+            #8c711c 308.568deg 360deg
         );
+
     box-shadow:
-        0 0 45px rgba(212,175,55,.18),
-        inset 0 0 30px rgba(0,0,0,.6);
-    transition:transform 5s cubic-bezier(.12,.8,.16,1);
-    overflow:hidden;
+        0 0 0 1px #000,
+        0 0 45px rgba(212,175,55,.18);
+
+    transition:
+        transform 5.2s cubic-bezier(.12,.75,.12,1);
 }
 
-.wheel-inner{
+.wheel::after{
+    content:"";
     position:absolute;
-    width:86px;
-    height:86px;
+    inset:0;
+    border-radius:50%;
+    box-shadow:
+        inset 0 0 35px rgba(0,0,0,.8);
+    pointer-events:none;
+}
+
+.segment{
+    position:absolute;
     left:50%;
     top:50%;
-    transform:translate(-50%,-50%);
-    border-radius:50%;
-    background:#070707;
-    border:2px solid var(--gold);
+    width:130px;
+    height:30px;
+    margin-left:-65px;
+    margin-top:-15px;
+
     display:flex;
     align-items:center;
     justify-content:center;
-    z-index:10;
-    box-shadow:0 0 25px rgba(0,0,0,.8);
+
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    text-align:center;
+    color:#fff;
+
+    transform-origin:center;
 }
 
-.wheel-inner span{
-    color:var(--gold);
-    font-family:var(--heading);
-    font-size:13px;
-    letter-spacing:1px;
+.segment span{
+    display:block;
+    width:100px;
+    line-height:1.15;
+    transform:translateY(-100px);
 }
 
-.wheel-label{
+.segment.s1{
+    transform:rotate(25.714deg);
+}
+
+.segment.s2{
+    transform:rotate(77.142deg);
+}
+
+.segment.s3{
+    transform:rotate(128.57deg);
+}
+
+.segment.s4{
+    transform:rotate(180deg);
+}
+
+.segment.s5{
+    transform:rotate(231.428deg);
+}
+
+.segment.s6{
+    transform:rotate(282.856deg);
+}
+
+.segment.s7{
+    transform:rotate(334.284deg);
+}
+
+.segment.s7 span{
+    color:#080808;
+}
+
+.wheel-center{
     position:absolute;
+    z-index:10;
     left:50%;
     top:50%;
-    width:105px;
-    margin-left:-52.5px;
-    margin-top:-10px;
-    text-align:center;
-    transform:
-        rotate(var(--angle))
-        translateY(-117px)
-        rotate(calc(var(--angle) * -1));
-    transform-origin:center;
-    font-size:9px;
-    font-weight:700;
-    letter-spacing:.4px;
-    text-transform:uppercase;
-    color:white;
-    z-index:4;
-    line-height:1.2;
-}
+    width:72px;
+    height:72px;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:#080808;
+    border:2px solid var(--gold);
 
-.wheel-label.gold-label{
-    color:#050505;
-}
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-.spin-message{
-    text-align:center;
-    color:var(--gray);
-    font-size:12px;
-    margin-bottom:15px;
+    color:var(--gold);
+    font-family:var(--heading);
+    font-size:14px;
+
+    box-shadow:
+        0 0 20px rgba(0,0,0,.8);
 }
 
 /* =========================
    REWARDS
 ========================= */
 
-.reward-tabs{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    background:#101010;
-    border:1px solid var(--border);
-    padding:4px;
-    border-radius:13px;
-    margin-bottom:18px;
-}
-
-.reward-tab{
-    height:40px;
-    border:none;
-    background:transparent;
-    color:#666;
-    border-radius:9px;
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:1px;
-}
-
-.reward-tab.active{
-    background:#252525;
-    color:var(--gold);
+.page-title{
+    font-family:var(--heading);
+    font-size:34px;
+    text-align:center;
+    margin-bottom:24px;
 }
 
 .reward-card{
@@ -706,82 +577,69 @@ button{
     overflow:hidden;
 }
 
-.reward-card.active-reward{
-    border-color:rgba(212,175,55,.35);
+.reward-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:4px;
+    height:100%;
+    background:var(--gold);
 }
 
-.reward-card-top{
+.reward-top{
     display:flex;
-    justify-content:space-between;
     align-items:flex-start;
-    gap:10px;
-}
-
-.reward-type{
-    color:var(--gold);
-    font-size:9px;
-    letter-spacing:2px;
+    justify-content:space-between;
+    gap:15px;
 }
 
 .reward-title{
     font-family:var(--heading);
-    font-size:20px;
-    margin-top:6px;
-}
-
-.status{
-    padding:5px 8px;
-    border-radius:20px;
-    font-size:8px;
-    letter-spacing:1px;
-    background:rgba(98,199,122,.1);
-    color:var(--green);
-    border:1px solid rgba(98,199,122,.2);
-}
-
-.status.redeemed{
-    color:#777;
-    background:#1b1b1b;
-    border-color:#292929;
-}
-
-.reward-code{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-top:18px;
-    padding:12px;
-    background:#080808;
-    border:1px dashed #3c3c3c;
-    border-radius:10px;
-}
-
-.reward-code span{
-    font-family:monospace;
-    color:var(--gold);
-    letter-spacing:2px;
-    font-size:14px;
-}
-
-.copy-btn{
-    background:none;
-    border:none;
-    color:white;
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:1px;
+    font-size:19px;
 }
 
 .reward-date{
-    color:#555;
+    color:#666;
+    font-size:11px;
+    margin-top:5px;
+}
+
+.status{
+    flex-shrink:0;
     font-size:9px;
-    margin-top:10px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    padding:6px 9px;
+    border-radius:99px;
+    background:rgba(98,210,143,.1);
+    color:var(--green);
+    border:1px solid rgba(98,210,143,.2);
+}
+
+.status.redeemed{
+    color:#888;
+    background:#222;
+    border-color:#333;
+}
+
+.reward-code{
+    margin-top:16px;
+    background:#070707;
+    border:1px dashed #4a4a4a;
+    border-radius:10px;
+    padding:15px;
+    text-align:center;
+    color:var(--gold);
+    font-family:monospace;
+    font-size:17px;
+    letter-spacing:2px;
 }
 
 .empty{
     text-align:center;
-    padding:50px 20px;
-    color:#666;
+    padding:45px 20px;
+    color:#777;
 }
 
 .empty-icon{
@@ -795,194 +653,80 @@ button{
 
 .promo-image{
     width:100%;
-    height:180px;
+    height:190px;
     object-fit:cover;
-    border-radius:14px;
-    margin-bottom:15px;
+    display:block;
 }
 
-.promo-title{
+.promo-content{
+    padding:20px;
+}
+
+.promo-content h3{
     font-family:var(--heading);
-    font-size:21px;
+    font-size:22px;
 }
 
-.promo-description{
-    color:var(--gray);
-    font-size:12px;
+.promo-content p{
+    color:#888;
+    font-size:13px;
     line-height:1.6;
-    margin:8px 0 15px;
+    margin-top:8px;
 }
 
 /* =========================
-   ACCOUNT
+   CLAIM
 ========================= */
 
-.account-profile{
+.claim-title{
     text-align:center;
-    padding:25px;
+    margin-bottom:25px;
 }
 
-.avatar{
-    width:78px;
-    height:78px;
-    border-radius:50%;
-    margin:0 auto 15px;
-    border:1px solid rgba(212,175,55,.55);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--gold);
+.claim-title h2{
     font-family:var(--heading);
-    font-size:30px;
+    font-size:34px;
 }
 
-.phone{
-    color:var(--gray);
+.claim-title p{
+    color:#777;
+    margin-top:10px;
     font-size:13px;
 }
 
-.stat-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:8px;
+.steps{
+    margin-top:10px;
 }
 
-.stat{
-    background:#111;
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:15px 7px;
-    text-align:center;
-}
-
-.stat strong{
-    display:block;
-    color:var(--gold);
-    font-family:var(--heading);
-    font-size:23px;
-}
-
-.stat span{
-    display:block;
-    color:#666;
-    font-size:8px;
-    margin-top:3px;
-    letter-spacing:.5px;
-}
-
-.achievement-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.achievement{
-    padding:15px;
-    border:1px solid var(--border);
-    background:#101010;
-    border-radius:14px;
-}
-
-.achievement.locked{
-    opacity:.35;
-}
-
-.achievement-icon{
-    font-size:22px;
-    margin-bottom:7px;
-}
-
-.achievement strong{
-    font-size:11px;
-    display:block;
-}
-
-.achievement span{
-    color:#666;
-    font-size:9px;
-}
-
-/* =========================
-   ACTIVITY
-========================= */
-
-.activity-item{
+.step{
     display:flex;
-    gap:12px;
-    padding:14px 0;
-    border-bottom:1px solid #202020;
+    gap:15px;
+    padding:16px 0;
+    border-bottom:1px solid #222;
 }
 
-.activity-item:last-child{
+.step:last-child{
     border-bottom:none;
 }
 
-.activity-dot{
-    width:34px;
-    height:34px;
-    flex:none;
-    border-radius:50%;
-    background:rgba(212,175,55,.1);
-    border:1px solid rgba(212,175,55,.2);
-    display:flex;
-    align-items:center;
-    justify-content:center;
+.step-number{
     color:var(--gold);
-}
-
-.activity-info{
-    flex:1;
-}
-
-.activity-info strong{
-    font-size:12px;
-    display:block;
-}
-
-.activity-info span{
-    color:#666;
-    font-size:9px;
-}
-
-/* =========================
-   BOTTOM NAV
-========================= */
-
-.bottom-nav{
-    position:fixed;
-    bottom:0;
-    left:50%;
-    transform:translateX(-50%);
-    width:min(500px,100%);
-    padding:10px 12px 14px;
-    background:rgba(7,7,7,.94);
-    backdrop-filter:blur(18px);
-    border-top:1px solid #222;
-    display:none;
-    grid-template-columns:repeat(4,1fr);
-    z-index:100;
-}
-
-.nav{
-    border:none;
-    background:none;
-    color:#555;
-    font-size:8px;
-    letter-spacing:1px;
-    font-weight:700;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:5px;
-}
-
-.nav-icon{
+    font-family:var(--heading);
     font-size:19px;
-    line-height:1;
+    width:28px;
+    flex-shrink:0;
 }
 
-.nav.active{
-    color:var(--gold);
+.step-text strong{
+    display:block;
+    font-size:13px;
+}
+
+.step-text span{
+    display:block;
+    color:#777;
+    font-size:12px;
+    margin-top:4px;
 }
 
 /* =========================
@@ -992,13 +736,16 @@ button{
 .modal{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.82);
-    backdrop-filter:blur(10px);
+    z-index:9999;
+
     display:none;
     align-items:center;
     justify-content:center;
-    z-index:500;
+
     padding:20px;
+
+    background:rgba(0,0,0,.88);
+    backdrop-filter:blur(12px);
 }
 
 .modal.show{
@@ -1008,13 +755,23 @@ button{
 .modal-box{
     width:100%;
     max-width:390px;
+
     background:
-        radial-gradient(circle at 50% 0%,rgba(212,175,55,.13),transparent 40%),
-        #151515;
-    border:1px solid rgba(212,175,55,.65);
+        linear-gradient(
+            145deg,
+            #1a1a1a,
+            #0c0c0c
+        );
+
+    border:1px solid var(--gold);
     border-radius:24px;
-    padding:30px 22px 22px;
+    padding:30px 24px;
+
     text-align:center;
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.8);
+
     animation:modalIn .3s ease;
 }
 
@@ -1023,134 +780,208 @@ button{
         opacity:0;
         transform:scale(.92);
     }
+
     to{
         opacity:1;
         transform:scale(1);
     }
 }
 
-.modal-small{
+.modal-small-title{
     color:#777;
-    font-size:10px;
+    font-size:11px;
     letter-spacing:3px;
+    text-transform:uppercase;
 }
 
 .modal-box h2{
     font-family:var(--heading);
-    font-size:35px;
-    margin:5px 0 8px;
+    font-size:38px;
+    margin-top:10px;
 }
 
 .modal-reward-name{
     color:var(--gold);
     font-family:var(--heading);
-    font-size:24px;
-    margin-bottom:20px;
+    font-size:25px;
+    margin:14px 0 20px;
 }
 
 .modal-code{
-    padding:14px;
+    display:none;
+    background:#080808;
     border:1px dashed #555;
-    background:#090909;
+    padding:14px;
+    border-radius:10px;
     color:var(--gold);
     font-family:monospace;
-    letter-spacing:3px;
-    font-size:18px;
-    margin-bottom:15px;
-}
-
-.modal-note{
-    color:#777;
-    font-size:11px;
+    letter-spacing:2px;
     margin-bottom:20px;
-    line-height:1.5;
 }
 
-.modal-actions{
-    display:grid;
-    gap:9px;
-}
-
-.close-modal{
-    background:none;
-    border:none;
-    color:#777;
-    font-size:11px;
-    padding:10px;
+.modal-text{
+    color:#888;
+    font-size:13px;
+    line-height:1.6;
+    margin:15px 0 22px;
 }
 
 /* =========================
-   TOAST
+   BOTTOM NAV
 ========================= */
 
-.toast{
+.bottom-nav{
     position:fixed;
+    z-index:500;
     left:50%;
-    bottom:95px;
-    transform:translate(-50%,20px);
-    width:calc(100% - 36px);
-    max-width:460px;
-    background:#1b1b1b;
-    border:1px solid #333;
-    color:white;
-    padding:14px 16px;
-    border-radius:13px;
-    z-index:800;
-    font-size:12px;
-    text-align:center;
-    opacity:0;
-    pointer-events:none;
-    transition:.3s;
+    bottom:15px;
+    transform:translateX(-50%);
+
+    width:calc(100% - 25px);
+    max-width:500px;
+
+    display:none;
+
+    background:
+        rgba(18,18,18,.94);
+
+    backdrop-filter:blur(20px);
+
+    border:1px solid #292929;
+    border-radius:22px;
+
+    padding:9px;
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.65);
 }
 
-.toast.show{
-    opacity:1;
-    transform:translate(-50%,0);
+.nav{
+    flex:1;
+    height:62px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    gap:5px;
+
+    border:none;
+    background:transparent;
+
+    color:#666;
+
+    font-size:9px;
+    letter-spacing:1.5px;
+    font-weight:700;
+}
+
+.nav-icon{
+    font-size:20px;
+    line-height:1;
+}
+
+.nav.active{
+    color:var(--gold);
+}
+
+.nav.active .nav-icon{
+    filter:
+        drop-shadow(
+            0 0 8px rgba(212,175,55,.35)
+        );
 }
 
 /* =========================
-   CONFETTI
+   LOADING
 ========================= */
 
-#confetti{
+.loading{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    color:#777;
+    padding:30px;
+}
+
+.dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--gold);
+    animation:pulse 1s infinite;
+}
+
+.dot:nth-child(2){
+    animation-delay:.15s;
+}
+
+.dot:nth-child(3){
+    animation-delay:.3s;
+}
+
+@keyframes pulse{
+    0%,100%{
+        opacity:.25;
+        transform:scale(.8);
+    }
+
+    50%{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+/* =========================
+   SYSTEM ERROR
+========================= */
+
+.system-error{
+    display:none;
     position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    pointer-events:none;
-    z-index:700;
+    z-index:99999;
+    top:15px;
+    left:15px;
+    right:15px;
+
+    background:#171717;
+    border:1px solid #7d2525;
+    border-radius:15px;
+    padding:16px;
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.7);
+}
+
+.system-error strong{
+    color:#ff6b6b;
+    font-size:13px;
+}
+
+.system-error p{
+    color:#bbb;
+    font-size:12px;
+    line-height:1.5;
+    margin-top:7px;
 }
 
 /* =========================
-   RESPONSIVE
+   DESKTOP
 ========================= */
 
-@media(max-width:380px){
+@media(min-width:700px){
 
     .app{
-        padding-left:14px;
-        padding-right:14px;
+        padding-top:40px;
     }
 
-    .wheel-wrap{
-        width:290px;
-        height:290px;
+    .logo-area{
+        margin-bottom:70px;
     }
 
-    .wheel-label{
-        transform:
-            rotate(var(--angle))
-            translateY(-101px)
-            rotate(calc(var(--angle) * -1));
-        font-size:8px;
-    }
-
-    .logo{
-        font-size:39px;
-    }
-
-    .login-hero h1{
-        font-size:29px;
+    .bottom-nav{
+        bottom:20px;
     }
 }
 
@@ -1159,39 +990,67 @@ button{
 
 <body>
 
+<div
+    id="system-error"
+    class="system-error"
+>
+    <strong>EVORA SYSTEM ERROR</strong>
+    <p id="system-error-text"></p>
+</div>
+
 <div class="app">
 
-    <!-- ================= LOGIN ================= -->
+    <!-- =====================
+         LOGO
+    ====================== -->
 
-    <section id="page-login" class="page login-page active">
+    <div class="logo-area">
+        <div class="logo">EVORA</div>
+        <div class="tagline">SCENT OF CONFIDENCE</div>
+    </div>
 
-        <div class="logo-area">
-            <div class="logo">EVORA</div>
-            <div class="tagline">SCENT OF CONFIDENCE</div>
+
+    <!-- =====================
+         LOGIN
+    ====================== -->
+
+    <section
+        id="view-login"
+        class="view active"
+    >
+
+        <div class="login-title">
+
+            <h1>
+                Your rewards are waiting.
+            </h1>
+
+            <p>
+                Masuk menggunakan nomor WhatsApp kamu.
+            </p>
+
         </div>
 
-        <div class="login-hero">
-            <h1>Your rewards are waiting.</h1>
-            <p>Masuk menggunakan nomor WhatsApp kamu.</p>
-        </div>
-
-        <div class="card login-card">
+        <div class="card">
 
             <input
                 id="login-phone"
                 class="input"
                 type="tel"
                 inputmode="numeric"
+                autocomplete="tel"
                 placeholder="0812xxxxxxxx"
-                autocomplete="off"
             >
 
-            <div id="login-error" class="error"></div>
+            <div
+                id="login-error"
+                class="error"
+            ></div>
 
             <button
-                id="login-button"
+                id="btn-login"
+                type="button"
                 class="btn btn-primary"
-                onclick="app.login()"
             >
                 MASUK
             </button>
@@ -1206,230 +1065,189 @@ button{
     </section>
 
 
-    <!-- ================= HOME ================= -->
+    <!-- =====================
+         DASHBOARD
+    ====================== -->
 
-    <section id="page-home" class="page">
-
-        <div class="page-header">
-            <div>
-                <div class="muted" style="font-size:11px;">EVORA REWARDS</div>
-                <div class="page-header-title">Home</div>
-            </div>
-
-            <div class="header-profile" id="header-avatar">E</div>
-        </div>
+    <section
+        id="view-dashboard"
+        class="view"
+    >
 
         <div class="welcome">
-            <small>WELCOME BACK</small>
-            <h1 id="home-phone">EVORA MEMBER</h1>
-        </div>
 
+            <h2>
+                Welcome back.
+            </h2>
 
-        <!-- HERO -->
-
-        <div class="card hero-card">
-
-            <div class="hero-label">EVORA LOYALTY</div>
-
-            <h2>Your rewards are waiting.</h2>
-
-            <p>
-                Kumpulkan pembelian, dapatkan Spin Credit,
-                dan menangkan reward eksklusif EVORA.
+            <p id="dash-phone">
+                -
             </p>
 
-            <button
-                class="btn btn-primary hero-btn"
-                onclick="app.navigate('spin')"
-            >
-                SPIN NOW
-            </button>
+        </div>
+
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    Spin Credits
+                </div>
+
+                <div
+                    id="dash-credits"
+                    class="stat-value"
+                >
+                    0
+                </div>
+
+            </div>
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    Purchases
+                </div>
+
+                <div
+                    id="dash-progress"
+                    class="stat-value"
+                >
+                    0
+                </div>
+
+            </div>
 
         </div>
 
 
-        <!-- CREDIT -->
+        <div
+            class="card"
+            style="margin-top:14px;"
+        >
 
-        <div class="card credit-card">
+            <div class="progress-title">
 
-            <div class="credit-left">
-                <small>AVAILABLE SPIN CREDITS</small>
-                <div class="credit-number" id="home-credits">0</div>
-            </div>
+                <span>
+                    LOYALTY PROGRESS
+                </span>
 
-            <div class="credit-right">
-                ✦
-            </div>
+                <span
+                    id="progress-number"
+                    class="progress-number"
+                >
+                    0 / 10
+                </span>
 
-        </div>
-
-
-        <!-- PROGRESS -->
-
-        <div class="card">
-
-            <div class="section-title">
-                <h3>Your EVORA Journey</h3>
-                <span id="progress-percent">0%</span>
-            </div>
-
-            <div class="progress-number">
-                <span id="home-progress">0</span> / 10
             </div>
 
             <div class="progress-bg">
-                <div id="home-progress-bar" class="progress-fill"></div>
+
+                <div
+                    id="progress-fill"
+                    class="progress-fill"
+                ></div>
+
             </div>
 
-            <div id="home-progress-text" class="progress-info">
-                10 pembelian lagi untuk mendapatkan FREE EVORA.
+            <div
+                id="progress-message"
+                class="progress-message"
+            >
+                Loading...
             </div>
 
         </div>
 
 
-        <!-- QUICK ACTION -->
-
-        <div class="section-title">
-            <h3>Quick Actions</h3>
-        </div>
-
-        <div class="quick-grid">
+        <div class="action-grid">
 
             <button
-                class="quick-btn"
-                onclick="app.navigate('claim')"
+                class="btn btn-primary"
+                onclick="app.navigate('spin')"
             >
-                <div class="icon">✦</div>
-                <strong>Tukar Kode</strong>
-                <span>Claim purchase</span>
+                SPIN
             </button>
-
-            <button
-                class="quick-btn"
-                onclick="app.navigate('rewards')"
-            >
-                <div class="icon">◇</div>
-                <strong>My Rewards</strong>
-                <span>Lihat hadiah</span>
-            </button>
-
-        </div>
-
-
-        <!-- LEVEL -->
-
-        <div class="card level-card" style="margin-top:16px;">
-
-            <div class="section-title">
-                <h3>Member Level</h3>
-                <span id="level-next">NEXT: INSIDER</span>
-            </div>
-
-            <div class="level-top">
-                <div class="level-name" id="level-name">MEMBER</div>
-                <div class="level-badge" id="level-badge">LEVEL 01</div>
-            </div>
-
-            <div class="level-line">
-                <div id="level-bar"></div>
-            </div>
-
-        </div>
-
-
-        <!-- LATEST REWARD -->
-
-        <div class="section-title" style="margin-top:25px;">
-            <h3>Latest Reward</h3>
-            <span onclick="app.navigate('rewards')" style="cursor:pointer;">
-                VIEW ALL
-            </span>
-        </div>
-
-        <div id="latest-reward">
-            <div class="card reward-mini">
-                <div class="reward-mini-icon">◇</div>
-                <div class="reward-mini-info">
-                    <strong>Belum ada reward</strong>
-                    <span>Spin untuk mendapatkan reward.</span>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- PROMO SHORTCUT -->
-
-        <div class="section-title" style="margin-top:25px;">
-            <h3>Discover EVORA</h3>
-        </div>
-
-        <div class="card">
-
-            <div style="color:var(--gold);font-size:10px;letter-spacing:2px;">
-                LATEST FROM EVORA
-            </div>
-
-            <div class="heading" style="font-size:23px;margin:8px 0;">
-                Find your signature scent.
-            </div>
-
-            <div class="muted" style="font-size:12px;margin-bottom:15px;">
-                Lihat promo dan update terbaru EVORA.
-            </div>
 
             <button
                 class="btn btn-outline"
-                onclick="app.navigate('promo')"
+                onclick="app.navigate('claim')"
             >
-                LIHAT PROMO
+                TUKAR KODE
             </button>
 
         </div>
+
+
+        <button
+            class="btn btn-dark"
+            style="margin-top:12px;"
+            onclick="app.navigate('rewards')"
+        >
+            MY REWARDS
+        </button>
+
+
+        <button
+            onclick="app.logout()"
+            style="
+                display:block;
+                margin:25px auto 0;
+                background:none;
+                border:none;
+                color:#666;
+                text-decoration:underline;
+                font-size:12px;
+            "
+        >
+            Keluar Akun
+        </button>
 
     </section>
 
 
-    <!-- ================= CLAIM ================= -->
+    <!-- =====================
+         CLAIM
+    ====================== -->
 
-    <section id="page-claim" class="page">
+    <section
+        id="view-claim"
+        class="view"
+    >
 
-        <div class="page-header">
-            <div>
-                <div class="muted" style="font-size:11px;">EVORA REWARDS</div>
-                <div class="page-header-title">Claim Code</div>
-            </div>
+        <div class="claim-title">
+
+            <h2>
+                TUKAR KODE
+            </h2>
+
+            <p>
+                Masukkan kode kartu yang ada di dalam box EVORA.
+            </p>
+
         </div>
 
+
         <div class="card">
-
-            <div class="center" style="margin-bottom:20px;">
-                <div style="font-size:35px;color:var(--gold);">✦</div>
-
-                <h2 class="heading" style="font-size:26px;">
-                    Tukar Kode Kartu
-                </h2>
-
-                <p class="muted" style="font-size:12px;margin-top:7px;">
-                    Masukkan kode yang terdapat di dalam box EVORA.
-                </p>
-            </div>
 
             <input
                 id="claim-code"
                 class="input"
                 type="text"
-                placeholder="KODE KARTU"
                 autocomplete="off"
-                style="text-transform:uppercase;"
+                placeholder="KODE KARTU"
             >
 
-            <div id="claim-error" class="error"></div>
+            <div
+                id="claim-error"
+                class="error"
+            ></div>
 
             <button
-                id="claim-button"
+                id="btn-claim"
                 class="btn btn-primary"
-                onclick="app.claimCode()"
+                type="button"
             >
                 TUKAR KODE
             </button>
@@ -1439,48 +1257,120 @@ button{
 
         <div class="card">
 
-            <div class="section-title">
-                <h3>How It Works</h3>
-            </div>
+            <h3
+                class="gold heading"
+                style="font-size:22px;margin-bottom:5px;"
+            >
+                HOW IT WORKS
+            </h3>
 
-            <div class="activity-item">
-                <div class="activity-dot">01</div>
-                <div class="activity-info">
-                    <strong>BUY</strong>
-                    <span>Purchase EVORA.</span>
-                </div>
-            </div>
+            <div class="steps">
 
-            <div class="activity-item">
-                <div class="activity-dot">02</div>
-                <div class="activity-info">
-                    <strong>SCAN</strong>
-                    <span>Scan QR di dalam box.</span>
-                </div>
-            </div>
+                <div class="step">
 
-            <div class="activity-item">
-                <div class="activity-dot">03</div>
-                <div class="activity-info">
-                    <strong>CLAIM</strong>
-                    <span>Masukkan kode kartu.</span>
-                </div>
-            </div>
+                    <div class="step-number">
+                        01
+                    </div>
 
-            <div class="activity-item">
-                <div class="activity-dot">04</div>
-                <div class="activity-info">
-                    <strong>SPIN</strong>
-                    <span>Gunakan Spin Credit.</span>
-                </div>
-            </div>
+                    <div class="step-text">
+                        <strong>BUY</strong>
+                        <span>
+                            Beli produk EVORA.
+                        </span>
+                    </div>
 
-            <div class="activity-item">
-                <div class="activity-dot">05</div>
-                <div class="activity-info">
-                    <strong>COLLECT</strong>
-                    <span>Kumpulkan 10 pembelian.</span>
                 </div>
+
+                <div class="step">
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+                    <div class="step-text">
+                        <strong>SCAN</strong>
+                        <span>
+                            Scan QR di dalam box.
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+                    <div class="step-text">
+                        <strong>LOGIN</strong>
+                        <span>
+                            Masukkan nomor WhatsApp.
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-number">
+                        04
+                    </div>
+
+                    <div class="step-text">
+                        <strong>CLAIM</strong>
+                        <span>
+                            Masukkan kode kartu.
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-number">
+                        05
+                    </div>
+
+                    <div class="step-text">
+                        <strong>SPIN</strong>
+                        <span>
+                            Gunakan Spin Credit.
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-number">
+                        06
+                    </div>
+
+                    <div class="step-text">
+                        <strong>COLLECT</strong>
+                        <span>
+                            Kumpulkan 10 pembelian.
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-number">
+                        07
+                    </div>
+
+                    <div class="step-text">
+                        <strong>REDEEM</strong>
+                        <span>
+                            Dapatkan FREE EVORA BOTTLE.
+                        </span>
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
@@ -1488,21 +1378,29 @@ button{
     </section>
 
 
-    <!-- ================= SPIN ================= -->
+    <!-- =====================
+         SPIN
+    ====================== -->
 
-    <section id="page-spin" class="page">
+    <section
+        id="view-spin"
+        class="view"
+    >
 
         <div class="spin-header">
 
-            <div class="muted" style="font-size:10px;letter-spacing:3px;">
-                EVORA REWARDS
-            </div>
-
-            <h1>SPIN TO WIN</h1>
+            <h2>
+                SPIN TO WIN
+            </h2>
 
             <p>
-                Spin Credit:
-                <span class="spin-credit" id="spin-credits">0</span>
+                Credits:
+                <span
+                    id="spin-credits"
+                    class="spin-credit"
+                >
+                    0
+                </span>
             </p>
 
         </div>
@@ -1512,59 +1410,62 @@ button{
 
             <div class="pointer"></div>
 
-            <div id="wheel" class="wheel">
+            <div
+                id="wheel"
+                class="wheel"
+            >
 
-                <div
-                    class="wheel-label"
-                    style="--angle:25.714deg;"
-                >
-                    POCKET<br>20ML
+                <div class="segment s1">
+                    <span>
+                        FREE POCKET<br>
+                        20ML
+                    </span>
                 </div>
 
-                <div
-                    class="wheel-label"
-                    style="--angle:77.142deg;"
-                >
-                    RP5K
+                <div class="segment s2">
+                    <span>
+                        DISKON<br>
+                        RP5.000
+                    </span>
                 </div>
 
-                <div
-                    class="wheel-label"
-                    style="--angle:128.570deg;"
-                >
-                    RP10K
+                <div class="segment s3">
+                    <span>
+                        DISKON<br>
+                        RP10.000
+                    </span>
                 </div>
 
-                <div
-                    class="wheel-label"
-                    style="--angle:180deg;"
-                >
-                    20% OFF
+                <div class="segment s4">
+                    <span>
+                        DISKON<br>
+                        20%
+                    </span>
                 </div>
 
-                <div
-                    class="wheel-label"
-                    style="--angle:231.428deg;"
-                >
-                    10% OFF
+                <div class="segment s5">
+                    <span>
+                        DISKON<br>
+                        10%
+                    </span>
                 </div>
 
-                <div
-                    class="wheel-label"
-                    style="--angle:282.856deg;"
-                >
-                    GOLD
+                <div class="segment s6">
+                    <span>
+                        EMAS<br>
+                        0,0001G
+                    </span>
                 </div>
 
-                <div
-                    class="wheel-label gold-label"
-                    style="--angle:334.284deg;"
-                >
-                    PARFUM<br>30ML
+                <div class="segment s7">
+                    <span>
+                        PARFUM<br>
+                        30ML
+                    </span>
                 </div>
 
-                <div class="wheel-inner">
-                    <span>EVORA</span>
+                <div class="wheel-center">
+                    EVORA
                 </div>
 
             </div>
@@ -1572,360 +1473,186 @@ button{
         </div>
 
 
-        <div class="spin-message" id="spin-message">
-            Setiap kode pembelian memberikan 1 Spin Credit.
-        </div>
-
-        <div id="spin-action"></div>
+        <div
+            id="spin-area"
+            style="margin-top:10px;"
+        ></div>
 
     </section>
 
 
-    <!-- ================= REWARDS ================= -->
+    <!-- =====================
+         REWARDS
+    ====================== -->
 
-    <section id="page-rewards" class="page">
+    <section
+        id="view-rewards"
+        class="view"
+    >
 
-        <div class="page-header">
-            <div>
-                <div class="muted" style="font-size:11px;">EVORA REWARDS</div>
-                <div class="page-header-title">My Rewards</div>
-            </div>
+        <h2 class="page-title">
+            MY REWARDS
+        </h2>
 
-            <div class="header-profile">◇</div>
-        </div>
-
-
-        <div class="reward-tabs">
-
-            <button
-                id="tab-active"
-                class="reward-tab active"
-                onclick="app.setRewardTab('active')"
-            >
-                ACTIVE
-            </button>
-
-            <button
-                id="tab-redeemed"
-                class="reward-tab"
-                onclick="app.setRewardTab('redeemed')"
-            >
-                REDEEMED
-            </button>
-
-        </div>
-
-
-        <div id="rewards-list"></div>
+        <div
+            id="rewards-list"
+        ></div>
 
     </section>
 
 
-    <!-- ================= PROMO ================= -->
+    <!-- =====================
+         PROMO
+    ====================== -->
 
-    <section id="page-promo" class="page">
+    <section
+        id="view-promo"
+        class="view"
+    >
 
-        <div class="page-header">
-            <div>
-                <div class="muted" style="font-size:11px;">EVORA</div>
-                <div class="page-header-title">Promo</div>
-            </div>
-        </div>
+        <h2 class="page-title">
+            EVORA PROMO
+        </h2>
 
-        <div id="promo-list"></div>
-
-    </section>
-
-
-    <!-- ================= ACCOUNT ================= -->
-
-    <section id="page-account" class="page">
-
-        <div class="page-header">
-            <div>
-                <div class="muted" style="font-size:11px;">EVORA MEMBER</div>
-                <div class="page-header-title">Account</div>
-            </div>
-        </div>
-
-
-        <div class="card account-profile">
-
-            <div class="avatar" id="account-avatar">
-                E
-            </div>
-
-            <div class="heading" style="font-size:24px;">
-                EVORA MEMBER
-            </div>
-
-            <div class="phone" id="account-phone">
-                -
-            </div>
-
-        </div>
-
-
-        <div class="stat-grid" style="margin-bottom:16px;">
-
-            <div class="stat">
-                <strong id="stat-progress">0</strong>
-                <span>PURCHASES</span>
-            </div>
-
-            <div class="stat">
-                <strong id="stat-credits">0</strong>
-                <span>SPINS</span>
-            </div>
-
-            <div class="stat">
-                <strong id="stat-rewards">0</strong>
-                <span>REWARDS</span>
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="section-title">
-                <h3>Achievements</h3>
-            </div>
-
-            <div class="achievement-grid">
-
-                <div id="ach-first" class="achievement locked">
-                    <div class="achievement-icon">✦</div>
-                    <strong>FIRST PURCHASE</strong>
-                    <span>Claim your first code</span>
-                </div>
-
-                <div id="ach-spin" class="achievement locked">
-                    <div class="achievement-icon">◎</div>
-                    <strong>FIRST SPIN</strong>
-                    <span>Spin the wheel</span>
-                </div>
-
-                <div id="ach-reward" class="achievement locked">
-                    <div class="achievement-icon">◇</div>
-                    <strong>FIRST REWARD</strong>
-                    <span>Win a reward</span>
-                </div>
-
-                <div id="ach-vip" class="achievement locked">
-                    <div class="achievement-icon">♛</div>
-                    <strong>EVORA VIP</strong>
-                    <span>Reach 10 purchases</span>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="section-title">
-                <h3>Account</h3>
-            </div>
-
-            <button
-                class="btn btn-dark"
-                onclick="app.logout()"
-            >
-                KELUAR AKUN
-            </button>
-
-        </div>
+        <div
+            id="promo-list"
+        ></div>
 
     </section>
 
 </div>
 
 
-<!-- ================= BOTTOM NAV ================= -->
+<!-- =========================
+     SUCCESS MODAL
+========================= -->
 
-<nav id="bottom-nav" class="bottom-nav">
-
-    <button
-        id="nav-home"
-        class="nav active"
-        onclick="app.navigate('home')"
-    >
-        <div class="nav-icon">⌂</div>
-        HOME
-    </button>
-
-    <button
-        id="nav-spin"
-        class="nav"
-        onclick="app.navigate('spin')"
-    >
-        <div class="nav-icon">◎</div>
-        SPIN
-    </button>
-
-    <button
-        id="nav-rewards"
-        class="nav"
-        onclick="app.navigate('rewards')"
-    >
-        <div class="nav-icon">◇</div>
-        REWARDS
-    </button>
-
-    <button
-        id="nav-account"
-        class="nav"
-        onclick="app.navigate('account')"
-    >
-        <div class="nav-icon">○</div>
-        ACCOUNT
-    </button>
-
-</nav>
-
-
-<!-- ================= REWARD MODAL ================= -->
-
-<div id="reward-modal" class="modal">
+<div
+    id="success-modal"
+    class="modal"
+>
 
     <div class="modal-box">
 
-        <div class="modal-small">
+        <div class="modal-small-title">
+            CODE VERIFIED
+        </div>
+
+        <h2>
+            +1
+        </h2>
+
+        <div
+            class="modal-reward-name"
+        >
+            PURCHASE
+        </div>
+
+        <p class="modal-text">
+            Kamu mendapatkan 1 Purchase
+            dan 1 Spin Credit.
+        </p>
+
+        <button
+            class="btn btn-primary"
+            onclick="app.closeModal('success-modal');app.navigate('spin')"
+        >
+            SPIN SEKARANG
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     REWARD MODAL
+========================= -->
+
+<div
+    id="reward-modal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-small-title">
             CONGRATULATIONS
         </div>
 
-        <h2>YOU WON</h2>
+        <h2>
+            YOU WON
+        </h2>
 
         <div
-            id="modal-reward-name"
+            id="reward-name"
             class="modal-reward-name"
         >
             -
         </div>
 
         <div
-            id="modal-code"
+            id="reward-code"
             class="modal-code"
         >
             -
         </div>
 
-        <div class="modal-note">
-            Reward berhasil ditambahkan ke akun kamu.
-            Simpan kode ini untuk digunakan nanti.
-        </div>
-
-        <div class="modal-actions">
-
-            <button
-                class="btn btn-primary"
-                onclick="app.copyCurrentReward()"
-            >
-                COPY CODE
-            </button>
-
-            <button
-                class="btn btn-outline"
-                onclick="app.viewRewardsFromModal()"
-            >
-                LIHAT REWARDS
-            </button>
-
-            <button
-                class="close-modal"
-                onclick="app.closeRewardModal()"
-            >
-                TUTUP
-            </button>
-
-        </div>
+        <button
+            class="btn btn-outline"
+            onclick="app.closeModal('reward-modal');app.navigate('rewards')"
+        >
+            LIHAT REWARDS
+        </button>
 
     </div>
 
 </div>
 
 
-<!-- ================= SUCCESS CLAIM MODAL ================= -->
+<!-- =========================
+     FREE BOTTLE MODAL
+========================= -->
 
-<div id="claim-modal" class="modal">
+<div
+    id="free-modal"
+    class="modal"
+>
 
     <div class="modal-box">
-
-        <div style="font-size:45px;color:var(--gold);">
-            ✓
-        </div>
-
-        <div class="modal-small">
-            CODE VERIFIED
-        </div>
-
-        <h2 style="font-size:29px;">
-            PURCHASE ADDED
-        </h2>
 
         <div
-            class="modal-reward-name"
-            style="font-size:19px;"
+            style="
+                font-size:50px;
+                margin-bottom:10px;
+            "
         >
-            +1 PURCHASE<br>
-            +1 SPIN CREDIT
-        </div>
-
-        <div class="modal-actions">
-
-            <button
-                class="btn btn-primary"
-                onclick="app.closeClaimModal();app.navigate('spin')"
-            >
-                SPIN SEKARANG
-            </button>
-
-            <button
-                class="close-modal"
-                onclick="app.closeClaimModal()"
-            >
-                NANTI
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= FREE BOTTLE MODAL ================= -->
-
-<div id="free-modal" class="modal">
-
-    <div class="modal-box">
-
-        <div style="font-size:45px;color:var(--gold);">
             ✦
         </div>
 
-        <div class="modal-small">
-            GOAL REACHED
+        <div class="modal-small-title">
+            CONGRATULATIONS
         </div>
 
-        <h2 style="font-size:29px;">
-            YOU DID IT
+        <h2>
+            GOAL REACHED
         </h2>
 
         <div class="modal-reward-name">
-            FREE EVORA BOTTLE
+            FREE EVORA
+            <br>
+            BOTTLE 30ML
         </div>
 
-        <div class="modal-note">
+        <p class="modal-text">
             Kamu telah mencapai 10 pembelian.
-            Reward Free EVORA sudah ditambahkan ke akun kamu.
-        </div>
+            Reward free bottle telah masuk
+            ke akunmu.
+        </p>
 
         <button
             class="btn btn-primary"
-            onclick="app.closeFreeModal();app.navigate('rewards')"
+            onclick="app.closeModal('free-modal');app.navigate('rewards')"
         >
             LIHAT REWARD
         </button>
@@ -1935,12 +1662,61 @@ button{
 </div>
 
 
-<div id="toast" class="toast"></div>
+<!-- =========================
+     BOTTOM NAV
+========================= -->
 
-<canvas id="confetti"></canvas>
+<nav
+    id="bottom-nav"
+    class="bottom-nav"
+>
+
+    <button
+        id="nav-dashboard"
+        class="nav active"
+        onclick="app.navigate('dashboard')"
+    >
+        <span class="nav-icon">⌂</span>
+        HOME
+    </button>
+
+    <button
+        id="nav-spin"
+        class="nav"
+        onclick="app.navigate('spin')"
+    >
+        <span class="nav-icon">◉</span>
+        SPIN
+    </button>
+
+    <button
+        id="nav-rewards"
+        class="nav"
+        onclick="app.navigate('rewards')"
+    >
+        <span class="nav-icon">◇</span>
+        REWARDS
+    </button>
+
+    <button
+        id="nav-promo"
+        class="nav"
+        onclick="app.navigate('promo')"
+    >
+        <span class="nav-icon">◆</span>
+        PROMO
+    </button>
+
+</nav>
 
 
 <script>
+
+/* =========================================================
+   EVORA REWARDS
+   COMPLETE CUSTOMER APP
+========================================================= */
+
 
 /* =========================================================
    SUPABASE
@@ -1952,7 +1728,7 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
     'sb_publishable_dp2VMN6xlQVY1SsxXrUPkg_Wi5BXoYs';
 
-const supabase =
+const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
@@ -1965,679 +1741,720 @@ const supabase =
 
 const app = {
 
-    userPhone:
+    phone:
         localStorage.getItem('evora_phone') || null,
 
-    customerData:null,
+    customer:
+        null,
 
     credits:0,
 
     progress:0,
 
-    rewards:[],
+    spinning:false,
 
-    rewardTab:'active',
-
-    isSpinning:false,
-
-    currentReward:null,
-
-    wheelRotation:0,
-
-
-    /* =========================
-       WHEEL DATA
-    ========================= */
-
-    wheelSegments:[
-        {
-            name:'Free Pocket 20ML',
-            short:'POCKET 20ML'
-        },
-        {
-            name:'Kode Diskon Rp5.000',
-            short:'RP5K'
-        },
-        {
-            name:'Kode Diskon Rp10.000',
-            short:'RP10K'
-        },
-        {
-            name:'Diskon 20%',
-            short:'20% OFF'
-        },
-        {
-            name:'Diskon 10%',
-            short:'10% OFF'
-        },
-        {
-            name:'Emas 0,0001g',
-            short:'GOLD'
-        },
-        {
-            name:'Parfum 30ML',
-            short:'PARFUM 30ML'
-        }
+    /* Wheel index MUST match database reward names */
+    wheelRewards:[
+        'Free Pocket 20ML',
+        'Kode Diskon Rp5.000',
+        'Kode Diskon Rp10.000',
+        'Diskon 20%',
+        'Diskon 10%',
+        'Emas 0,0001g',
+        'Parfum 30ML'
     ],
 
 
-    /* =========================
+    /* =====================================================
        INIT
-    ========================= */
+    ===================================================== */
 
     async init(){
 
-        if(this.userPhone){
+        this.bindEvents();
 
-            this.showLoggedIn();
+        if(this.phone){
 
-            await this.loadCustomer();
+            const success =
+                await this.loadCustomer();
 
-            this.navigate('home',false);
+            if(success){
+
+                this.navigate('dashboard');
+
+            }else{
+
+                this.logout();
+
+            }
 
         }else{
 
-            this.showLogin();
+            this.navigate('login');
 
         }
 
     },
 
 
-    /* =========================
+    /* =====================================================
+       EVENTS
+    ===================================================== */
+
+    bindEvents(){
+
+        const loginButton =
+            document.getElementById('btn-login');
+
+        if(loginButton){
+
+            loginButton.addEventListener(
+                'click',
+                () => this.login()
+            );
+
+        }
+
+
+        const phoneInput =
+            document.getElementById('login-phone');
+
+        if(phoneInput){
+
+            phoneInput.addEventListener(
+                'keydown',
+                e => {
+
+                    if(e.key === 'Enter'){
+
+                        e.preventDefault();
+
+                        this.login();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        const claimButton =
+            document.getElementById('btn-claim');
+
+        if(claimButton){
+
+            claimButton.addEventListener(
+                'click',
+                () => this.claimCode()
+            );
+
+        }
+
+
+        const claimInput =
+            document.getElementById('claim-code');
+
+        if(claimInput){
+
+            claimInput.addEventListener(
+                'keydown',
+                e => {
+
+                    if(e.key === 'Enter'){
+
+                        e.preventDefault();
+
+                        this.claimCode();
+
+                    }
+
+                }
+            );
+
+        }
+
+    },
+
+
+    /* =====================================================
+       PHONE NORMALIZATION
+    ===================================================== */
+
+    normalizePhone(value){
+
+        let phone =
+            String(value || '')
+            .replace(/\D/g,'');
+
+        if(phone.startsWith('62')){
+
+            phone =
+                '0' +
+                phone.substring(2);
+
+        }
+
+        if(phone.startsWith('8')){
+
+            phone =
+                '0' +
+                phone;
+
+        }
+
+        return phone;
+
+    },
+
+
+    /* =====================================================
        LOGIN
-    ========================= */
-
-    showLogin(){
-
-        document
-            .getElementById('bottom-nav')
-            .style.display='none';
-
-        this.showPage('login');
-
-    },
-
-
-    showLoggedIn(){
-
-        document
-            .getElementById('bottom-nav')
-            .style.display='grid';
-
-    },
-
+    ===================================================== */
 
     async login(){
 
         const input =
-            document
-                .getElementById('login-phone');
+            document.getElementById('login-phone');
 
         const button =
-            document
-                .getElementById('login-button');
+            document.getElementById('btn-login');
 
-        const error =
-            document
-                .getElementById('login-error');
+        const errorBox =
+            document.getElementById('login-error');
+
 
         const phone =
-            input.value.trim();
+            this.normalizePhone(
+                input.value
+            );
 
-        error.style.display='none';
+
+        errorBox.style.display =
+            'none';
+
+        errorBox.textContent =
+            '';
+
 
         if(!phone){
 
-            error.textContent =
-                'Masukkan nomor WhatsApp.';
-
-            error.style.display='block';
+            this.showError(
+                errorBox,
+                'Masukkan nomor WhatsApp.'
+            );
 
             return;
+
         }
 
-        button.disabled=true;
 
-        button.textContent='MEMPROSES...';
+        if(phone.length < 10){
+
+            this.showError(
+                errorBox,
+                'Nomor WhatsApp tidak valid.'
+            );
+
+            return;
+
+        }
+
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            'MEMPROSES...';
+
 
         try{
 
-            const {data,error:rpcError} =
-                await supabase.rpc(
-                    'evora_login',
-                    {
-                        p_phone:phone
-                    }
-                );
+            console.log(
+                'EVORA LOGIN:',
+                phone
+            );
 
-            if(rpcError){
 
-                throw rpcError;
+            const {
+                data,
+                error
+            } =
+            await supabaseClient.rpc(
+                'evora_login',
+                {
+                    p_phone:phone
+                }
+            );
 
-            }
 
-            if(!data || data.success === false){
+            console.log(
+                'EVORA LOGIN RESULT:',
+                data,
+                error
+            );
+
+
+            if(error){
 
                 throw new Error(
-                    'Nomor WhatsApp tidak dapat diproses.'
+                    error.message ||
+                    'Login database gagal.'
                 );
 
             }
 
-            this.userPhone=phone;
+
+            if(!data){
+
+                throw new Error(
+                    'Database tidak mengembalikan data customer.'
+                );
+
+            }
+
+
+            if(data.success === false){
+
+                throw new Error(
+                    data.message ||
+                    'Nomor WhatsApp tidak dapat masuk.'
+                );
+
+            }
+
+
+            this.phone =
+                phone;
+
+            this.customer =
+                data;
+
+            this.credits =
+                Number(
+                    data.spin_credits || 0
+                );
+
+            this.progress =
+                Number(
+                    data.progress || 0
+                );
+
 
             localStorage.setItem(
                 'evora_phone',
                 phone
             );
 
-            this.customerData=data;
 
-            this.progress=
-                Number(data.progress || 0);
+            this.navigate(
+                'dashboard'
+            );
 
-            this.credits=
-                Number(data.spin_credits || 0);
 
-            this.showLoggedIn();
+        }catch(error){
 
-            await this.loadCustomer();
+            console.error(
+                'LOGIN ERROR:',
+                error
+            );
 
-            this.navigate('home');
 
-        }catch(e){
+            this.showError(
+                errorBox,
+                error.message ||
+                'Gagal masuk ke EVORA.'
+            );
 
-            console.error(e);
-
-            error.textContent =
-                e.message ||
-                'Gagal masuk.';
-
-            error.style.display='block';
 
         }finally{
 
-            button.disabled=false;
+            button.disabled =
+                false;
 
-            button.textContent='MASUK';
+            button.textContent =
+                'MASUK';
 
         }
 
     },
 
 
-    /* =========================
-       CUSTOMER
-    ========================= */
+    /* =====================================================
+       LOAD CUSTOMER
+    ===================================================== */
 
     async loadCustomer(){
 
-        if(!this.userPhone)return;
+        if(!this.phone){
+
+            return false;
+
+        }
+
 
         try{
 
-            const {data,error} =
-                await supabase
-                    .from('customers')
-                    .select('*')
-                    .eq('phone',this.userPhone)
-                    .maybeSingle();
+            const {
+                data,
+                error
+            } =
+            await supabaseClient.rpc(
+                'evora_login',
+                {
+                    p_phone:this.phone
+                }
+            );
 
-            if(error)throw error;
 
-            if(data){
+            if(error){
 
-                this.customerData=data;
+                console.error(
+                    error
+                );
 
-                this.progress=
-                    Number(data.progress || 0);
-
-                this.credits=
-                    Number(data.spin_credits || 0);
+                return false;
 
             }
 
-        }catch(e){
 
-            console.warn(
-                'Customer load:',
-                e.message
+            if(!data){
+
+                return false;
+
+            }
+
+
+            if(data.success === false){
+
+                return false;
+
+            }
+
+
+            this.customer =
+                data;
+
+            this.credits =
+                Number(
+                    data.spin_credits || 0
+                );
+
+            this.progress =
+                Number(
+                    data.progress || 0
+                );
+
+
+            return true;
+
+
+        }catch(error){
+
+            console.error(
+                error
             );
+
+            return false;
 
         }
 
     },
 
 
-    /* =========================
-       NAVIGATION
-    ========================= */
+    /* =====================================================
+       DASHBOARD
+    ===================================================== */
 
-    showPage(page){
-
-        document
-            .querySelectorAll('.page')
-            .forEach(p =>
-                p.classList.remove('active')
-            );
-
-        const target =
-            document.getElementById(
-                'page-'+page
-            );
-
-        if(target){
-
-            target.classList.add('active');
-
-        }
-
-    },
-
-
-    navigate(page,load=true){
-
-        if(this.isSpinning)return;
-
-        if(!this.userPhone){
-
-            this.showLogin();
-
-            return;
-
-        }
-
-        this.showPage(page);
-
-        document
-            .querySelectorAll('.nav')
-            .forEach(n =>
-                n.classList.remove('active')
-            );
-
-        const nav =
-            document.getElementById(
-                'nav-'+page
-            );
-
-        if(nav){
-
-            nav.classList.add('active');
-
-        }
-
-        window.scrollTo({
-            top:0,
-            behavior:'smooth'
-        });
-
-        if(load){
-
-            if(page==='home')
-                this.loadHome();
-
-            if(page==='spin')
-                this.loadSpin();
-
-            if(page==='rewards')
-                this.loadRewards();
-
-            if(page==='promo')
-                this.loadPromos();
-
-            if(page==='account')
-                this.loadAccount();
-
-        }
-
-    },
-
-
-    /* =========================================================
-       HOME
-    ========================================================= */
-
-    async loadHome(){
-
-        await this.loadCustomer();
+    async loadDashboard(){
 
         const phone =
-            this.userPhone || '';
-
-        document
-            .getElementById('home-phone')
-            .textContent =
-                this.maskPhone(phone);
-
-        document
-            .getElementById('home-credits')
-            .textContent =
-                this.credits;
-
-        document
-            .getElementById('spin-credits')
-            .textContent =
-                this.credits;
-
-        document
-            .getElementById('home-progress')
-            .textContent =
-                this.progress;
-
-        const percent =
-            Math.min(
-                100,
-                this.progress * 10
+            document.getElementById(
+                'dash-phone'
             );
 
-        document
-            .getElementById('home-progress-bar')
-            .style.width =
-                percent+'%';
-
-        document
-            .getElementById('progress-percent')
-            .textContent =
-                percent+'%';
-
-        const remaining =
-            Math.max(
-                0,
-                10-this.progress
+        const credits =
+            document.getElementById(
+                'dash-credits'
             );
 
-        const progressText =
-            document
-                .getElementById(
-                    'home-progress-text'
-                );
-
-        if(this.progress >= 10){
-
-            progressText.innerHTML =
-                '<span class="gold">FREE EVORA BOTTLE UNLOCKED!</span>';
-
-        }else{
-
-            progressText.textContent =
-                remaining+
-                ' pembelian lagi untuk mendapatkan FREE EVORA.';
-
-        }
-
-        this.updateLevel();
-
-        await this.loadLatestReward();
-
-    },
-
-
-    maskPhone(phone){
-
-        if(!phone)return 'EVORA MEMBER';
-
-        if(phone.length <= 7)
-            return phone;
-
-        return (
-            phone.substring(0,4)+
-            '••••'+
-            phone.substring(phone.length-3)
-        );
-
-    },
-
-
-    updateLevel(){
-
-        let name='MEMBER';
-
-        let level='LEVEL 01';
-
-        let percent=
-            Math.min(
-                100,
-                this.progress * 10
+        const progress =
+            document.getElementById(
+                'dash-progress'
             );
 
-        let next='NEXT: INSIDER';
+        const progressNumber =
+            document.getElementById(
+                'progress-number'
+            );
 
-        if(this.progress >= 3){
+        const fill =
+            document.getElementById(
+                'progress-fill'
+            );
 
-            name='INSIDER';
-            level='LEVEL 02';
-            next='NEXT: ELITE';
-
-            percent =
-                Math.min(
-                    100,
-                    ((this.progress-3)/3)*100
-                );
-
-        }
-
-        if(this.progress >= 6){
-
-            name='ELITE';
-            level='LEVEL 03';
-            next='NEXT: VIP';
-
-            percent =
-                Math.min(
-                    100,
-                    ((this.progress-6)/4)*100
-                );
-
-        }
-
-        if(this.progress >= 10){
-
-            name='VIP';
-            level='LEVEL 04';
-            next='EVORA VIP';
-
-            percent=100;
-
-        }
-
-        document
-            .getElementById('level-name')
-            .textContent=name;
-
-        document
-            .getElementById('level-badge')
-            .textContent=level;
-
-        document
-            .getElementById('level-next')
-            .textContent=next;
-
-        document
-            .getElementById('level-bar')
-            .style.width=
-                percent+'%';
-
-    },
+        const message =
+            document.getElementById(
+                'progress-message'
+            );
 
 
-    async loadLatestReward(){
+        phone.textContent =
+            this.phone || '-';
 
-        const container =
-            document
-                .getElementById(
-                    'latest-reward'
-                );
-
-        let rewards=[];
 
         try{
 
-            rewards =
-                await this.fetchRewards();
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
+            .from('customers')
+            .select('*')
+            .eq('phone',this.phone)
+            .single();
 
-        }catch(e){
 
-            rewards=[];
+            if(error){
+
+                throw error;
+
+            }
+
+
+            this.customer =
+                data;
+
+            this.credits =
+                Number(
+                    data.spin_credits || 0
+                );
+
+            this.progress =
+                Number(
+                    data.progress || 0
+                );
+
+
+        }catch(error){
+
+            console.error(
+                'Dashboard:',
+                error
+            );
 
         }
 
-        if(!rewards.length){
 
-            container.innerHTML=`
-                <div class="card reward-mini">
-                    <div class="reward-mini-icon">◇</div>
-                    <div class="reward-mini-info">
-                        <strong>Belum ada reward</strong>
-                        <span>Spin untuk mendapatkan reward.</span>
-                    </div>
-                </div>
-            `;
+        credits.textContent =
+            this.credits;
 
-            return;
+
+        progress.textContent =
+            this.progress;
+
+
+        progressNumber.textContent =
+            `${this.progress} / 10`;
+
+
+        fill.style.width =
+            `${Math.min(this.progress,10) * 10}%`;
+
+
+        if(this.progress >= 10){
+
+            message.innerHTML =
+                '<span class="gold">FREE BOTTLE UNLOCKED!</span>';
+
+        }else{
+
+            const remaining =
+                10 - this.progress;
+
+            message.textContent =
+                `${remaining} pembelian lagi untuk mendapatkan FREE EVORA BOTTLE.`;
 
         }
-
-        const r=rewards[0];
-
-        container.innerHTML=`
-            <div class="card reward-mini">
-                <div class="reward-mini-icon">◇</div>
-                <div class="reward-mini-info">
-                    <strong>${this.escape(r.title)}</strong>
-                    <span>${this.escape(r.code)}</span>
-                </div>
-                <div class="gold" style="font-size:10px;">
-                    ${r.status.toUpperCase()}
-                </div>
-            </div>
-        `;
 
     },
 
 
-    /* =========================================================
+    /* =====================================================
        CLAIM CODE
-    ========================================================= */
+    ===================================================== */
 
     async claimCode(){
 
         const input =
-            document
-                .getElementById('claim-code');
+            document.getElementById(
+                'claim-code'
+            );
 
         const button =
-            document
-                .getElementById('claim-button');
+            document.getElementById(
+                'btn-claim'
+            );
 
-        const error =
-            document
-                .getElementById('claim-error');
+        const errorBox =
+            document.getElementById(
+                'claim-error'
+            );
+
 
         const code =
             input.value
-                .trim()
-                .toUpperCase();
+            .trim()
+            .toUpperCase();
 
-        error.style.display='none';
+
+        errorBox.style.display =
+            'none';
+
 
         if(!code){
 
-            error.textContent=
-                'Masukkan kode kartu.';
-
-            error.style.display='block';
+            this.showError(
+                errorBox,
+                'Masukkan kode kartu.'
+            );
 
             return;
 
         }
 
-        button.disabled=true;
 
-        button.textContent=
+        button.disabled =
+            true;
+
+        button.textContent =
             'MEMVERIFIKASI...';
+
 
         try{
 
-            const {data,error:rpcError} =
-                await supabase.rpc(
-                    'claim_evora_card',
-                    {
-                        p_phone:this.userPhone,
-                        p_code:code
-                    }
-                );
+            console.log(
+                'CLAIM:',
+                code
+            );
 
-            if(rpcError)
-                throw rpcError;
 
-            if(!data){
+            const {
+                data,
+                error
+            } =
+            await supabaseClient.rpc(
+                'claim_evora_card',
+                {
+                    p_phone:this.phone,
+                    p_code:code
+                }
+            );
+
+
+            console.log(
+                'CLAIM RESULT:',
+                data,
+                error
+            );
+
+
+            if(error){
 
                 throw new Error(
-                    'Kode tidak dapat diproses.'
+                    error.message ||
+                    'Kode tidak dapat diverifikasi.'
                 );
 
             }
 
-            if(data.success===false){
+
+            if(data && data.success === false){
 
                 throw new Error(
                     data.message ||
-                    'Kode tidak valid.'
+                    'Kode kartu tidak valid.'
                 );
 
             }
 
-            if(data.progress !== undefined){
 
-                this.progress=
-                    Number(data.progress || 0);
+            if(data){
+
+                if(
+                    data.progress !== undefined
+                ){
+
+                    this.progress =
+                        Number(
+                            data.progress
+                        );
+
+                }
+
+
+                if(
+                    data.spin_credits !== undefined
+                ){
+
+                    this.credits =
+                        Number(
+                            data.spin_credits
+                        );
+
+                }
+
+
+                if(
+                    data.unlocked_bottle === true
+                ){
+
+                    this.closeModal(
+                        'success-modal'
+                    );
+
+                    this.showModal(
+                        'free-modal'
+                    );
+
+                    return;
+
+                }
 
             }
 
-            if(data.spin_credits !== undefined){
 
-                this.credits=
-                    Number(data.spin_credits || 0);
-
-            }
-
-            await this.loadCustomer();
-
-            input.value='';
-
-            if(
-                data.unlocked_bottle ||
-                this.progress >= 10
-            ){
-
-                this.showFreeModal();
-
-            }else{
-
-                this.showClaimModal();
-
-            }
-
-            this.showToast(
-                'Kode berhasil diverifikasi.'
+            this.showModal(
+                'success-modal'
             );
 
-        }catch(e){
 
-            console.error(e);
+            input.value =
+                '';
 
-            error.textContent =
-                e.message ||
-                'Gagal menukar kode.';
 
-            error.style.display='block';
+        }catch(error){
+
+            console.error(
+                'CLAIM ERROR:',
+                error
+            );
+
+
+            this.showError(
+                errorBox,
+                error.message ||
+                'Gagal menukar kode.'
+            );
+
 
         }finally{
 
-            button.disabled=false;
+            button.disabled =
+                false;
 
-            button.textContent=
+            button.textContent =
                 'TUKAR KODE';
 
         }
@@ -2645,139 +2462,198 @@ const app = {
     },
 
 
-    /* =========================================================
-       SPIN
-    ========================================================= */
+    /* =====================================================
+       LOAD SPIN
+    ===================================================== */
 
-    async loadSpin(){
+    loadSpin(){
 
-        await this.loadCustomer();
-
-        document
-            .getElementById('spin-credits')
-            .textContent=this.credits;
-
-        this.renderSpinButton();
-
-    },
-
-
-    renderSpinButton(){
+        const credit =
+            document.getElementById(
+                'spin-credits'
+            );
 
         const area =
-            document
-                .getElementById(
-                    'spin-action'
-                );
+            document.getElementById(
+                'spin-area'
+            );
+
+
+        credit.textContent =
+            this.credits;
+
 
         if(this.credits > 0){
 
-            area.innerHTML=`
+            area.innerHTML = `
                 <button
                     id="spin-button"
                     class="btn btn-primary"
-                    onclick="app.executeSpin()"
                 >
                     PUTAR SEKARANG
                 </button>
             `;
 
+
             document
-                .getElementById('spin-message')
-                .textContent =
-                'Kamu punya kesempatan untuk memenangkan reward.';
+            .getElementById('spin-button')
+            .addEventListener(
+                'click',
+                () => this.executeSpin()
+            );
+
 
         }else{
 
-            area.innerHTML=`
-                <button
-                    class="btn btn-outline"
-                    onclick="app.navigate('claim')"
-                >
-                    TUKAR KODE PEMBELIAN
-                </button>
-            `;
+            area.innerHTML = `
 
-            document
-                .getElementById('spin-message')
-                .textContent =
-                'Belum ada Spin Credit. Claim kode pembelian untuk mendapatkan kesempatan spin.';
+                <div
+                    class="card center"
+                    style="margin-top:10px;"
+                >
+
+                    <p
+                        class="gray"
+                        style="margin-bottom:15px;"
+                    >
+                        Belum ada kesempatan spin.
+                    </p>
+
+                    <button
+                        class="btn btn-outline"
+                        onclick="app.navigate('claim')"
+                    >
+                        TUKAR KODE
+                    </button>
+
+                </div>
+
+            `;
 
         }
 
     },
 
 
+    /* =====================================================
+       EXECUTE SPIN
+    ===================================================== */
+
     async executeSpin(){
 
         if(
-            this.isSpinning ||
+            this.spinning ||
             this.credits <= 0
-        )return;
+        ){
 
-        this.isSpinning=true;
+            return;
+
+        }
+
+
+        this.spinning =
+            true;
+
 
         const button =
-            document
-                .getElementById(
-                    'spin-button'
-                );
+            document.getElementById(
+                'spin-button'
+            );
+
 
         if(button){
 
-            button.disabled=true;
+            button.disabled =
+                true;
 
-            button.textContent=
+            button.textContent =
                 'MEMPROSES...';
 
         }
 
+
         try{
 
             /*
-                PENTING:
-                RPC ini sudah berhasil kamu
-                test langsung di Supabase.
+             IMPORTANT:
+             Database RPC is responsible
+             for deducting credit.
+
+             Frontend does NOT deduct twice.
             */
 
-            const {data,error} =
-                await supabase.rpc(
-                    'execute_evora_spin',
-                    {
-                        p_phone:this.userPhone
-                    }
-                );
+            const {
+                data,
+                error
+            } =
+            await supabaseClient.rpc(
+                'execute_evora_spin',
+                {
+                    p_phone:this.phone
+                }
+            );
 
-            if(error)
-                throw error;
 
-            if(!data)
+            console.log(
+                'SPIN RESULT:',
+                data,
+                error
+            );
+
+
+            if(error){
+
                 throw new Error(
-                    'Tidak ada hasil spin.'
+                    error.message ||
+                    'Spin gagal.'
                 );
 
-            if(data.success===false)
+            }
+
+
+            if(!data){
+
+                throw new Error(
+                    'Database tidak mengembalikan hasil spin.'
+                );
+
+            }
+
+
+            if(data.success === false){
+
                 throw new Error(
                     data.message ||
                     'Spin gagal.'
                 );
 
-            const rewardName =
+            }
+
+
+            const reward =
                 data.reward ||
                 data.reward_name;
+
 
             const code =
                 data.code ||
                 data.redeem_code ||
                 null;
 
-            if(!rewardName){
+
+            if(!reward){
 
                 throw new Error(
-                    'Reward dari server tidak ditemukan.'
+                    'Reward tidak ditemukan dari database.'
                 );
 
             }
+
+
+            /*
+             * Use remaining credits
+             * returned by database.
+             */
 
             if(
                 data.remaining_credits !== undefined
@@ -2790,440 +2666,357 @@ const app = {
 
             }else{
 
-                this.credits=
+                this.credits =
                     Math.max(
                         0,
-                        this.credits-1
+                        this.credits - 1
                     );
 
             }
 
 
-            /*
-                Simpan reward lokal sebagai
-                backup agar tombol LIHAT REWARDS
-                tetap bisa menampilkan reward
-                walaupun query history terlambat.
-            */
-
-            this.saveLocalReward({
-                title:rewardName,
-                code:code,
-                status:'active',
-                created_at:
-                    new Date().toISOString()
-            });
+            document
+            .getElementById(
+                'spin-credits'
+            )
+            .textContent =
+                this.credits;
 
 
-            /*
-                Cari sektor reward.
-            */
+            /* Find correct wheel segment */
 
             let index =
                 this.findWheelIndex(
-                    rewardName
+                    reward
                 );
-
-            if(index < 0)
-                index=0;
 
 
             /*
-                Center angle masing-masing sektor.
-                Pointer berada di posisi 0 derajat.
-            */
+             * Segment centers:
+             *
+             * 0 = 25.714
+             * 1 = 77.142
+             * 2 = 128.570
+             * 3 = 180
+             * 4 = 231.428
+             * 5 = 282.856
+             * 6 = 334.284
+             */
 
-            const centerAngles=[
-                25.714,
-                77.142,
-                128.570,
-                180,
-                231.428,
-                282.856,
-                334.284
-            ];
+            const segmentSize =
+                360 / 7;
 
-            const targetAngle =
-                centerAngles[index];
+            const segmentCenter =
+                index * segmentSize +
+                segmentSize / 2;
 
-            const spins =
-                5 * 360;
+
+            /*
+             * Rotate multiple rounds,
+             * then put selected segment
+             * exactly under pointer.
+             */
+
+            const rounds =
+                6 * 360;
 
             const finalRotation =
-                this.wheelRotation +
-                spins +
-                (360-targetAngle);
+                rounds +
+                (360 - segmentCenter);
+
 
             const wheel =
-                document
-                    .getElementById('wheel');
+                document.getElementById(
+                    'wheel'
+                );
+
 
             wheel.style.transform =
                 `rotate(${finalRotation}deg)`;
 
-            this.wheelRotation =
-                finalRotation;
 
+            setTimeout(
+                () => {
 
-            /*
-                Tunggu animasi selesai.
-            */
+                    this.showReward(
+                        reward,
+                        code
+                    );
 
-            await this.sleep(5200);
+                    this.spinning =
+                        false;
 
-            this.currentReward={
-                title:rewardName,
-                code:code
-            };
+                    this.loadSpin();
 
-            document
-                .getElementById(
-                    'spin-credits'
-                )
-                .textContent=
-                    this.credits;
-
-            this.showRewardModal(
-                rewardName,
-                code
+                },
+                5400
             );
 
-            this.fireConfetti();
 
-        }catch(e){
+        }catch(error){
 
             console.error(
                 'SPIN ERROR:',
-                e
+                error
             );
 
-            this.showToast(
-                'Gagal melakukan spin: '+
-                (e.message || 'Kesalahan sistem.')
+
+            alert(
+                error.message ||
+                'Gagal melakukan spin.'
             );
 
-        }finally{
 
-            this.isSpinning=false;
+            this.spinning =
+                false;
 
-            this.renderSpinButton();
+
+            if(button){
+
+                button.disabled =
+                    false;
+
+                button.textContent =
+                    'PUTAR SEKARANG';
+
+            }
 
         }
 
     },
 
 
+    /* =====================================================
+       FIND WHEEL INDEX
+    ===================================================== */
+
     findWheelIndex(reward){
 
-        const value =
+        const clean =
             String(reward)
-                .toLowerCase()
-                .trim();
+            .trim()
+            .toLowerCase();
 
-        return this.wheelSegments.findIndex(
-            segment => {
 
-                const name =
-                    segment.name
-                        .toLowerCase();
+        const exact =
+            this.wheelRewards.findIndex(
+                item =>
+                    item.toLowerCase() === clean
+            );
 
-                if(value===name)
-                    return true;
 
-                if(
-                    value.includes(name) ||
-                    name.includes(value)
-                )
-                    return true;
+        if(exact !== -1){
 
-                if(
-                    value.includes('pocket') &&
-                    name.includes('pocket')
-                )
-                    return true;
+            return exact;
 
-                if(
-                    value.includes('5.000') &&
-                    name.includes('5.000')
-                )
-                    return true;
+        }
 
-                if(
-                    value.includes('10.000') &&
-                    name.includes('10.000')
-                )
-                    return true;
 
-                if(
-                    value.includes('20%') &&
-                    name.includes('20%')
-                )
-                    return true;
+        const aliases = [
 
-                if(
-                    value.includes('10%') &&
-                    name.includes('10%')
-                )
-                    return true;
+            [
+                'free pocket',
+                0
+            ],
 
-                if(
-                    value.includes('emas') &&
-                    name.includes('emas')
-                )
-                    return true;
+            [
+                'diskon rp5',
+                1
+            ],
 
-                if(
-                    value.includes('parfum') &&
-                    name.includes('parfum')
-                )
-                    return true;
+            [
+                'diskon rp10',
+                2
+            ],
 
-                return false;
+            [
+                'diskon 20',
+                3
+            ],
+
+            [
+                'diskon 10',
+                4
+            ],
+
+            [
+                'emas',
+                5
+            ],
+
+            [
+                'parfum 30',
+                6
+            ]
+
+        ];
+
+
+        for(
+            const [word,index]
+            of aliases
+        ){
+
+            if(
+                clean.includes(word)
+            ){
+
+                return index;
 
             }
+
+        }
+
+
+        return 0;
+
+    },
+
+
+    /* =====================================================
+       SHOW REWARD
+    ===================================================== */
+
+    showReward(
+        reward,
+        code
+    ){
+
+        document
+        .getElementById(
+            'reward-name'
+        )
+        .textContent =
+            reward;
+
+
+        const codeBox =
+            document.getElementById(
+                'reward-code'
+            );
+
+
+        if(code){
+
+            codeBox.textContent =
+                code;
+
+            codeBox.style.display =
+                'block';
+
+        }else{
+
+            codeBox.style.display =
+                'none';
+
+        }
+
+
+        this.showModal(
+            'reward-modal'
         );
 
     },
 
 
-    /* =========================================================
-       REWARDS
-    ========================================================= */
+    /* =====================================================
+       LOAD REWARDS
+    ===================================================== */
 
     async loadRewards(){
 
         const list =
-            document
-                .getElementById(
-                    'rewards-list'
-                );
+            document.getElementById(
+                'rewards-list'
+            );
 
-        list.innerHTML=`
-            <div class="empty">
-                Loading rewards...
-            </div>
-        `;
+
+        list.innerHTML =
+            this.loadingHTML();
+
 
         try{
-
-            const rewards =
-                await this.fetchRewards();
-
-            this.rewards=rewards;
-
-            this.renderRewards();
-
-        }catch(e){
-
-            console.error(e);
 
             /*
-                Jangan biarkan halaman kosong.
-                Tampilkan local backup.
-            */
+             * Get customer first
+             */
 
-            this.rewards=
-                this.getLocalRewards();
+            const {
+                data:customer,
+                error:customerError
+            } =
+            await supabaseClient
+            .from('customers')
+            .select('id')
+            .eq('phone',this.phone)
+            .single();
 
-            this.renderRewards();
 
-            if(!this.rewards.length){
+            if(customerError){
 
-                list.innerHTML=`
+                throw customerError;
+
+            }
+
+
+            if(!customer){
+
+                throw new Error(
+                    'Customer tidak ditemukan.'
+                );
+
+            }
+
+
+            /*
+             * IMPORTANT:
+             * Query reward codes using
+             * customer_id.
+             */
+
+            const {
+                data:codes,
+                error:codesError
+            } =
+            await supabaseClient
+            .from('redeem_codes')
+            .select('*')
+            .eq(
+                'customer_id',
+                customer.id
+            )
+            .order(
+                'created_at',
+                {
+                    ascending:false
+                }
+            );
+
+
+            if(codesError){
+
+                throw codesError;
+
+            }
+
+
+            if(
+                !codes ||
+                codes.length === 0
+            ){
+
+                list.innerHTML = `
+
                     <div class="empty">
-                        <div class="empty-icon">◇</div>
-                        <div>
-                            Reward belum dapat dimuat.
+
+                        <div class="empty-icon">
+                            ◇
                         </div>
-                    </div>
-                `;
 
-            }
+                        <p>
+                            Belum ada reward.
+                        </p>
 
-        }
-
-    },
-
-
-    async fetchRewards(){
-
-        let databaseRewards=[];
-
-        try{
-
-            if(!this.customerData){
-
-                await this.loadCustomer();
-
-            }
-
-            const customerId =
-                this.customerData?.id;
-
-            if(customerId){
-
-                const {data,error} =
-                    await supabase
-                        .from('redeem_codes')
-                        .select('*')
-                        .eq(
-                            'customer_id',
-                            customerId
-                        )
-                        .order(
-                            'created_at',
-                            {
-                                ascending:false
-                            }
-                        );
-
-                if(error)
-                    throw error;
-
-                databaseRewards =
-                    (data || [])
-                    .map(row =>
-                        this.normalizeReward(row)
-                    );
-
-            }
-
-        }catch(e){
-
-            console.warn(
-                'Database rewards:',
-                e.message
-            );
-
-        }
-
-
-        /*
-            Merge dengan local backup.
-        */
-
-        const localRewards =
-            this.getLocalRewards();
-
-
-        const map=new Map();
-
-        [...databaseRewards,...localRewards]
-            .forEach(r => {
-
-                if(!r.code)return;
-
-                map.set(
-                    r.code,
-                    r
-                );
-
-            });
-
-
-        return Array.from(
-            map.values()
-        ).sort(
-            (a,b) =>
-                new Date(b.created_at) -
-                new Date(a.created_at)
-        );
-
-    },
-
-
-    normalizeReward(row){
-
-        let title='VOUCHER REWARD';
-
-        const code =
-            row.code || '';
-
-        if(
-            code
-                .toUpperCase()
-                .includes('FREE')
-        ){
-
-            title='FREE EVORA BOTTLE 30ML';
-
-        }
-
-        /*
-            Kalau ada metadata reward,
-            gunakan metadata tersebut.
-        */
-
-        if(row.reward_name)
-            title=row.reward_name;
-
-        if(row.name)
-            title=row.name;
-
-        return{
-
-            id:row.id,
-
-            title:title,
-
-            code:code,
-
-            status:
-                String(
-                    row.status || 'active'
-                ).toLowerCase(),
-
-            created_at:
-                row.created_at ||
-                new Date().toISOString()
-
-        };
-
-    },
-
-
-    renderRewards(){
-
-        const list =
-            document
-                .getElementById(
-                    'rewards-list'
-                );
-
-        let rewards =
-            this.rewards.filter(
-                r =>
-                    this.rewardTab==='active'
-                    ?
-                    r.status==='active'
-                    :
-                    r.status==='redeemed'
-            );
-
-
-        if(!rewards.length){
-
-            list.innerHTML=`
-                <div class="empty">
-
-                    <div class="empty-icon">
-                        ${this.rewardTab==='active'?'◇':'✓'}
-                    </div>
-
-                    <div style="font-size:13px;">
-                        ${
-                            this.rewardTab==='active'
-                            ?
-                            'Belum ada reward aktif.'
-                            :
-                            'Belum ada reward yang digunakan.'
-                        }
-                    </div>
-
-                    ${
-                        this.rewardTab==='active'
-                        ?
-                        `
                         <button
                             class="btn btn-outline"
                             style="margin-top:20px;"
@@ -3231,557 +3024,68 @@ const app = {
                         >
                             SPIN SEKARANG
                         </button>
-                        `
-                        :
-                        ''
-                    }
-
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        list.innerHTML =
-            rewards.map(
-                reward =>
-                    this.rewardHTML(reward)
-            ).join('');
-
-    },
-
-
-    rewardHTML(reward){
-
-        const active =
-            reward.status==='active';
-
-        const date =
-            this.formatDate(
-                reward.created_at
-            );
-
-        return`
-
-            <div class="card reward-card ${active?'active-reward':''}">
-
-                <div class="reward-card-top">
-
-                    <div>
-
-                        <div class="reward-type">
-                            EVORA REWARD
-                        </div>
-
-                        <div class="reward-title">
-                            ${this.escape(
-                                reward.title
-                            )}
-                        </div>
 
                     </div>
 
-                    <div class="status ${active?'':'redeemed'}">
-                        ${
-                            active
-                            ?
-                            'ACTIVE'
-                            :
-                            'REDEEMED'
-                        }
-                    </div>
-
-                </div>
-
-
-                <div class="reward-code">
-
-                    <span>
-                        ${this.escape(
-                            reward.code
-                        )}
-                    </span>
-
-                    ${
-                        active
-                        ?
-                        `
-                        <button
-                            class="copy-btn"
-                            onclick="app.copyCode('${this.escapeAttr(reward.code)}')"
-                        >
-                            COPY
-                        </button>
-                        `
-                        :
-                        ''
-                    }
-
-                </div>
-
-
-                <div class="reward-date">
-                    ${date}
-                </div>
-
-            </div>
-
-        `;
-
-    },
-
-
-    setRewardTab(tab){
-
-        this.rewardTab=tab;
-
-        document
-            .getElementById('tab-active')
-            .classList.toggle(
-                'active',
-                tab==='active'
-            );
-
-        document
-            .getElementById('tab-redeemed')
-            .classList.toggle(
-                'active',
-                tab==='redeemed'
-            );
-
-        this.renderRewards();
-
-    },
-
-
-    saveLocalReward(reward){
-
-        const key=
-            'evora_rewards_'+
-            this.userPhone;
-
-        const existing=
-            this.getLocalRewards();
-
-        if(
-            reward.code &&
-            existing.some(
-                r =>
-                    r.code===reward.code
-            )
-        )
-            return;
-
-        existing.unshift(reward);
-
-        localStorage.setItem(
-            key,
-            JSON.stringify(
-                existing.slice(0,50)
-            )
-        );
-
-    },
-
-
-    getLocalRewards(){
-
-        if(!this.userPhone)
-            return[];
-
-        const key=
-            'evora_rewards_'+
-            this.userPhone;
-
-        try{
-
-            const data=
-                JSON.parse(
-                    localStorage.getItem(key) ||
-                    '[]'
-                );
-
-            return Array.isArray(data)
-                ? data
-                : [];
-
-        }catch(e){
-
-            return[];
-
-        }
-
-    },
-
-
-    /* =========================================================
-       MODAL
-    ========================================================= */
-
-    showRewardModal(
-        rewardName,
-        code
-    ){
-
-        document
-            .getElementById(
-                'modal-reward-name'
-            )
-            .textContent=
-                rewardName;
-
-        document
-            .getElementById(
-                'modal-code'
-            )
-            .textContent=
-                code || 'REWARD';
-
-        document
-            .getElementById(
-                'reward-modal'
-            )
-            .classList.add('show');
-
-    },
-
-
-    closeRewardModal(){
-
-        document
-            .getElementById(
-                'reward-modal'
-            )
-            .classList.remove('show');
-
-    },
-
-
-    viewRewardsFromModal(){
-
-        this.closeRewardModal();
-
-        /*
-            Tunggu modal benar-benar hilang,
-            kemudian load reward.
-        */
-
-        setTimeout(
-            () => {
-
-                this.rewardTab='active';
-
-                this.navigate(
-                    'rewards'
-                );
-
-            },
-            80
-        );
-
-    },
-
-
-    showClaimModal(){
-
-        document
-            .getElementById(
-                'claim-modal'
-            )
-            .classList.add('show');
-
-    },
-
-
-    closeClaimModal(){
-
-        document
-            .getElementById(
-                'claim-modal'
-            )
-            .classList.remove('show');
-
-    },
-
-
-    showFreeModal(){
-
-        document
-            .getElementById(
-                'free-modal'
-            )
-            .classList.add('show');
-
-        this.fireConfetti();
-
-    },
-
-
-    closeFreeModal(){
-
-        document
-            .getElementById(
-                'free-modal'
-            )
-            .classList.remove('show');
-
-    },
-
-
-    /* =========================================================
-       ACCOUNT
-    ========================================================= */
-
-    async loadAccount(){
-
-        await this.loadCustomer();
-
-        document
-            .getElementById(
-                'account-phone'
-            )
-            .textContent=
-                this.userPhone;
-
-        document
-            .getElementById(
-                'stat-progress'
-            )
-            .textContent=
-                this.progress;
-
-        document
-            .getElementById(
-                'stat-credits'
-            )
-            .textContent=
-                this.credits;
-
-        const rewards=
-            await this.fetchRewards();
-
-        document
-            .getElementById(
-                'stat-rewards'
-            )
-            .textContent=
-                rewards.length;
-
-        this.updateAchievements(
-            rewards
-        );
-
-        const first =
-            (this.userPhone || 'E')
-                .charAt(0)
-                .toUpperCase();
-
-        document
-            .getElementById(
-                'account-avatar'
-            )
-            .textContent=first;
-
-        document
-            .getElementById(
-                'header-avatar'
-            )
-            .textContent=first;
-
-    },
-
-
-    updateAchievements(rewards){
-
-        if(this.progress>=1){
-
-            document
-                .getElementById(
-                    'ach-first'
-                )
-                .classList.remove(
-                    'locked'
-                );
-
-        }
-
-        if(
-            this.credits>0 ||
-            localStorage.getItem(
-                'evora_has_spun_'+this.userPhone
-            )
-        ){
-
-            document
-                .getElementById(
-                    'ach-spin'
-                )
-                .classList.remove(
-                    'locked'
-                );
-
-        }
-
-        if(rewards.length){
-
-            document
-                .getElementById(
-                    'ach-reward'
-                )
-                .classList.remove(
-                    'locked'
-                );
-
-        }
-
-        if(this.progress>=10){
-
-            document
-                .getElementById(
-                    'ach-vip'
-                )
-                .classList.remove(
-                    'locked'
-                );
-
-        }
-
-    },
-
-
-    /* =========================================================
-       PROMO
-    ========================================================= */
-
-    async loadPromos(){
-
-        const list =
-            document
-                .getElementById(
-                    'promo-list'
-                );
-
-        list.innerHTML=`
-            <div class="empty">
-                Loading promo...
-            </div>
-        `;
-
-        try{
-
-            const {data,error} =
-                await supabase
-                    .from('promos')
-                    .select('*')
-                    .eq(
-                        'is_active',
-                        true
-                    )
-                    .order(
-                        'created_at',
-                        {
-                            ascending:false
-                        }
-                    );
-
-            if(error)
-                throw error;
-
-            if(!data || !data.length){
-
-                list.innerHTML=`
-                    <div class="empty">
-                        <div class="empty-icon">✦</div>
-                        Belum ada promo saat ini.
-                    </div>
                 `;
 
                 return;
 
             }
 
+
             list.innerHTML =
-                data.map(
-                    promo => `
-
-                    <div class="card">
-
-                        ${
-                            promo.image_url
-                            ?
-                            `
-                            <img
-                                src="${this.escapeAttr(
-                                    promo.image_url
-                                )}"
-                                class="promo-image"
-                                loading="lazy"
-                            >
-                            `
-                            :
-                            ''
-                        }
-
-                        <div class="promo-title">
-                            ${this.escape(
-                                promo.title ||
-                                'EVORA PROMO'
-                            )}
-                        </div>
-
-                        <div class="promo-description">
-                            ${this.escape(
-                                promo.description ||
-                                ''
-                            )}
-                        </div>
-
-                        ${
-                            promo.button_url
-                            ?
-                            `
-                            <a
-                                href="${this.escapeAttr(
-                                    promo.button_url
-                                )}"
-                                target="_blank"
-                                class="btn btn-outline"
-                                style="
-                                    display:flex;
-                                    align-items:center;
-                                    justify-content:center;
-                                    text-decoration:none;
-                                "
-                            >
-                                ${this.escape(
-                                    promo.button_text ||
-                                    'LIHAT'
-                                )}
-                            </a>
-                            `
-                            :
-                            ''
-                        }
-
-                    </div>
-
-                    `
+                codes
+                .map(
+                    code =>
+                        this.rewardHTML(code)
                 )
                 .join('');
 
-        }catch(e){
 
-            console.warn(
-                'Promo:',
-                e.message
+        }catch(error){
+
+            console.error(
+                'REWARDS ERROR:',
+                error
             );
 
-            list.innerHTML=`
+
+            list.innerHTML = `
+
                 <div class="empty">
-                    Promo belum tersedia.
+
+                    <div
+                        style="
+                            color:#ff6868;
+                            margin-bottom:10px;
+                        "
+                    >
+                        Gagal memuat rewards.
+                    </div>
+
+                    <p
+                        style="
+                            font-size:12px;
+                            line-height:1.5;
+                        "
+                    >
+                        ${this.escapeHTML(
+                            error.message ||
+                            'Database error'
+                        )}
+                    </p>
+
+                    <button
+                        class="btn btn-outline"
+                        style="margin-top:20px;"
+                        onclick="app.loadRewards()"
+                    >
+                        COBA LAGI
+                    </button>
+
                 </div>
+
             `;
 
         }
@@ -3789,66 +3093,440 @@ const app = {
     },
 
 
-    /* =========================================================
-       COPY
-    ========================================================= */
+    /* =====================================================
+       REWARD HTML
+    ===================================================== */
 
-    async copyCurrentReward(){
+    rewardHTML(item){
+
+        const code =
+            item.code || '-';
+
+
+        const status =
+            String(
+                item.status || 'active'
+            )
+            .toLowerCase();
+
+
+        const isRedeemed =
+            status === 'redeemed';
+
+
+        let title =
+            'VOUCHER REWARD';
+
 
         if(
-            !this.currentReward ||
-            !this.currentReward.code
-        )
-            return;
+            code
+            .toUpperCase()
+            .includes('FREE')
+        ){
 
-        await this.copyCode(
-            this.currentReward.code
-        );
+            title =
+                'FREE EVORA BOTTLE 30ML';
+
+        }
+
+
+        const date =
+            item.created_at
+            ?
+            new Date(
+                item.created_at
+            ).toLocaleDateString(
+                'id-ID',
+                {
+                    day:'numeric',
+                    month:'short',
+                    year:'numeric'
+                }
+            )
+            :
+            '-';
+
+
+        return `
+
+            <div class="card reward-card">
+
+                <div class="reward-top">
+
+                    <div>
+
+                        <div class="reward-title">
+                            ${this.escapeHTML(title)}
+                        </div>
+
+                        <div class="reward-date">
+                            ${date}
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="status ${isRedeemed ? 'redeemed' : ''}"
+                    >
+                        ${this.escapeHTML(status)}
+                    </div>
+
+                </div>
+
+
+                <div class="reward-code">
+                    ${this.escapeHTML(code)}
+                </div>
+
+            </div>
+
+        `;
 
     },
 
 
-    async copyCode(code){
+    /* =====================================================
+       PROMOS
+    ===================================================== */
+
+    async loadPromos(){
+
+        const list =
+            document.getElementById(
+                'promo-list'
+            );
+
+
+        list.innerHTML =
+            this.loadingHTML();
+
 
         try{
 
-            await navigator.clipboard.writeText(
-                code
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
+            .from('promos')
+            .select('*')
+            .eq(
+                'is_active',
+                true
+            )
+            .order(
+                'created_at',
+                {
+                    ascending:false
+                }
             );
 
-            this.showToast(
-                'Kode berhasil disalin.'
+
+            if(error){
+
+                throw error;
+
+            }
+
+
+            if(
+                !data ||
+                data.length === 0
+            ){
+
+                list.innerHTML = `
+
+                    <div class="empty">
+
+                        <div class="empty-icon">
+                            ◆
+                        </div>
+
+                        <p>
+                            Belum ada promo saat ini.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            list.innerHTML =
+                data
+                .map(
+                    promo =>
+                        this.promoHTML(promo)
+                )
+                .join('');
+
+
+        }catch(error){
+
+            console.error(
+                'PROMO ERROR:',
+                error
             );
 
-        }catch(e){
 
-            const area=
-                document.createElement(
-                    'textarea'
-                );
+            list.innerHTML = `
 
-            area.value=code;
+                <div class="empty">
 
-            document.body.appendChild(area);
+                    <p>
+                        Promo belum tersedia.
+                    </p>
 
-            area.select();
+                </div>
 
-            document.execCommand('copy');
-
-            area.remove();
-
-            this.showToast(
-                'Kode berhasil disalin.'
-            );
+            `;
 
         }
 
     },
 
 
-    /* =========================================================
+    promoHTML(promo){
+
+        const image =
+            promo.image_url
+            ?
+            `
+            <img
+                class="promo-image"
+                src="${this.escapeAttribute(
+                    promo.image_url
+                )}"
+                alt=""
+                loading="lazy"
+            >
+            `
+            :
+            `
+            <div
+                class="promo-image"
+                style="
+                    background:#111;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-family:var(--heading);
+                    font-size:38px;
+                "
+            >
+                EVORA
+            </div>
+            `;
+
+
+        const button =
+            promo.button_url
+            ?
+            `
+            <a
+                href="${this.escapeAttribute(
+                    promo.button_url
+                )}"
+                target="_blank"
+                rel="noopener"
+                class="btn btn-outline"
+                style="
+                    display:block;
+                    text-decoration:none;
+                    margin-top:16px;
+                "
+            >
+                ${this.escapeHTML(
+                    promo.button_text ||
+                    'LIHAT SELENGKAPNYA'
+                )}
+            </a>
+            `
+            :
+            '';
+
+
+        return `
+
+            <div
+                class="card"
+                style="padding:0;overflow:hidden;"
+            >
+
+                ${image}
+
+                <div class="promo-content">
+
+                    <h3>
+                        ${this.escapeHTML(
+                            promo.title || 'EVORA'
+                        )}
+                    </h3>
+
+                    <p>
+                        ${this.escapeHTML(
+                            promo.description || ''
+                        )}
+                    </p>
+
+                    ${button}
+
+                </div>
+
+            </div>
+
+        `;
+
+    },
+
+
+    /* =====================================================
+       NAVIGATION
+    ===================================================== */
+
+    navigate(view){
+
+        if(
+            this.spinning &&
+            view !== 'spin'
+        ){
+
+            return;
+
+        }
+
+
+        document
+        .querySelectorAll('.view')
+        .forEach(
+            element =>
+                element.classList.remove(
+                    'active'
+                )
+        );
+
+
+        const target =
+            document.getElementById(
+                `view-${view}`
+            );
+
+
+        if(!target){
+
+            return;
+
+        }
+
+
+        target.classList.add(
+            'active'
+        );
+
+
+        const nav =
+            document.getElementById(
+                'bottom-nav'
+            );
+
+
+        if(view === 'login'){
+
+            nav.style.display =
+                'none';
+
+        }else{
+
+            nav.style.display =
+                'flex';
+
+
+            document
+            .querySelectorAll('.nav')
+            .forEach(
+                n =>
+                    n.classList.remove(
+                        'active'
+                    )
+            );
+
+
+            const active =
+                document.getElementById(
+                    `nav-${view}`
+                );
+
+
+            if(active){
+
+                active.classList.add(
+                    'active'
+                );
+
+            }
+
+        }
+
+
+        if(view === 'dashboard'){
+
+            this.loadDashboard();
+
+        }
+
+
+        if(view === 'spin'){
+
+            this.loadSpin();
+
+        }
+
+
+        if(view === 'rewards'){
+
+            this.loadRewards();
+
+        }
+
+
+        if(view === 'promo'){
+
+            this.loadPromos();
+
+        }
+
+
+        if(view === 'claim'){
+
+            const error =
+                document.getElementById(
+                    'claim-error'
+                );
+
+            if(error){
+
+                error.style.display =
+                    'none';
+
+            }
+
+        }
+
+
+        window.scrollTo({
+            top:0,
+            behavior:'instant'
+        });
+
+    },
+
+
+    /* =====================================================
        LOGOUT
-    ========================================================= */
+    ===================================================== */
 
     logout(){
 
@@ -3856,67 +3534,107 @@ const app = {
             'evora_phone'
         );
 
-        this.userPhone=null;
+        this.phone =
+            null;
 
-        this.customerData=null;
+        this.customer =
+            null;
 
-        this.progress=0;
+        this.credits =
+            0;
 
-        this.credits=0;
+        this.progress =
+            0;
 
-        this.rewards=[];
-
-        document
-            .getElementById(
-                'bottom-nav'
-            )
-            .style.display='none';
-
-        this.showPage('login');
-
-        document
-            .getElementById(
-                'login-phone'
-            )
-            .value='';
+        this.navigate(
+            'login'
+        );
 
     },
 
 
-    /* =========================================================
-       HELPERS
-    ========================================================= */
+    /* =====================================================
+       MODALS
+    ===================================================== */
 
-    formatDate(date){
+    showModal(id){
 
-        if(!date)return '';
+        const modal =
+            document.getElementById(id);
 
-        try{
+        if(modal){
 
-            return new Date(date)
-                .toLocaleDateString(
-                    'id-ID',
-                    {
-                        day:'numeric',
-                        month:'short',
-                        year:'numeric'
-                    }
-                );
-
-        }catch(e){
-
-            return '';
+            modal.classList.add(
+                'show'
+            );
 
         }
 
     },
 
 
-    escape(value){
+    closeModal(id){
 
-        return String(
-            value ?? ''
-        )
+        const modal =
+            document.getElementById(id);
+
+        if(modal){
+
+            modal.classList.remove(
+                'show'
+            );
+
+        }
+
+    },
+
+
+    /* =====================================================
+       ERROR
+    ===================================================== */
+
+    showError(
+        element,
+        message
+    ){
+
+        element.textContent =
+            message;
+
+        element.style.display =
+            'block';
+
+    },
+
+
+    /* =====================================================
+       LOADING
+    ===================================================== */
+
+    loadingHTML(){
+
+        return `
+
+            <div class="loading">
+
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+
+            </div>
+
+        `;
+
+    },
+
+
+    /* =====================================================
+       ESCAPE
+    ===================================================== */
+
+    escapeHTML(value){
+
+        return String(value ?? '')
         .replace(
             /[&<>"']/g,
             char =>
@@ -3926,207 +3644,17 @@ const app = {
                     '>':'&gt;',
                     '"':'&quot;',
                     "'":'&#039;'
-                }[char])
+                })[char]
         );
 
     },
 
 
-    escapeAttr(value){
+    escapeAttribute(value){
 
-        return this.escape(value);
-
-    },
-
-
-    sleep(ms){
-
-        return new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    ms
-                )
+        return this.escapeHTML(
+            value
         );
-
-    },
-
-
-    showToast(message){
-
-        const toast =
-            document
-                .getElementById(
-                    'toast'
-                );
-
-        toast.textContent=message;
-
-        toast.classList.add('show');
-
-        clearTimeout(
-            this.toastTimer
-        );
-
-        this.toastTimer =
-            setTimeout(
-                () =>
-                    toast.classList.remove(
-                        'show'
-                    ),
-                2500
-            );
-
-    },
-
-
-    /* =========================================================
-       CONFETTI
-    ========================================================= */
-
-    fireConfetti(){
-
-        const canvas =
-            document
-                .getElementById(
-                    'confetti'
-                );
-
-        const ctx=
-            canvas.getContext('2d');
-
-        canvas.width=
-            window.innerWidth;
-
-        canvas.height=
-            window.innerHeight;
-
-        const particles=[];
-
-        const colors=[
-            '#d4af37',
-            '#ffffff',
-            '#f4f0e8',
-            '#b89428'
-        ];
-
-        for(
-            let i=0;
-            i<120;
-            i++
-        ){
-
-            particles.push({
-
-                x:
-                    Math.random() *
-                    canvas.width,
-
-                y:
-                    -Math.random() *
-                    canvas.height,
-
-                size:
-                    Math.random()*6+2,
-
-                speed:
-                    Math.random()*4+3,
-
-                drift:
-                    Math.random()*3-1.5,
-
-                rotation:
-                    Math.random()*6,
-
-                color:
-                    colors[
-                        Math.floor(
-                            Math.random() *
-                            colors.length
-                        )
-                    ]
-
-            });
-
-        }
-
-        let frame=0;
-
-        const draw=()=>{
-
-            ctx.clearRect(
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-
-            let alive=false;
-
-            particles.forEach(p=>{
-
-                p.y+=p.speed;
-
-                p.x+=p.drift;
-
-                p.rotation+=.08;
-
-                if(
-                    p.y<
-                    canvas.height+30
-                )
-                    alive=true;
-
-                ctx.save();
-
-                ctx.translate(
-                    p.x,
-                    p.y
-                );
-
-                ctx.rotate(
-                    p.rotation
-                );
-
-                ctx.fillStyle=
-                    p.color;
-
-                ctx.fillRect(
-                    -p.size/2,
-                    -p.size/2,
-                    p.size,
-                    p.size*1.6
-                );
-
-                ctx.restore();
-
-            });
-
-            frame++;
-
-            if(
-                alive &&
-                frame<240
-            ){
-
-                requestAnimationFrame(
-                    draw
-                );
-
-            }else{
-
-                ctx.clearRect(
-                    0,
-                    0,
-                    canvas.width,
-                    canvas.height
-                );
-
-            }
-
-        };
-
-        draw();
 
     }
 
@@ -4134,70 +3662,73 @@ const app = {
 
 
 /* =========================================================
-   SPIN ACHIEVEMENT FLAG
+   GLOBAL ERROR HANDLER
 ========================================================= */
 
-const originalExecuteSpin =
-    app.executeSpin.bind(app);
+window.addEventListener(
+    'error',
+    function(event){
 
-app.executeSpin =
-    async function(){
+        console.error(
+            'GLOBAL JS ERROR:',
+            event.error
+        );
 
-        await originalExecuteSpin();
 
-        if(this.currentReward){
-
-            localStorage.setItem(
-                'evora_has_spun_'+
-                this.userPhone,
-                '1'
+        const box =
+            document.getElementById(
+                'system-error'
             );
 
+        const text =
+            document.getElementById(
+                'system-error-text'
+            );
+
+
+        if(box && text){
+
+            text.textContent =
+                event.error?.message ||
+                event.message ||
+                'Terjadi kesalahan JavaScript.';
+
+            box.style.display =
+                'block';
+
         }
-
-    };
-
-
-/* =========================================================
-   DOM READY
-========================================================= */
-
-document.addEventListener(
-    'DOMContentLoaded',
-    () => {
-
-        app.init();
 
     }
 );
 
 
 /* =========================================================
-   PREVENT ZOOM DOUBLE TAP
+   UNHANDLED PROMISE ERROR
 ========================================================= */
 
-let lastTouchEnd=0;
+window.addEventListener(
+    'unhandledrejection',
+    function(event){
+
+        console.error(
+            'PROMISE ERROR:',
+            event.reason
+        );
+
+    }
+);
+
+
+/* =========================================================
+   START APP
+========================================================= */
 
 document.addEventListener(
-    'touchend',
-    event=>{
+    'DOMContentLoaded',
+    function(){
 
-        const now=
-            Date.now();
+        app.init();
 
-        if(
-            now-lastTouchEnd<=300
-        ){
-
-            event.preventDefault();
-
-        }
-
-        lastTouchEnd=now;
-
-    },
-    {
-        passive:false
     }
 );
 
