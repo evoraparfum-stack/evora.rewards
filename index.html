@@ -582,14 +582,13 @@ $$;
         const SUPABASE_KEY = 'sb_publishable_dp2VMN6xlQVY1SsxXrUPkg_Wi5BXoYs';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Core App Logic
+                // Core App Logic
         const app = {
             userPhone: localStorage.getItem('evora_phone'),
             credits: 0,
             progress: 0,
             isSpinning: false,
 
-            // Digunakan untuk mencocokkan string reward dari DB ke elemen roda (wheel) secara visual
             wheelSegments: [
                 { name: 'Free Pocket 20ML', matchWords: ['free', 'pocket', '20ml'] },
                 { name: 'Kode Diskon Rp5.000', matchWords: ['5.000', '5000', '5k'] },
@@ -602,11 +601,101 @@ $$;
 
             init: async function() {
                 if(this.userPhone) {
-                    // Refresh data profile secara diam-diam tanpa minta nomor hp lagi
                     await this.syncSessionProfile();
                     this.navigate('dashboard');
                 } else {
                     this.navigate('login');
+                }
+            },
+
+            syncSessionProfile: async function() {
+                if (!this.userPhone) return false;
+                try {
+                    const { data, error } = await supabase.rpc('evora_login', { p_phone: this.userPhone });
+                    if (error) throw error;
+                    
+                    // Handle jika response berupa array
+                    let res = Array.isArray(data) ? data[0] : data;
+                    
+                    if (res) {
+                        this.progress = res.progress || 0;
+                        this.credits = res.spin_credits || 0;
+                        return true;
+                    }
+                } catch(e) {
+                    console.error("Gagal sinkronisasi:", e);
+                }
+                return false;
+            },
+
+            navigate: function(viewId) {
+                if (this.isSpinning) return; 
+
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.getElementById('view-' + viewId).classList.add('active');
+                
+                if(viewId === 'login') {
+                    document.getElementById('bottom-nav').style.display = 'none';
+                } else {
+                    document.getElementById('bottom-nav').style.display = 'flex';
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    const activeNav = document.getElementById('nav-' + viewId);
+                    if(activeNav) activeNav.classList.add('active');
+                }
+
+                if(viewId === 'dashboard') this.loadDashboard();
+                if(viewId === 'spin') this.loadSpinState();
+                if(viewId === 'rewards') this.loadRewards();
+                if(viewId === 'promo') this.loadPromos();
+                
+                const claimErr = document.getElementById('claim-error');
+                const claimInput = document.getElementById('claim-code');
+                if (claimErr) claimErr.style.display = 'none';
+                if (claimInput) claimInput.value = '';
+                window.scrollTo(0,0);
+            },
+
+            login: async function() {
+                const phoneInput = document.getElementById('login-phone').value.trim();
+                const btn = document.getElementById('btn-login');
+                const err = document.getElementById('login-error');
+                
+                if(!phoneInput) { 
+                    err.textContent = "Masukkan nomor WhatsApp yang valid."; 
+                    err.style.display = 'block'; 
+                    return; 
+                }
+                
+                btn.disabled = true;
+                btn.textContent = "MEMPROSES...";
+                err.style.display = 'none';
+
+                try {
+                    const { data, error } = await supabase.rpc('evora_login', { p_phone: phoneInput });
+                    
+                    // Lempar error jika dari database memang ada error
+                    if (error) throw error;
+                    
+                    // Pastikan kita bisa baca datanya meskipun berupa array
+                    let res = Array.isArray(data) ? data[0] : data;
+                    
+                    if (!res) throw new Error("Data dari server kosong.");
+                    if (res.success === false) throw new Error("Sistem menolak login.");
+
+                    this.userPhone = phoneInput;
+                    this.progress = res.progress || 0;
+                    this.credits = res.spin_credits || 0;
+                    
+                    localStorage.setItem('evora_phone', phoneInput);
+                    this.navigate('dashboard');
+                } catch(e) {
+                    console.error("Login Error:", e);
+                    // Tampilkan pesan error ASLI dari Supabase ke layar (agar kita tahu masalahnya apa)
+                    err.textContent = "Gagal masuk: " + (e.message || JSON.stringify(e));
+                    err.style.display = 'block';
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = "MASUK";
                 }
             },
 
