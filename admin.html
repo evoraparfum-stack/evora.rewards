@@ -2,36 +2,40 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
 <title>EVORA ADMIN</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 :root{
-    --bg:#090909;
-    --panel:#111;
-    --panel2:#171717;
-    --border:#292929;
+    --black:#080808;
+    --black2:#101010;
+    --card:#151515;
+    --card2:#1b1b1b;
     --gold:#d4af37;
-    --gold2:#a88722;
+    --gold2:#f1cf55;
     --white:#fff;
-    --gray:#888;
-    --green:#39d98a;
-    --red:#ff4d4d;
+    --gray:#929292;
+    --border:#292929;
+    --red:#ff5757;
+    --green:#4ade80;
 }
 
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
-    -webkit-tap-highlight-color:transparent;
 }
 
 body{
-    background:var(--bg);
-    color:var(--white);
-    font-family:Arial,sans-serif;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at top,#18150c 0,#080808 38%,#050505 100%);
+    color:white;
     min-height:100vh;
 }
 
@@ -46,73 +50,106 @@ button{
     cursor:pointer;
 }
 
-.hidden{
-    display:none!important;
+.app{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
 }
 
 /* LOGIN */
 
-.login-screen{
+#loginScreen{
     min-height:100vh;
     display:flex;
-    align-items:center;
     justify-content:center;
+    align-items:center;
     padding:20px;
 }
 
 .login-box{
     width:100%;
-    max-width:400px;
-    background:linear-gradient(145deg,#171717,#0d0d0d);
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:30px;
-    box-shadow:0 20px 60px rgba(0,0,0,.5);
+    max-width:420px;
+    background:linear-gradient(145deg,#181818,#0d0d0d);
+    border:1px solid #333;
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 30px 80px rgba(0,0,0,.7);
 }
 
 .logo{
     text-align:center;
-    color:var(--gold);
     font-family:Georgia,serif;
-    font-size:38px;
-    letter-spacing:6px;
+    font-size:48px;
+    letter-spacing:7px;
+    margin-bottom:5px;
 }
 
-.logo-sub{
+.tagline{
     text-align:center;
-    color:var(--gray);
+    color:var(--gold);
     font-size:10px;
-    letter-spacing:3px;
-    margin-top:6px;
-    margin-bottom:35px;
+    letter-spacing:4px;
+    margin-bottom:40px;
 }
 
-.input{
+.login-title{
+    font-family:Georgia,serif;
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.login-sub{
+    color:var(--gray);
+    margin-bottom:25px;
+}
+
+input,
+textarea,
+select{
     width:100%;
-    background:#090909;
-    border:1px solid var(--border);
+    background:#0b0b0b;
+    border:1px solid #333;
     color:white;
+    border-radius:10px;
     padding:14px;
-    border-radius:9px;
     outline:none;
-    margin-bottom:12px;
 }
 
-.input:focus{
+input:focus,
+textarea:focus,
+select:focus{
     border-color:var(--gold);
 }
 
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+.field{
+    margin-bottom:15px;
+}
+
+.field label{
+    display:block;
+    color:#aaa;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
 .btn{
-    border:0;
-    border-radius:8px;
-    padding:13px 16px;
+    width:100%;
+    border:none;
+    border-radius:10px;
+    padding:14px;
     font-weight:700;
-    cursor:pointer;
+    letter-spacing:1px;
+    transition:.2s;
 }
 
 .btn-gold{
     background:var(--gold);
-    color:#000;
+    color:#050505;
 }
 
 .btn-gold:hover{
@@ -120,106 +157,66 @@ button{
 }
 
 .btn-dark{
-    background:#222;
+    background:#202020;
     color:white;
     border:1px solid #333;
 }
 
 .btn-danger{
-    background:#351616;
-    color:#ff6868;
+    background:#321515;
+    color:#ff7070;
     border:1px solid #542020;
 }
 
-.btn-small{
-    padding:8px 10px;
-    font-size:12px;
-}
-
 .error{
-    color:#ff5c5c;
+    color:#ff6262;
     font-size:13px;
-    margin-bottom:12px;
-}
-
-/* APP */
-
-.app{
+    margin-top:12px;
     display:none;
-    min-height:100vh;
 }
 
-.sidebar{
-    position:fixed;
-    left:0;
-    top:0;
-    bottom:0;
-    width:240px;
-    background:#0d0d0d;
-    border-right:1px solid var(--border);
-    padding:25px 15px;
-    z-index:100;
+/* ADMIN */
+
+#adminScreen{
+    display:none;
 }
 
-.side-logo{
-    font-family:Georgia,serif;
-    color:var(--gold);
-    text-align:center;
-    font-size:30px;
-    letter-spacing:4px;
-    margin-bottom:30px;
-}
-
-.side-menu{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-}
-
-.side-btn{
-    width:100%;
-    text-align:left;
-    background:transparent;
-    color:#999;
-    border:0;
-    padding:13px 15px;
-    border-radius:8px;
-    font-size:14px;
-}
-
-.side-btn:hover,
-.side-btn.active{
-    background:#1d1d1d;
-    color:var(--gold);
-}
-
-.logout{
-    position:absolute;
-    bottom:25px;
-    left:15px;
-    right:15px;
-}
-
-.main{
-    margin-left:240px;
-    padding:25px;
-    max-width:1600px;
-}
-
-.topbar{
+.header{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:15px;
     margin-bottom:25px;
 }
 
-.topbar h1{
+.header-left h1{
     font-family:Georgia,serif;
-    font-size:27px;
+    font-size:30px;
 }
 
-.mobile-menu{
-    display:none;
+.header-left p{
+    color:var(--gray);
+    font-size:13px;
+    margin-top:5px;
+}
+
+.header-actions{
+    display:flex;
+    gap:10px;
+}
+
+.small-btn{
+    padding:10px 14px;
+    border-radius:9px;
+    border:1px solid #333;
+    background:#171717;
+    color:white;
+}
+
+.small-btn.gold{
+    color:#111;
+    background:var(--gold);
+    border-color:var(--gold);
 }
 
 /* STATS */
@@ -232,53 +229,85 @@ button{
 }
 
 .stat{
-    background:linear-gradient(145deg,#161616,#0d0d0d);
+    background:linear-gradient(145deg,#171717,#101010);
     border:1px solid var(--border);
-    border-radius:14px;
+    border-radius:15px;
     padding:20px;
 }
 
 .stat-label{
     color:#888;
-    font-size:12px;
-    text-transform:uppercase;
+    font-size:11px;
     letter-spacing:1px;
+    text-transform:uppercase;
 }
 
 .stat-value{
+    font-family:Georgia,serif;
     color:var(--gold);
-    font-size:32px;
-    font-weight:700;
+    font-size:34px;
     margin-top:8px;
+}
+
+/* NAV */
+
+.tabs{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    margin-bottom:20px;
+    padding-bottom:5px;
+}
+
+.tab{
+    white-space:nowrap;
+    padding:11px 17px;
+    border:1px solid #333;
+    border-radius:10px;
+    background:#121212;
+    color:#aaa;
+}
+
+.tab.active{
+    background:var(--gold);
+    color:#111;
+    border-color:var(--gold);
+    font-weight:bold;
 }
 
 /* PANELS */
 
 .panel{
-    background:#111;
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:20px;
-    margin-bottom:20px;
+    display:none;
 }
 
-.panel-title{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
+.panel.active{
+    display:block;
+}
+
+.card{
+    background:linear-gradient(145deg,#171717,#101010);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
     margin-bottom:18px;
 }
 
-.panel-title h2{
+.card-title{
     font-family:Georgia,serif;
-    font-size:20px;
+    font-size:22px;
+    margin-bottom:5px;
 }
 
-/* TABLE */
+.card-sub{
+    color:#777;
+    font-size:13px;
+    margin-bottom:20px;
+}
+
+/* REWARD TABLE */
 
 .table-wrap{
-    width:100%;
     overflow-x:auto;
 }
 
@@ -289,160 +318,118 @@ table{
 }
 
 th{
-    color:#777;
     text-align:left;
+    color:#777;
     font-size:11px;
     text-transform:uppercase;
     letter-spacing:1px;
     padding:12px;
-    border-bottom:1px solid var(--border);
+    border-bottom:1px solid #292929;
 }
 
 td{
-    padding:13px 12px;
-    border-bottom:1px solid #202020;
-    font-size:13px;
+    padding:12px;
+    border-bottom:1px solid #222;
+    font-size:14px;
 }
 
-tr:last-child td{
-    border-bottom:0;
+.reward-name{
+    font-weight:bold;
 }
 
-.badge{
+.gold{
+    color:var(--gold);
+}
+
+.status{
     display:inline-block;
-    padding:5px 8px;
-    border-radius:5px;
-    background:#222;
-    color:#aaa;
+    padding:5px 9px;
+    border-radius:20px;
     font-size:10px;
     font-weight:bold;
 }
 
-.badge.active{
-    background:rgba(57,217,138,.1);
-    color:var(--green);
+.status.active{
+    background:#12311f;
+    color:#4ade80;
 }
 
-.badge.gold{
-    background:rgba(212,175,55,.12);
-    color:var(--gold);
+.status.inactive{
+    background:#301616;
+    color:#ff6969;
 }
 
-.badge.red{
-    background:rgba(255,77,77,.1);
-    color:var(--red);
-}
+/* REWARD EDIT */
 
-/* FORMS */
-
-.form-grid{
+.reward-editor{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:14px;
+    grid-template-columns:1.5fr .7fr .7fr auto;
+    gap:10px;
+    align-items:end;
 }
 
-.form-group{
-    margin-bottom:5px;
-}
-
-.form-group.full{
-    grid-column:1/-1;
-}
-
-.form-group label{
-    display:block;
-    color:#999;
-    font-size:12px;
-    margin-bottom:7px;
-}
-
-textarea.input{
-    min-height:110px;
-    resize:vertical;
-}
-
-.preview{
-    width:100%;
-    max-height:180px;
-    object-fit:cover;
-    border-radius:8px;
-    border:1px solid var(--border);
-    margin-top:10px;
+.reward-editor .field{
+    margin:0;
 }
 
 /* PROMO */
 
 .promo-grid{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
 }
 
 .promo-card{
-    background:#151515;
-    border:1px solid var(--border);
-    border-radius:12px;
+    background:#111;
+    border:1px solid #292929;
+    border-radius:15px;
     overflow:hidden;
 }
 
 .promo-image{
     width:100%;
-    height:150px;
+    height:180px;
     object-fit:cover;
-    background:#222;
+    background:#191919;
 }
 
-.promo-content{
-    padding:15px;
+.promo-body{
+    padding:18px;
 }
 
-.promo-title{
-    font-weight:bold;
-    margin-bottom:7px;
+.promo-body h3{
+    margin-bottom:8px;
 }
 
-.promo-desc{
+.promo-body p{
     color:#888;
-    font-size:12px;
-    line-height:1.5;
-    min-height:38px;
+    font-size:13px;
+    line-height:1.6;
+    margin-bottom:15px;
 }
 
 .promo-actions{
     display:flex;
-    gap:7px;
-    margin-top:14px;
+    gap:8px;
 }
 
-/* SEARCH */
+.promo-actions button{
+    flex:1;
+}
 
-.search{
-    display:flex;
-    gap:10px;
+/* CUSTOMER */
+
+.customer-search{
     margin-bottom:15px;
 }
 
-.search .input{
-    margin:0;
-}
-
-/* TOAST */
-
-.toast{
-    position:fixed;
-    right:20px;
-    bottom:20px;
-    background:#191919;
-    border:1px solid var(--gold);
-    color:white;
-    padding:14px 18px;
-    border-radius:9px;
-    z-index:9999;
-    box-shadow:0 10px 30px rgba(0,0,0,.5);
-}
-
-.toast.error{
-    border-color:var(--red);
+.badge{
+    padding:5px 8px;
+    border-radius:20px;
+    background:#242424;
+    color:#bbb;
+    font-size:11px;
 }
 
 /* MODAL */
@@ -450,28 +437,28 @@ textarea.input{
 .modal{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.8);
+    background:rgba(0,0,0,.82);
     backdrop-filter:blur(8px);
     display:none;
-    align-items:center;
     justify-content:center;
+    align-items:center;
+    z-index:999;
     padding:20px;
-    z-index:500;
 }
 
-.modal.show{
+.modal.active{
     display:flex;
 }
 
 .modal-box{
     width:100%;
-    max-width:600px;
+    max-width:500px;
+    background:#161616;
+    border:1px solid var(--gold);
+    border-radius:18px;
+    padding:25px;
     max-height:90vh;
     overflow:auto;
-    background:#141414;
-    border:1px solid var(--gold);
-    border-radius:15px;
-    padding:22px;
 }
 
 .modal-head{
@@ -482,86 +469,122 @@ textarea.input{
 }
 
 .close{
-    background:#222;
-    border:0;
-    color:white;
-    width:32px;
-    height:32px;
-    border-radius:50%;
+    background:none;
+    border:none;
+    color:#888;
+    font-size:25px;
 }
 
-/* RESPONSIVE */
+/* TOAST */
 
-@media(max-width:900px){
+.toast{
+    position:fixed;
+    bottom:25px;
+    left:50%;
+    transform:translateX(-50%) translateY(100px);
+    background:#171717;
+    border:1px solid var(--gold);
+    color:white;
+    padding:13px 20px;
+    border-radius:10px;
+    z-index:2000;
+    transition:.3s;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
 
-    .sidebar{
-        transform:translateX(-100%);
-        transition:.25s;
-    }
+.toast.show{
+    transform:translateX(-50%) translateY(0);
+}
 
-    .sidebar.open{
-        transform:translateX(0);
-    }
+.toast.error{
+    border-color:#ff5757;
+}
 
-    .main{
-        margin-left:0;
-        padding:15px;
-    }
+/* LOADING */
 
-    .mobile-menu{
-        display:block;
-        background:#191919;
-        color:var(--gold);
-        border:1px solid var(--border);
-        width:42px;
-        height:42px;
-        border-radius:8px;
-    }
+.loading{
+    padding:40px;
+    text-align:center;
+    color:#777;
+}
+
+.spinner{
+    width:28px;
+    height:28px;
+    border:3px solid #333;
+    border-top-color:var(--gold);
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:0 auto 12px;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+/* MOBILE */
+
+@media(max-width:800px){
 
     .stats{
         grid-template-columns:repeat(2,1fr);
     }
 
     .promo-grid{
-        grid-template-columns:1fr 1fr;
+        grid-template-columns:1fr;
     }
+
+    .reward-editor{
+        grid-template-columns:1fr;
+    }
+
+    .header{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .header-actions{
+        width:100%;
+    }
+
+    .header-actions button{
+        flex:1;
+    }
+
 }
 
-@media(max-width:600px){
+@media(max-width:480px){
 
-    .topbar h1{
-        font-size:22px;
+    .app{
+        padding:14px;
+    }
+
+    .login-box{
+        padding:25px 20px;
+    }
+
+    .logo{
+        font-size:40px;
     }
 
     .stats{
-        grid-template-columns:1fr 1fr;
-        gap:10px;
+        gap:9px;
     }
 
     .stat{
-        padding:15px;
+        padding:14px;
     }
 
     .stat-value{
-        font-size:25px;
+        font-size:28px;
     }
 
-    .form-grid{
-        grid-template-columns:1fr;
-    }
-
-    .form-group.full{
-        grid-column:auto;
-    }
-
-    .promo-grid{
-        grid-template-columns:1fr;
-    }
-
-    .panel{
+    .card{
         padding:15px;
     }
+
 }
+
 </style>
 </head>
 
@@ -569,673 +592,541 @@ textarea.input{
 
 <!-- ================= LOGIN ================= -->
 
-<div class="login-screen" id="loginScreen">
+<section id="loginScreen">
 
-    <div class="login-box">
+<div class="login-box">
 
-        <div class="logo">EVORA</div>
-        <div class="logo-sub">REWARDS ADMIN PANEL</div>
+    <div class="logo">EVORA</div>
+    <div class="tagline">SCENT OF CONFIDENCE</div>
 
-        <div id="loginError" class="error hidden"></div>
+    <div class="login-title">
+        Admin Dashboard
+    </div>
 
+    <div class="login-sub">
+        Kelola EVORA Rewards dari satu tempat.
+    </div>
+
+    <div class="field">
+        <label>PASSWORD ADMIN</label>
         <input
-            id="adminPassword"
-            class="input"
             type="password"
-            placeholder="Password Admin"
-        >
+            id="adminPassword"
+            placeholder="Masukkan password admin">
+    </div>
 
-        <button
-            class="btn btn-gold"
-            style="width:100%"
-            onclick="admin.login()"
-        >
-            MASUK ADMIN
-        </button>
+    <button
+        class="btn btn-gold"
+        onclick="admin.login()">
+        MASUK ADMIN
+    </button>
 
-        <p style="color:#666;text-align:center;font-size:11px;margin-top:18px;">
-            EVORA Rewards Management System
-        </p>
+    <div id="loginError" class="error"></div>
+
+</div>
+
+</section>
+
+
+<!-- ================= ADMIN ================= -->
+
+<section id="adminScreen">
+
+<div class="app">
+
+    <header class="header">
+
+        <div class="header-left">
+            <h1>EVORA ADMIN</h1>
+            <p>Rewards Management System</p>
+        </div>
+
+        <div class="header-actions">
+
+            <button
+                class="small-btn"
+                onclick="admin.refreshAll()">
+                ↻ Refresh
+            </button>
+
+            <button
+                class="small-btn"
+                onclick="admin.logout()">
+                Keluar
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+            <div class="stat-label">
+                Customers
+            </div>
+
+            <div
+                class="stat-value"
+                id="statCustomers">
+                -
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">
+                Spin Rewards
+            </div>
+
+            <div
+                class="stat-value"
+                id="statRewards">
+                -
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">
+                Reward Codes
+            </div>
+
+            <div
+                class="stat-value"
+                id="statCodes">
+                -
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">
+                Active Promo
+            </div>
+
+            <div
+                class="stat-value"
+                id="statPromos">
+                -
+            </div>
+        </div>
 
     </div>
 
-</div>
 
+    <!-- TABS -->
 
-<!-- ================= APP ================= -->
+    <div class="tabs">
 
-<div class="app" id="app">
-
-    <!-- SIDEBAR -->
-
-    <aside class="sidebar" id="sidebar">
-
-        <div class="side-logo">EVORA</div>
-
-        <div class="side-menu">
-
-            <button class="side-btn active" onclick="admin.page('dashboard',this)">
-                📊 Dashboard
-            </button>
-
-            <button class="side-btn" onclick="admin.page('customers',this)">
-                👥 Customers
-            </button>
-
-            <button class="side-btn" onclick="admin.page('rewards',this)">
-                🎁 Spin Rewards
-            </button>
-
-            <button class="side-btn" onclick="admin.page('promos',this)">
-                📢 Promo
-            </button>
-
-            <button class="side-btn" onclick="admin.page('history',this)">
-                🎡 Spin History
-            </button>
-
-            <button class="side-btn" onclick="admin.page('codes',this)">
-                🎟️ Card Codes
-            </button>
-
-        </div>
-
-        <button class="side-btn logout" onclick="admin.logout()">
-            ↪ Keluar
+        <button
+            class="tab active"
+            onclick="admin.openTab('overview',this)">
+            OVERVIEW
         </button>
 
-    </aside>
+        <button
+            class="tab"
+            onclick="admin.openTab('rewards',this)">
+            🎰 HADIAH SPIN
+        </button>
+
+        <button
+            class="tab"
+            onclick="admin.openTab('customers',this)">
+            👥 CUSTOMER
+        </button>
+
+        <button
+            class="tab"
+            onclick="admin.openTab('codes',this)">
+            🎟️ REWARD CODES
+        </button>
+
+        <button
+            class="tab"
+            onclick="admin.openTab('promo',this)">
+            📢 PROMO
+        </button>
+
+    </div>
 
 
-    <!-- MAIN -->
+    <!-- ================= OVERVIEW ================= -->
 
-    <main class="main">
+    <div id="panel-overview" class="panel active">
 
-        <div class="topbar">
+        <div class="card">
 
-            <div style="display:flex;align-items:center;gap:12px">
-
-                <button
-                    class="mobile-menu"
-                    onclick="document.getElementById('sidebar').classList.toggle('open')"
-                >
-                    ☰
-                </button>
-
-                <h1 id="pageTitle">Dashboard</h1>
-
+            <div class="card-title">
+                EVORA Rewards
             </div>
 
-            <div style="font-size:12px;color:#777">
-                EVORA ADMIN
+            <div class="card-sub">
+                Ringkasan sistem reward.
             </div>
 
-        </div>
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+                gap:12px;
+            ">
 
+                <div style="
+                    background:#0c0c0c;
+                    border:1px solid #252525;
+                    border-radius:12px;
+                    padding:18px;
+                ">
+                    <div style="color:#777;font-size:12px;">
+                        TOTAL CUSTOMER
+                    </div>
 
-        <!-- ================= DASHBOARD ================= -->
-
-        <section id="page-dashboard">
-
-            <div class="stats">
-
-                <div class="stat">
-                    <div class="stat-label">Customers</div>
-                    <div class="stat-value" id="statCustomers">0</div>
+                    <div
+                        id="overviewCustomers"
+                        class="gold"
+                        style="font-size:28px;margin-top:7px;">
+                        -
+                    </div>
                 </div>
 
-                <div class="stat">
-                    <div class="stat-label">Total Spin</div>
-                    <div class="stat-value" id="statSpins">0</div>
+
+                <div style="
+                    background:#0c0c0c;
+                    border:1px solid #252525;
+                    border-radius:12px;
+                    padding:18px;
+                ">
+                    <div style="color:#777;font-size:12px;">
+                        TOTAL REWARD
+                    </div>
+
+                    <div
+                        id="overviewCodes"
+                        class="gold"
+                        style="font-size:28px;margin-top:7px;">
+                        -
+                    </div>
                 </div>
 
-                <div class="stat">
-                    <div class="stat-label">Reward</div>
-                    <div class="stat-value" id="statRewards">0</div>
+
+                <div style="
+                    background:#0c0c0c;
+                    border:1px solid #252525;
+                    border-radius:12px;
+                    padding:18px;
+                ">
+                    <div style="color:#777;font-size:12px;">
+                        PROMO AKTIF
+                    </div>
+
+                    <div
+                        id="overviewPromos"
+                        class="gold"
+                        style="font-size:28px;margin-top:7px;">
+                        -
+                    </div>
                 </div>
-
-                <div class="stat">
-                    <div class="stat-label">Card Used</div>
-                    <div class="stat-value" id="statCards">0</div>
-                </div>
-
-            </div>
-
-
-            <div class="panel">
-
-                <div class="panel-title">
-                    <h2>Reward Terpopuler</h2>
-
-                    <button
-                        class="btn btn-dark btn-small"
-                        onclick="admin.loadDashboard()"
-                    >
-                        ↻ Refresh
-                    </button>
-                </div>
-
-                <div id="popularRewards">
-                    Memuat...
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= CUSTOMERS ================= -->
-
-        <section id="page-customers" class="hidden">
-
-            <div class="panel">
-
-                <div class="panel-title">
-
-                    <h2>Customers</h2>
-
-                    <button
-                        class="btn btn-dark btn-small"
-                        onclick="admin.loadCustomers()"
-                    >
-                        ↻ Refresh
-                    </button>
-
-                </div>
-
-                <div class="search">
-
-                    <input
-                        id="customerSearch"
-                        class="input"
-                        placeholder="Cari nomor WhatsApp..."
-                        oninput="admin.filterCustomers()"
-                    >
-
-                </div>
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-                            <tr>
-                                <th>WhatsApp</th>
-                                <th>Progress</th>
-                                <th>Spin Credit</th>
-                                <th>Free Bottle</th>
-                                <th>Terdaftar</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="customersTable"></tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= REWARDS ================= -->
-
-        <section id="page-rewards" class="hidden">
-
-            <div class="panel">
-
-                <div class="panel-title">
-
-                    <h2>Spin Rewards</h2>
-
-                    <button
-                        class="btn btn-gold"
-                        onclick="admin.openRewardModal()"
-                    >
-                        + Tambah Hadiah
-                    </button>
-
-                </div>
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-                                <th>Nama</th>
-                                <th>Probability</th>
-                                <th>Stock</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-
-                        </thead>
-
-                        <tbody id="rewardsTable"></tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= PROMOS ================= -->
-
-        <section id="page-promos" class="hidden">
-
-            <div class="panel">
-
-                <div class="panel-title">
-
-                    <h2>Promo EVORA</h2>
-
-                    <button
-                        class="btn btn-gold"
-                        onclick="admin.openPromoModal()"
-                    >
-                        + Tambah Promo
-                    </button>
-
-                </div>
-
-                <p style="color:#777;font-size:13px;margin-bottom:20px">
-                    Promo aktif akan otomatis tampil di halaman PROMO customer.
-                </p>
-
-                <div
-                    class="promo-grid"
-                    id="promoGrid"
-                ></div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= HISTORY ================= -->
-
-        <section id="page-history" class="hidden">
-
-            <div class="panel">
-
-                <div class="panel-title">
-
-                    <h2>Spin History</h2>
-
-                    <button
-                        class="btn btn-dark btn-small"
-                        onclick="admin.loadHistory()"
-                    >
-                        ↻ Refresh
-                    </button>
-
-                </div>
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-                            <tr>
-                                <th>Tanggal</th>
-                                <th>Customer</th>
-                                <th>Reward</th>
-                                <th>Card</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="historyTable"></tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= CARD CODES ================= -->
-
-        <section id="page-codes" class="hidden">
-
-            <div class="panel">
-
-                <div class="panel-title">
-
-                    <h2>Card Codes</h2>
-
-                    <button
-                        class="btn btn-dark btn-small"
-                        onclick="admin.loadCodes()"
-                    >
-                        ↻ Refresh
-                    </button>
-
-                </div>
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-                                <th>Code</th>
-                                <th>Status</th>
-                                <th>Used By</th>
-                                <th>Used At</th>
-                            </tr>
-
-                        </thead>
-
-                        <tbody id="codesTable"></tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-</div>
-
-
-<!-- ================= REWARD MODAL ================= -->
-
-<div class="modal" id="rewardModal">
-
-    <div class="modal-box">
-
-        <div class="modal-head">
-
-            <h2 id="rewardModalTitle">
-                Tambah Hadiah
-            </h2>
-
-            <button class="close" onclick="admin.closeModal('rewardModal')">
-                ×
-            </button>
-
-        </div>
-
-        <input type="hidden" id="rewardId">
-
-        <div class="form-grid">
-
-            <div class="form-group full">
-
-                <label>Nama Hadiah</label>
-
-                <input
-                    id="rewardName"
-                    class="input"
-                    placeholder="Contoh: Kode Diskon Rp5.000"
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Probability (%)</label>
-
-                <input
-                    id="rewardProbability"
-                    class="input"
-                    type="number"
-                    step="0.01"
-                    placeholder="15"
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Stock</label>
-
-                <input
-                    id="rewardStock"
-                    class="input"
-                    type="number"
-                    placeholder="Kosong = unlimited"
-                >
 
             </div>
 
         </div>
 
-        <label style="display:flex;align-items:center;gap:8px;margin:15px 0;color:#aaa;font-size:13px">
+
+        <div class="card">
+
+            <div class="card-title">
+                Sistem
+            </div>
+
+            <div class="card-sub">
+                Status koneksi database.
+            </div>
+
+            <div id="systemStatus">
+                Mengecek koneksi...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= REWARDS ================= -->
+
+    <div id="panel-rewards" class="panel">
+
+        <div class="card">
+
+            <div class="card-title">
+                Pengaturan Spin Wheel
+            </div>
+
+            <div class="card-sub">
+                Atur hadiah, probability dan status hadiah.
+            </div>
+
+            <div id="rewardsContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Memuat hadiah...
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= CUSTOMERS ================= -->
+
+    <div id="panel-customers" class="panel">
+
+        <div class="card">
+
+            <div class="card-title">
+                Customer EVORA
+            </div>
+
+            <div class="card-sub">
+                Pantau progress, spin credit dan reward customer.
+            </div>
 
             <input
-                id="rewardActive"
-                type="checkbox"
-                checked
-                style="width:auto;margin:0"
-            >
+                class="customer-search"
+                id="customerSearch"
+                placeholder="Cari nomor WhatsApp..."
+                oninput="admin.filterCustomers()">
 
-            Hadiah aktif
+            <div class="table-wrap">
 
-        </label>
+                <table>
 
-        <button
-            class="btn btn-gold"
-            style="width:100%"
-            onclick="admin.saveReward()"
-        >
-            SIMPAN HADIAH
-        </button>
+                    <thead>
+
+                    <tr>
+                        <th>WhatsApp</th>
+                        <th>Progress</th>
+                        <th>Spin</th>
+                        <th>Free Bottle</th>
+                        <th>Terdaftar</th>
+                    </tr>
+
+                    </thead>
+
+                    <tbody id="customersTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= CODES ================= -->
+
+    <div id="panel-codes" class="panel">
+
+        <div class="card">
+
+            <div class="card-title">
+                Reward Codes
+            </div>
+
+            <div class="card-sub">
+                Semua kode hadiah yang telah dibuat.
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+                        <th>Code</th>
+                        <th>Status</th>
+                        <th>Customer</th>
+                        <th>Tanggal</th>
+                    </tr>
+
+                    </thead>
+
+                    <tbody id="codesTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= PROMO ================= -->
+
+    <div id="panel-promo" class="panel">
+
+        <div class="card">
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:10px;
+            ">
+
+                <div>
+                    <div class="card-title">
+                        Promo EVORA
+                    </div>
+
+                    <div class="card-sub">
+                        Promo akan tampil di halaman PROMO customer.
+                    </div>
+                </div>
+
+                <button
+                    class="small-btn gold"
+                    onclick="admin.openPromoModal()">
+                    + Tambah Promo
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div id="promoContainer"
+             class="promo-grid">
+
+        </div>
 
     </div>
 
 </div>
+
+</section>
 
 
 <!-- ================= PROMO MODAL ================= -->
 
 <div class="modal" id="promoModal">
 
-    <div class="modal-box">
+<div class="modal-box">
 
-        <div class="modal-head">
+    <div class="modal-head">
 
-            <h2 id="promoModalTitle">
-                Tambah Promo
-            </h2>
-
-            <button class="close" onclick="admin.closeModal('promoModal')">
-                ×
-            </button>
-
-        </div>
-
-        <input type="hidden" id="promoId">
-
-        <div class="form-grid">
-
-            <div class="form-group full">
-
-                <label>Judul Promo</label>
-
-                <input
-                    id="promoTitle"
-                    class="input"
-                    placeholder="Contoh: Promo Merdeka EVORA"
-                >
-
-            </div>
-
-            <div class="form-group full">
-
-                <label>Deskripsi</label>
-
-                <textarea
-                    id="promoDescription"
-                    class="input"
-                    placeholder="Tulis informasi promo..."
-                ></textarea>
-
-            </div>
-
-            <div class="form-group full">
-
-                <label>URL Gambar</label>
-
-                <input
-                    id="promoImage"
-                    class="input"
-                    placeholder="https://..."
-                    oninput="admin.previewPromo()"
-                >
-
-                <img
-                    id="promoPreview"
-                    class="preview hidden"
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Teks Tombol</label>
-
-                <input
-                    id="promoButton"
-                    class="input"
-                    placeholder="BELI SEKARANG"
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Link Tombol</label>
-
-                <input
-                    id="promoUrl"
-                    class="input"
-                    placeholder="https://..."
-                >
-
-            </div>
-
-        </div>
-
-        <label style="display:flex;align-items:center;gap:8px;margin:15px 0;color:#aaa;font-size:13px">
-
-            <input
-                id="promoActive"
-                type="checkbox"
-                checked
-                style="width:auto;margin:0"
-            >
-
-            Promo aktif
-
-        </label>
+        <h2 id="promoModalTitle">
+            Tambah Promo
+        </h2>
 
         <button
-            class="btn btn-gold"
-            style="width:100%"
-            onclick="admin.savePromo()"
-        >
-            SIMPAN PROMO
+            class="close"
+            onclick="admin.closePromoModal()">
+            ×
         </button>
 
     </div>
+
+
+    <input type="hidden" id="promoId">
+
+
+    <div class="field">
+
+        <label>JUDUL PROMO</label>
+
+        <input
+            id="promoTitle"
+            placeholder="Contoh: Promo Kemerdekaan EVORA">
+
+    </div>
+
+
+    <div class="field">
+
+        <label>DESKRIPSI</label>
+
+        <textarea
+            id="promoDescription"
+            placeholder="Tulis informasi promo..."></textarea>
+
+    </div>
+
+
+    <div class="field">
+
+        <label>URL GAMBAR</label>
+
+        <input
+            id="promoImage"
+            placeholder="https://...">
+
+    </div>
+
+
+    <div class="field">
+
+        <label>TEXT TOMBOL</label>
+
+        <input
+            id="promoButtonText"
+            placeholder="BELI SEKARANG">
+
+    </div>
+
+
+    <div class="field">
+
+        <label>LINK TOMBOL</label>
+
+        <input
+            id="promoButtonUrl"
+            placeholder="https://shopee.co.id/...">
+
+    </div>
+
+
+    <div class="field">
+
+        <label>STATUS</label>
+
+        <select id="promoActive">
+
+            <option value="true">
+                AKTIF
+            </option>
+
+            <option value="false">
+                NONAKTIF
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <button
+        class="btn btn-gold"
+        onclick="admin.savePromo()">
+        SIMPAN PROMO
+    </button>
+
+</div>
 
 </div>
 
 
-<!-- ================= CUSTOMER MODAL ================= -->
+<!-- TOAST -->
 
-<div class="modal" id="customerModal">
-
-    <div class="modal-box">
-
-        <div class="modal-head">
-
-            <h2>Edit Customer</h2>
-
-            <button class="close" onclick="admin.closeModal('customerModal')">
-                ×
-            </button>
-
-        </div>
-
-        <input type="hidden" id="editCustomerId">
-
-        <div class="form-group">
-
-            <label>Nomor WhatsApp</label>
-
-            <input
-                id="editPhone"
-                class="input"
-                disabled
-            >
-
-        </div>
-
-        <div class="form-group">
-
-            <label>Progress Pembelian</label>
-
-            <input
-                id="editProgress"
-                class="input"
-                type="number"
-                min="0"
-                max="9"
-            >
-
-        </div>
-
-        <div class="form-group">
-
-            <label>Spin Credit</label>
-
-            <input
-                id="editCredits"
-                class="input"
-                type="number"
-                min="0"
-            >
-
-        </div>
-
-        <div class="form-group">
-
-            <label>Total Free Bottle</label>
-
-            <input
-                id="editFreeBottle"
-                class="input"
-                type="number"
-                min="0"
-            >
-
-        </div>
-
-        <button
-            class="btn btn-gold"
-            style="width:100%"
-            onclick="admin.saveCustomer()"
-        >
-            SIMPAN CUSTOMER
-        </button>
-
-    </div>
-
+<div
+    id="toast"
+    class="toast">
 </div>
 
 
@@ -1246,76 +1137,90 @@ textarea.input{
 ========================================================= */
 
 const SUPABASE_URL =
-    "https://bkwcgdlwdbccbuczhtac.supabase.co";
+'https://bkwcgdlwdbccbuczhtac.supabase.co';
 
 const SUPABASE_KEY =
-    "sb_publishable_dp2VMN6xlQVY1SsxXrUPkg_Wi5BXoYs";
+'sb_publishable_dp2VMN6xlQVY1SsxXrUPkg_Wi5BXoYs';
 
 const supabase =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 
 /* =========================================================
-   ADMIN
+   ADMIN PASSWORD
+=========================================================
+
+   GANTI PASSWORD DI BAWAH INI.
+
+   CONTOH:
+   const ADMIN_PASSWORD = 'EVORA2026';
+
+========================================================= */
+
+const ADMIN_PASSWORD = 'EVORA_ADMIN_2026';
+
+
+/* =========================================================
+   ADMIN APP
 ========================================================= */
 
 const admin = {
 
-    /*
-      Password ini hanya pengaman halaman UI.
-      BUKAN sistem keamanan database.
-      Untuk produksi sebaiknya gunakan Supabase Auth.
-    */
+    customers: [],
+    rewards: [],
+    codes: [],
+    promos: [],
 
-    password:"EVORAADMIN",
+    /* ================= LOGIN ================= */
 
-    customers:[],
-    rewards:[],
-    promos:[],
+    login: async function(){
 
-    login(){
-
-        const input =
-            document.getElementById("adminPassword").value;
+        const password =
+            document
+            .getElementById('adminPassword')
+            .value
+            .trim();
 
         const error =
-            document.getElementById("loginError");
+            document.getElementById('loginError');
 
-        if(input !== this.password){
+        if(password !== ADMIN_PASSWORD){
 
             error.textContent =
-                "Password admin salah.";
+                'Password admin salah.';
 
-            error.classList.remove("hidden");
+            error.style.display='block';
 
             return;
         }
 
-        sessionStorage.setItem(
-            "evora_admin",
-            "true"
+        error.style.display='none';
+
+        localStorage.setItem(
+            'evora_admin',
+            'true'
         );
 
-        document.getElementById(
-            "loginScreen"
-        ).style.display="none";
+        document
+        .getElementById('loginScreen')
+        .style.display='none';
 
-        document.getElementById(
-            "app"
-        ).style.display="block";
+        document
+        .getElementById('adminScreen')
+        .style.display='block';
 
-        this.loadDashboard();
+        await this.refreshAll();
 
     },
 
 
-    logout(){
+    logout:function(){
 
-        sessionStorage.removeItem(
-            "evora_admin"
+        localStorage.removeItem(
+            'evora_admin'
         );
 
         location.reload();
@@ -1323,220 +1228,170 @@ const admin = {
     },
 
 
-    init(){
+    /* ================= INIT ================= */
 
-        if(
-            sessionStorage.getItem(
-                "evora_admin"
-            ) === "true"
-        ){
+    init:function(){
 
-            document.getElementById(
-                "loginScreen"
-            ).style.display="none";
+        const logged =
+            localStorage.getItem(
+                'evora_admin'
+            );
 
-            document.getElementById(
-                "app"
-            ).style.display="block";
+        if(logged === 'true'){
 
-            this.loadDashboard();
+            document
+            .getElementById('loginScreen')
+            .style.display='none';
+
+            document
+            .getElementById('adminScreen')
+            .style.display='block';
+
+            this.refreshAll();
 
         }
 
-    },
-
-
-    page(name,button){
-
-        document.querySelectorAll(
-            ".side-btn"
-        ).forEach(
-            x=>x.classList.remove("active")
+        document
+        .getElementById('adminPassword')
+        .addEventListener(
+            'keydown',
+            e=>{
+                if(e.key === 'Enter'){
+                    this.login();
+                }
+            }
         );
-
-        if(button)
-            button.classList.add("active");
-
-        document.querySelectorAll(
-            "main section"
-        ).forEach(
-            x=>x.classList.add("hidden")
-        );
-
-        document.getElementById(
-            "page-"+name
-        ).classList.remove("hidden");
-
-        const titles={
-            dashboard:"Dashboard",
-            customers:"Customers",
-            rewards:"Spin Rewards",
-            promos:"Promo EVORA",
-            history:"Spin History",
-            codes:"Card Codes"
-        };
-
-        document.getElementById(
-            "pageTitle"
-        ).textContent=titles[name];
-
-        document.getElementById(
-            "sidebar"
-        ).classList.remove("open");
-
-        if(name==="dashboard")
-            this.loadDashboard();
-
-        if(name==="customers")
-            this.loadCustomers();
-
-        if(name==="rewards")
-            this.loadRewards();
-
-        if(name==="promos")
-            this.loadPromos();
-
-        if(name==="history")
-            this.loadHistory();
-
-        if(name==="codes")
-            this.loadCodes();
 
     },
 
 
-    async loadDashboard(){
+    /* ================= TABS ================= */
+
+    openTab:function(name,button){
+
+        document
+        .querySelectorAll('.panel')
+        .forEach(p=>{
+            p.classList.remove('active');
+        });
+
+        document
+        .getElementById(
+            'panel-'+name
+        )
+        .classList.add('active');
+
+        document
+        .querySelectorAll('.tab')
+        .forEach(t=>{
+            t.classList.remove('active');
+        });
+
+        button.classList.add('active');
+
+    },
+
+
+    /* ================= REFRESH ================= */
+
+    refreshAll:async function(){
+
+        this.showToast(
+            'Memuat data...'
+        );
+
+        await Promise.all([
+            this.loadStats(),
+            this.loadRewards(),
+            this.loadCustomers(),
+            this.loadCodes(),
+            this.loadPromos()
+        ]);
+
+        document
+        .getElementById('systemStatus')
+        .innerHTML =
+        '<span style="color:#4ade80">● Database terhubung</span>';
+
+    },
+
+
+    /* ================= STATS ================= */
+
+    loadStats:async function(){
 
         try{
 
-            const [
-                customers,
-                spins,
-                rewards,
-                cards
-            ] = await Promise.all([
+            const customers =
+                await supabase
+                .from('customers')
+                .select('id',{count:'exact',head:true});
 
-                supabase
-                    .from("customers")
-                    .select("*",{count:"exact",head:true}),
+            const rewards =
+                await supabase
+                .from('spin_rewards')
+                .select('id',{count:'exact',head:true});
 
-                supabase
-                    .from("spins")
-                    .select("*",{count:"exact",head:true}),
+            const codes =
+                await supabase
+                .from('redeem_codes')
+                .select('id',{count:'exact',head:true});
 
-                supabase
-                    .from("redeem_codes")
-                    .select("*",{count:"exact",head:true}),
+            const promos =
+                await supabase
+                .from('promos')
+                .select('id',{count:'exact',head:true})
+                .eq('is_active',true);
 
-                supabase
-                    .from("card_codes")
-                    .select("*",{count:"exact",head:true})
-                    .eq("is_used",true)
 
-            ]);
-
-            document.getElementById(
-                "statCustomers"
-            ).textContent =
+            const customerCount =
                 customers.count || 0;
 
-            document.getElementById(
-                "statSpins"
-            ).textContent =
-                spins.count || 0;
-
-            document.getElementById(
-                "statRewards"
-            ).textContent =
+            const rewardCount =
                 rewards.count || 0;
 
-            document.getElementById(
-                "statCards"
-            ).textContent =
-                cards.count || 0;
+            const codeCount =
+                codes.count || 0;
+
+            const promoCount =
+                promos.count || 0;
 
 
-            const {data,error} =
-                await supabase
-                .from("spins")
-                .select(`
-                    reward_id,
-                    spin_rewards(name)
-                `);
+            document
+            .getElementById('statCustomers')
+            .textContent=customerCount;
 
-            if(error) throw error;
+            document
+            .getElementById('statRewards')
+            .textContent=rewardCount;
 
-            const counter={};
+            document
+            .getElementById('statCodes')
+            .textContent=codeCount;
 
-            (data||[]).forEach(row=>{
+            document
+            .getElementById('statPromos')
+            .textContent=promoCount;
 
-                const name =
-                    row.spin_rewards?.name ||
-                    "Unknown";
 
-                counter[name] =
-                    (counter[name]||0)+1;
+            document
+            .getElementById('overviewCustomers')
+            .textContent=customerCount;
 
-            });
+            document
+            .getElementById('overviewCodes')
+            .textContent=codeCount;
 
-            const sorted =
-                Object.entries(counter)
-                .sort((a,b)=>b[1]-a[1])
-                .slice(0,10);
-
-            let html="";
-
-            if(!sorted.length){
-
-                html =
-                    `<div style="color:#777">
-                    Belum ada data spin.
-                    </div>`;
-
-            }else{
-
-                html =
-                    `<div class="table-wrap">
-                    <table>
-                    <thead>
-                    <tr>
-                    <th>Reward</th>
-                    <th>Jumlah</th>
-                    </tr>
-                    </thead>
-                    <tbody>`;
-
-                sorted.forEach(x=>{
-
-                    html+=`
-                    <tr>
-                        <td>${escapeHtml(x[0])}</td>
-                        <td>
-                            <span class="badge gold">
-                                ${x[1]}x
-                            </span>
-                        </td>
-                    </tr>`;
-
-                });
-
-                html+=`
-                    </tbody>
-                    </table>
-                    </div>`;
-
-            }
-
-            document.getElementById(
-                "popularRewards"
-            ).innerHTML=html;
+            document
+            .getElementById('overviewPromos')
+            .textContent=promoCount;
 
         }catch(e){
 
             console.error(e);
 
-            toast(
-                "Gagal memuat dashboard",
+            this.showToast(
+                'Gagal memuat statistik',
                 true
             );
 
@@ -1545,1227 +1400,984 @@ const admin = {
     },
 
 
-    async loadCustomers(){
+    /* ================= REWARDS ================= */
 
-        const tbody =
-            document.getElementById(
-                "customersTable"
+    loadRewards:async function(){
+
+        const container =
+            document
+            .getElementById(
+                'rewardsContainer'
             );
 
-        tbody.innerHTML=
-            `<tr>
-                <td colspan="6">
-                    Memuat...
-                </td>
-            </tr>`;
-
-        try{
-
-            const {data,error} =
-                await supabase
-                .from("customers")
-                .select("*")
-                .order(
-                    "created_at",
-                    {ascending:false}
-                );
-
-            if(error) throw error;
-
-            this.customers=data||[];
-
-            this.renderCustomers(
-                this.customers
-            );
-
-        }catch(e){
-
-            console.error(e);
-
-            tbody.innerHTML=
-                `<tr>
-                    <td colspan="6">
-                    Gagal memuat customer.
-                    </td>
-                </tr>`;
-
-        }
-
-    },
+        container.innerHTML =
+        '<div class="loading"><div class="spinner"></div>Memuat hadiah...</div>';
 
 
-    renderCustomers(list){
-
-        const tbody =
-            document.getElementById(
-                "customersTable"
-            );
-
-        if(!list.length){
-
-            tbody.innerHTML=
-                `<tr>
-                    <td colspan="6">
-                    Belum ada customer.
-                    </td>
-                </tr>`;
-
-            return;
-        }
-
-        tbody.innerHTML =
-            list.map(c=>{
-
-                const date =
-                    c.created_at
-                    ? new Date(
-                        c.created_at
-                      ).toLocaleDateString(
-                        "id-ID"
-                      )
-                    :"—";
-
-                return `
-                <tr>
-
-                    <td>
-                        <strong>
-                            ${escapeHtml(
-                                c.phone||""
-                            )}
-                        </strong>
-                    </td>
-
-                    <td>
-                        <span class="badge gold">
-                            ${c.progress||0}/10
-                        </span>
-                    </td>
-
-                    <td>
-                        ${c.spin_credits||0}
-                    </td>
-
-                    <td>
-                        ${c.total_free_bottles||0}
-                    </td>
-
-                    <td>${date}</td>
-
-                    <td>
-                        <button
-                            class="btn btn-dark btn-small"
-                            onclick="admin.openCustomer('${c.id}')"
-                        >
-                            Edit
-                        </button>
-                    </td>
-
-                </tr>`;
-
-            }).join("");
-
-    },
-
-
-    filterCustomers(){
-
-        const q =
-            document.getElementById(
-                "customerSearch"
-            ).value
-            .toLowerCase()
-            .trim();
-
-        const filtered =
-            this.customers.filter(c=>
-                String(c.phone||"")
-                .toLowerCase()
-                .includes(q)
-            );
-
-        this.renderCustomers(
-            filtered
-        );
-
-    },
-
-
-    openCustomer(id){
-
-        const c =
-            this.customers.find(
-                x=>x.id===id
-            );
-
-        if(!c) return;
-
-        document.getElementById(
-            "editCustomerId"
-        ).value=c.id;
-
-        document.getElementById(
-            "editPhone"
-        ).value=c.phone||"";
-
-        document.getElementById(
-            "editProgress"
-        ).value=c.progress||0;
-
-        document.getElementById(
-            "editCredits"
-        ).value=c.spin_credits||0;
-
-        document.getElementById(
-            "editFreeBottle"
-        ).value=c.total_free_bottles||0;
-
-        document.getElementById(
-            "customerModal"
-        ).classList.add("show");
-
-    },
-
-
-    async saveCustomer(){
-
-        const id =
-            document.getElementById(
-                "editCustomerId"
-            ).value;
-
-        const progress =
-            Number(
-                document.getElementById(
-                    "editProgress"
-                ).value
-            );
-
-        const credits =
-            Number(
-                document.getElementById(
-                    "editCredits"
-                ).value
-            );
-
-        const freeBottle =
-            Number(
-                document.getElementById(
-                    "editFreeBottle"
-                ).value
-            );
-
-        const {error} =
+        const {data,error} =
             await supabase
-            .from("customers")
-            .update({
+            .from('spin_rewards')
+            .select('*')
+            .order('probability',{
+                ascending:false
+            });
 
-                progress,
-                spin_credits:credits,
-                total_free_bottles:freeBottle,
-                updated_at:new Date().toISOString()
-
-            })
-            .eq("id",id);
 
         if(error){
 
             console.error(error);
 
-            toast(
-                "Gagal menyimpan customer",
-                true
-            );
+            container.innerHTML =
+            `<div style="color:#ff6666">
+                Gagal memuat hadiah.<br>
+                ${this.escape(error.message)}
+            </div>`;
 
             return;
-
         }
 
-        this.closeModal(
-            "customerModal"
-        );
 
-        toast(
-            "Customer berhasil diperbarui"
-        );
-
-        this.loadCustomers();
-
-    },
+        this.rewards=data || [];
 
 
-    async loadRewards(){
+        if(!this.rewards.length){
 
-        const tbody =
-            document.getElementById(
-                "rewardsTable"
-            );
+            container.innerHTML =
+            '<div class="loading">Belum ada hadiah.</div>';
 
-        tbody.innerHTML=
-            `<tr>
-                <td colspan="5">
-                Memuat...
-                </td>
-            </tr>`;
-
-        try{
-
-            const {data,error} =
-                await supabase
-                .from("spin_rewards")
-                .select("*")
-                .order(
-                    "probability",
-                    {ascending:false}
-                );
-
-            if(error) throw error;
-
-            this.rewards=data||[];
-
-            if(!this.rewards.length){
-
-                tbody.innerHTML=
-                    `<tr>
-                    <td colspan="5">
-                    Belum ada hadiah.
-                    </td>
-                    </tr>`;
-
-                return;
-
-            }
-
-            tbody.innerHTML =
-                this.rewards.map(r=>{
-
-                    return `
-                    <tr>
-
-                        <td>
-                            <strong>
-                                ${escapeHtml(r.name)}
-                            </strong>
-                        </td>
-
-                        <td>
-                            <span class="badge gold">
-                                ${Number(
-                                    r.probability||0
-                                ).toFixed(2)}%
-                            </span>
-                        </td>
-
-                        <td>
-                            ${
-                                r.stock===null
-                                ? "Unlimited"
-                                : r.stock
-                            }
-                        </td>
-
-                        <td>
-                            ${
-                                r.is_active
-                                ? `<span class="badge active">
-                                    ACTIVE
-                                   </span>`
-                                : `<span class="badge red">
-                                    OFF
-                                   </span>`
-                            }
-                        </td>
-
-                        <td>
-
-                            <button
-                                class="btn btn-dark btn-small"
-                                onclick="admin.editReward('${r.id}')"
-                            >
-                                Edit
-                            </button>
-
-                            <button
-                                class="btn btn-danger btn-small"
-                                onclick="admin.deleteReward('${r.id}')"
-                            >
-                                Hapus
-                            </button>
-
-                        </td>
-
-                    </tr>`;
-
-                }).join("");
-
-        }catch(e){
-
-            console.error(e);
-
-            tbody.innerHTML=
-                `<tr>
-                    <td colspan="5">
-                    Gagal memuat hadiah.
-                    </td>
-                </tr>`;
-
+            return;
         }
 
+
+        container.innerHTML =
+        this.rewards.map(r=>`
+
+            <div class="card"
+                 style="background:#0d0d0d;margin-bottom:12px;">
+
+                <div class="reward-editor">
+
+                    <div class="field">
+
+                        <label>NAMA HADIAH</label>
+
+                        <input
+                            id="reward-name-${r.id}"
+                            value="${this.escapeAttr(r.name)}">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>PROBABILITY</label>
+
+                        <input
+                            id="reward-prob-${r.id}"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value="${Number(r.probability || 0)}">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>STOCK</label>
+
+                        <input
+                            id="reward-stock-${r.id}"
+                            type="number"
+                            min="0"
+                            value="${r.stock === null ? '' : Number(r.stock)}"
+                            placeholder="Unlimited">
+
+                    </div>
+
+
+                    <button
+                        class="small-btn gold"
+                        onclick="admin.updateReward('${r.id}')">
+                        SIMPAN
+                    </button>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-top:12px;
+                    gap:10px;
+                ">
+
+                    <span class="status ${r.is_active ? 'active':'inactive'}">
+                        ${r.is_active ? 'AKTIF':'NONAKTIF'}
+                    </span>
+
+
+                    <button
+                        class="small-btn"
+                        onclick="admin.toggleReward('${r.id}',${!r.is_active})">
+
+                        ${r.is_active
+                            ? 'Nonaktifkan'
+                            : 'Aktifkan'}
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `).join('');
+
     },
 
 
-    openRewardModal(){
-
-        document.getElementById(
-            "rewardModalTitle"
-        ).textContent=
-            "Tambah Hadiah";
-
-        document.getElementById(
-            "rewardId"
-        ).value="";
-
-        document.getElementById(
-            "rewardName"
-        ).value="";
-
-        document.getElementById(
-            "rewardProbability"
-        ).value="";
-
-        document.getElementById(
-            "rewardStock"
-        ).value="";
-
-        document.getElementById(
-            "rewardActive"
-        ).checked=true;
-
-        document.getElementById(
-            "rewardModal"
-        ).classList.add("show");
-
-    },
-
-
-    editReward(id){
-
-        const r =
-            this.rewards.find(
-                x=>x.id===id
-            );
-
-        if(!r) return;
-
-        document.getElementById(
-            "rewardModalTitle"
-        ).textContent=
-            "Edit Hadiah";
-
-        document.getElementById(
-            "rewardId"
-        ).value=r.id;
-
-        document.getElementById(
-            "rewardName"
-        ).value=r.name||"";
-
-        document.getElementById(
-            "rewardProbability"
-        ).value=r.probability||0;
-
-        document.getElementById(
-            "rewardStock"
-        ).value=
-            r.stock===null
-            ? ""
-            : r.stock;
-
-        document.getElementById(
-            "rewardActive"
-        ).checked=
-            !!r.is_active;
-
-        document.getElementById(
-            "rewardModal"
-        ).classList.add("show");
-
-    },
-
-
-    async saveReward(){
-
-        const id =
-            document.getElementById(
-                "rewardId"
-            ).value;
+    updateReward:async function(id){
 
         const name =
-            document.getElementById(
-                "rewardName"
+            document
+            .getElementById(
+                'reward-name-'+id
             ).value.trim();
 
         const probability =
             Number(
-                document.getElementById(
-                    "rewardProbability"
+                document
+                .getElementById(
+                    'reward-prob-'+id
                 ).value
             );
 
-        const stockInput =
-            document.getElementById(
-                "rewardStock"
+        const stockValue =
+            document
+            .getElementById(
+                'reward-stock-'+id
             ).value.trim();
 
         const stock =
-            stockInput===""
+            stockValue === ''
             ? null
-            : Number(stockInput);
+            : Number(stockValue);
 
-        const is_active =
-            document.getElementById(
-                "rewardActive"
-            ).checked;
 
         if(!name){
 
-            toast(
-                "Nama hadiah wajib diisi",
+            this.showToast(
+                'Nama hadiah wajib diisi',
                 true
             );
 
             return;
-
         }
 
-        if(probability<0){
-
-            toast(
-                "Probability tidak valid",
-                true
-            );
-
-            return;
-
-        }
-
-        const payload={
-            name,
-            probability,
-            stock,
-            is_active
-        };
-
-        let result;
-
-        if(id){
-
-            result =
-                await supabase
-                .from("spin_rewards")
-                .update(payload)
-                .eq("id",id);
-
-        }else{
-
-            result =
-                await supabase
-                .from("spin_rewards")
-                .insert(payload);
-
-        }
-
-        if(result.error){
-
-            console.error(result.error);
-
-            toast(
-                "Gagal menyimpan hadiah: "+
-                result.error.message,
-                true
-            );
-
-            return;
-
-        }
-
-        this.closeModal(
-            "rewardModal"
-        );
-
-        toast(
-            "Hadiah berhasil disimpan"
-        );
-
-        this.loadRewards();
-
-    },
-
-
-    async deleteReward(id){
-
-        if(
-            !confirm(
-                "Hapus hadiah ini?"
-            )
-        ) return;
 
         const {error} =
             await supabase
-            .from("spin_rewards")
-            .delete()
-            .eq("id",id);
+            .from('spin_rewards')
+            .update({
+                name:name,
+                probability:probability,
+                stock:stock
+            })
+            .eq('id',id);
+
 
         if(error){
 
-            toast(
-                "Gagal menghapus hadiah",
+            console.error(error);
+
+            this.showToast(
+                error.message,
                 true
             );
 
             return;
-
         }
 
-        toast(
-            "Hadiah berhasil dihapus"
+
+        this.showToast(
+            'Hadiah berhasil diperbarui'
         );
 
-        this.loadRewards();
+        await this.loadRewards();
 
     },
 
 
-    async loadPromos(){
+    toggleReward:async function(id,status){
 
-        const grid =
-            document.getElementById(
-                "promoGrid"
+        const {error} =
+            await supabase
+            .from('spin_rewards')
+            .update({
+                is_active:status
+            })
+            .eq('id',id);
+
+
+        if(error){
+
+            this.showToast(
+                error.message,
+                true
             );
 
-        grid.innerHTML=
-            `<div style="color:#777">
-            Memuat promo...
-            </div>`;
-
-        try{
-
-            const {data,error} =
-                await supabase
-                .from("promos")
-                .select("*")
-                .order(
-                    "created_at",
-                    {ascending:false}
-                );
-
-            if(error) throw error;
-
-            this.promos=data||[];
-
-            if(!this.promos.length){
-
-                grid.innerHTML=
-                    `<div style="color:#777">
-                    Belum ada promo.
-                    </div>`;
-
-                return;
-
-            }
-
-            grid.innerHTML =
-                this.promos.map(p=>{
-
-                    return `
-                    <div class="promo-card">
-
-                        ${
-                            p.image_url
-                            ?
-                            `<img
-                                class="promo-image"
-                                src="${escapeAttr(
-                                    p.image_url
-                                )}"
-                                onerror="this.style.display='none'"
-                            >`
-                            :
-                            `<div
-                                class="promo-image"
-                                style="
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                                color:#555;
-                                font-family:Georgia,serif;
-                                font-size:28px;
-                                "
-                            >
-                                EVORA
-                            </div>`
-                        }
-
-                        <div class="promo-content">
-
-                            <div class="promo-title">
-                                ${escapeHtml(
-                                    p.title||"Tanpa Judul"
-                                )}
-                            </div>
-
-                            <div class="promo-desc">
-                                ${escapeHtml(
-                                    p.description||""
-                                )}
-                            </div>
-
-                            <div style="margin-top:10px">
-
-                                ${
-                                    p.is_active
-                                    ?
-                                    `<span class="badge active">
-                                        AKTIF
-                                    </span>`
-                                    :
-                                    `<span class="badge red">
-                                        NONAKTIF
-                                    </span>`
-                                }
-
-                            </div>
-
-                            <div class="promo-actions">
-
-                                <button
-                                    class="btn btn-dark btn-small"
-                                    onclick="admin.editPromo('${p.id}')"
-                                >
-                                    Edit
-                                </button>
-
-                                <button
-                                    class="btn btn-danger btn-small"
-                                    onclick="admin.deletePromo('${p.id}')"
-                                >
-                                    Hapus
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>`;
-
-                }).join("");
-
-        }catch(e){
-
-            console.error(e);
-
-            grid.innerHTML=
-                `<div style="color:#ff5555">
-                Gagal memuat promo.
-                </div>`;
-
+            return;
         }
 
-    },
+
+        this.showToast(
+            status
+            ? 'Hadiah diaktifkan'
+            : 'Hadiah dinonaktifkan'
+        );
 
 
-    openPromoModal(){
+        await this.loadRewards();
 
-        document.getElementById(
-            "promoModalTitle"
-        ).textContent=
-            "Tambah Promo";
-
-        document.getElementById(
-            "promoId"
-        ).value="";
-
-        document.getElementById(
-            "promoTitle"
-        ).value="";
-
-        document.getElementById(
-            "promoDescription"
-        ).value="";
-
-        document.getElementById(
-            "promoImage"
-        ).value="";
-
-        document.getElementById(
-            "promoButton"
-        ).value="BELI SEKARANG";
-
-        document.getElementById(
-            "promoUrl"
-        ).value="";
-
-        document.getElementById(
-            "promoActive"
-        ).checked=true;
-
-        document.getElementById(
-            "promoPreview"
-        ).classList.add("hidden");
-
-        document.getElementById(
-            "promoModal"
-        ).classList.add("show");
+        await this.loadStats();
 
     },
 
 
-    editPromo(id){
+    /* ================= CUSTOMERS ================= */
+
+    loadCustomers:async function(){
+
+        const {data,error} =
+            await supabase
+            .from('customers')
+            .select('*')
+            .order('created_at',{
+                ascending:false
+            });
+
+
+        if(error){
+
+            console.error(error);
+
+            return;
+        }
+
+
+        this.customers=data || [];
+
+        this.renderCustomers(
+            this.customers
+        );
+
+    },
+
+
+    renderCustomers:function(list){
+
+        const tbody =
+            document
+            .getElementById(
+                'customersTable'
+            );
+
+
+        if(!list.length){
+
+            tbody.innerHTML =
+            `<tr>
+                <td colspan="5"
+                    style="text-align:center;color:#777;">
+                    Belum ada customer.
+                </td>
+            </tr>`;
+
+            return;
+        }
+
+
+        tbody.innerHTML =
+        list.map(c=>`
+
+            <tr>
+
+                <td>
+                    <strong>
+                        ${this.escape(c.phone || '-')}
+                    </strong>
+                </td>
+
+                <td>
+                    <span class="gold">
+                        ${Number(c.progress || 0)} / 10
+                    </span>
+                </td>
+
+                <td>
+                    ${Number(c.spin_credits || 0)}
+                </td>
+
+                <td>
+                    ${Number(c.total_free_bottles || 0)}
+                </td>
+
+                <td>
+                    <span style="color:#777;font-size:12px;">
+                        ${c.created_at
+                            ? new Date(c.created_at)
+                              .toLocaleDateString('id-ID')
+                            : '-'}
+                    </span>
+                </td>
+
+            </tr>
+
+        `).join('');
+
+    },
+
+
+    filterCustomers:function(){
+
+        const q =
+            document
+            .getElementById(
+                'customerSearch'
+            )
+            .value
+            .toLowerCase()
+            .trim();
+
+
+        const filtered =
+            this.customers.filter(c=>
+                String(c.phone || '')
+                .toLowerCase()
+                .includes(q)
+            );
+
+
+        this.renderCustomers(filtered);
+
+    },
+
+
+    /* ================= CODES ================= */
+
+    loadCodes:async function(){
+
+        const {data,error} =
+            await supabase
+            .from('redeem_codes')
+            .select('*')
+            .order('created_at',{
+                ascending:false
+            });
+
+
+        if(error){
+
+            console.error(error);
+
+            document
+            .getElementById('codesTable')
+            .innerHTML =
+            `<tr>
+                <td colspan="4"
+                    style="color:#ff6666;">
+                    ${this.escape(error.message)}
+                </td>
+            </tr>`;
+
+            return;
+        }
+
+
+        this.codes=data || [];
+
+
+        const tbody =
+            document
+            .getElementById(
+                'codesTable'
+            );
+
+
+        if(!this.codes.length){
+
+            tbody.innerHTML =
+            `<tr>
+                <td colspan="4"
+                    style="text-align:center;color:#777;">
+                    Belum ada reward code.
+                </td>
+            </tr>`;
+
+            return;
+        }
+
+
+        tbody.innerHTML =
+        this.codes.map(c=>`
+
+            <tr>
+
+                <td>
+                    <span class="gold"
+                          style="font-family:monospace;">
+                        ${this.escape(c.code)}
+                    </span>
+                </td>
+
+                <td>
+
+                    <span class="status ${
+                        String(c.status).toLowerCase()==='active'
+                        ? 'active'
+                        : 'inactive'
+                    }">
+
+                        ${this.escape(
+                            String(c.status || '-')
+                            .toUpperCase()
+                        )}
+
+                    </span>
+
+                </td>
+
+                <td>
+                    <span style="color:#888">
+                        ${c.customer_id
+                            ? String(c.customer_id).substring(0,8)+'...'
+                            : '-'}
+                    </span>
+                </td>
+
+                <td>
+                    ${c.created_at
+                        ? new Date(c.created_at)
+                          .toLocaleString('id-ID')
+                        : '-'}
+                </td>
+
+            </tr>
+
+        `).join('');
+
+    },
+
+
+    /* ================= PROMO ================= */
+
+    loadPromos:async function(){
+
+        const container =
+            document
+            .getElementById(
+                'promoContainer'
+            );
+
+
+        container.innerHTML =
+        '<div class="loading"><div class="spinner"></div>Memuat promo...</div>';
+
+
+        const {data,error} =
+            await supabase
+            .from('promos')
+            .select('*')
+            .order('created_at',{
+                ascending:false
+            });
+
+
+        if(error){
+
+            console.error(error);
+
+            container.innerHTML =
+            `<div style="color:#ff6666">
+                Gagal memuat promo.<br>
+                ${this.escape(error.message)}
+            </div>`;
+
+            return;
+        }
+
+
+        this.promos=data || [];
+
+
+        if(!this.promos.length){
+
+            container.innerHTML =
+            '<div class="loading">Belum ada promo.</div>';
+
+            return;
+        }
+
+
+        container.innerHTML =
+        this.promos.map(p=>`
+
+            <div class="promo-card">
+
+                ${
+                    p.image_url
+                    ?
+                    `<img
+                        class="promo-image"
+                        src="${this.escapeAttr(p.image_url)}"
+                        onerror="this.style.display='none';">`
+                    :
+                    `<div
+                        class="promo-image"
+                        style="
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            font-family:Georgia,serif;
+                            font-size:35px;
+                            color:#d4af37;">
+                        EVORA
+                    </div>`
+                }
+
+
+                <div class="promo-body">
+
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        gap:10px;
+                        margin-bottom:10px;
+                    ">
+
+                        <h3>
+                            ${this.escape(p.title || 'Promo')}
+                        </h3>
+
+                        <span class="status ${
+                            p.is_active
+                            ? 'active'
+                            : 'inactive'
+                        }">
+
+                            ${p.is_active
+                                ? 'AKTIF'
+                                : 'NONAKTIF'}
+
+                        </span>
+
+                    </div>
+
+
+                    <p>
+                        ${this.escape(
+                            p.description || ''
+                        )}
+                    </p>
+
+
+                    <div class="promo-actions">
+
+                        <button
+                            class="small-btn"
+                            onclick="admin.editPromo('${p.id}')">
+                            EDIT
+                        </button>
+
+                        <button
+                            class="small-btn"
+                            onclick="admin.togglePromo('${p.id}',${!p.is_active})">
+                            ${p.is_active
+                                ? 'NONAKTIF'
+                                : 'AKTIFKAN'}
+                        </button>
+
+                        <button
+                            class="small-btn"
+                            style="color:#ff6666;"
+                            onclick="admin.deletePromo('${p.id}')">
+                            HAPUS
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `).join('');
+
+    },
+
+
+    openPromoModal:function(id=null){
+
+        document
+        .getElementById(
+            'promoModal'
+        )
+        .classList.add('active');
+
+
+        if(!id){
+
+            document
+            .getElementById('promoModalTitle')
+            .textContent='Tambah Promo';
+
+            document
+            .getElementById('promoId')
+            .value='';
+
+            document
+            .getElementById('promoTitle')
+            .value='';
+
+            document
+            .getElementById('promoDescription')
+            .value='';
+
+            document
+            .getElementById('promoImage')
+            .value='';
+
+            document
+            .getElementById('promoButtonText')
+            .value='LIHAT PROMO';
+
+            document
+            .getElementById('promoButtonUrl')
+            .value='';
+
+            document
+            .getElementById('promoActive')
+            .value='true';
+
+            return;
+        }
+
+
+        this.editPromo(id);
+
+    },
+
+
+    editPromo:function(id){
 
         const p =
             this.promos.find(
-                x=>x.id===id
+                x=>String(x.id)===String(id)
             );
+
 
         if(!p) return;
 
-        document.getElementById(
-            "promoModalTitle"
-        ).textContent=
-            "Edit Promo";
 
-        document.getElementById(
-            "promoId"
-        ).value=p.id;
-
-        document.getElementById(
-            "promoTitle"
-        ).value=p.title||"";
-
-        document.getElementById(
-            "promoDescription"
-        ).value=p.description||"";
-
-        document.getElementById(
-            "promoImage"
-        ).value=p.image_url||"";
-
-        document.getElementById(
-            "promoButton"
-        ).value=
-            p.button_text||"BELI SEKARANG";
-
-        document.getElementById(
-            "promoUrl"
-        ).value=p.button_url||"";
-
-        document.getElementById(
-            "promoActive"
-        ).checked=
-            !!p.is_active;
-
-        this.previewPromo();
-
-        document.getElementById(
-            "promoModal"
-        ).classList.add("show");
-
-    },
+        document
+        .getElementById(
+            'promoModal'
+        )
+        .classList.add('active');
 
 
-    previewPromo(){
+        document
+        .getElementById('promoModalTitle')
+        .textContent='Edit Promo';
 
-        const url =
-            document.getElementById(
-                "promoImage"
-            ).value.trim();
 
-        const img =
-            document.getElementById(
-                "promoPreview"
-            );
+        document
+        .getElementById('promoId')
+        .value=p.id;
 
-        if(!url){
 
-            img.classList.add(
-                "hidden"
-            );
+        document
+        .getElementById('promoTitle')
+        .value=p.title || '';
 
-            return;
 
-        }
+        document
+        .getElementById('promoDescription')
+        .value=p.description || '';
 
-        img.src=url;
 
-        img.classList.remove(
-            "hidden"
-        );
+        document
+        .getElementById('promoImage')
+        .value=p.image_url || '';
+
+
+        document
+        .getElementById('promoButtonText')
+        .value=p.button_text || 'LIHAT PROMO';
+
+
+        document
+        .getElementById('promoButtonUrl')
+        .value=p.button_url || '';
+
+
+        document
+        .getElementById('promoActive')
+        .value=
+            p.is_active
+            ? 'true'
+            : 'false';
 
     },
 
 
-    async savePromo(){
+    closePromoModal:function(){
+
+        document
+        .getElementById(
+            'promoModal'
+        )
+        .classList.remove('active');
+
+    },
+
+
+    savePromo:async function(){
 
         const id =
-            document.getElementById(
-                "promoId"
-            ).value;
+            document
+            .getElementById('promoId')
+            .value;
+
 
         const title =
-            document.getElementById(
-                "promoTitle"
-            ).value.trim();
+            document
+            .getElementById('promoTitle')
+            .value
+            .trim();
+
 
         const description =
-            document.getElementById(
-                "promoDescription"
-            ).value.trim();
+            document
+            .getElementById('promoDescription')
+            .value
+            .trim();
+
 
         const image_url =
-            document.getElementById(
-                "promoImage"
-            ).value.trim();
+            document
+            .getElementById('promoImage')
+            .value
+            .trim();
+
 
         const button_text =
-            document.getElementById(
-                "promoButton"
-            ).value.trim();
+            document
+            .getElementById('promoButtonText')
+            .value
+            .trim();
+
 
         const button_url =
-            document.getElementById(
-                "promoUrl"
-            ).value.trim();
+            document
+            .getElementById('promoButtonUrl')
+            .value
+            .trim();
+
 
         const is_active =
-            document.getElementById(
-                "promoActive"
-            ).checked;
+            document
+            .getElementById('promoActive')
+            .value === 'true';
+
 
         if(!title){
 
-            toast(
-                "Judul promo wajib diisi",
+            this.showToast(
+                'Judul promo wajib diisi',
                 true
             );
 
             return;
-
         }
+
 
         const payload={
             title,
             description,
-            image_url:image_url||null,
-            button_text:button_text||null,
-            button_url:button_url||null,
-            is_active,
-            published_at:is_active
-                ? new Date().toISOString()
-                : null
+            image_url: image_url || null,
+            button_text: button_text || 'LIHAT PROMO',
+            button_url: button_url || null,
+            is_active
         };
 
+
         let result;
+
 
         if(id){
 
             result =
                 await supabase
-                .from("promos")
+                .from('promos')
                 .update(payload)
-                .eq("id",id);
+                .eq('id',id);
 
         }else{
 
             result =
                 await supabase
-                .from("promos")
-                .insert(payload);
+                .from('promos')
+                .insert([payload]);
 
         }
+
 
         if(result.error){
 
             console.error(result.error);
 
-            toast(
-                "Gagal menyimpan promo: "+
+            this.showToast(
                 result.error.message,
                 true
             );
 
             return;
-
         }
 
-        this.closeModal(
-            "promoModal"
+
+        this.showToast(
+            id
+            ? 'Promo berhasil diperbarui'
+            : 'Promo berhasil ditambahkan'
         );
 
-        toast(
-            "Promo berhasil disimpan"
-        );
 
-        this.loadPromos();
+        this.closePromoModal();
+
+        await this.loadPromos();
+
+        await this.loadStats();
 
     },
 
 
-    async deletePromo(id){
-
-        if(
-            !confirm(
-                "Hapus promo ini?"
-            )
-        ) return;
+    togglePromo:async function(id,status){
 
         const {error} =
             await supabase
-            .from("promos")
-            .delete()
-            .eq("id",id);
+            .from('promos')
+            .update({
+                is_active:status
+            })
+            .eq('id',id);
+
 
         if(error){
 
-            toast(
-                "Gagal menghapus promo",
+            this.showToast(
+                error.message,
                 true
             );
 
             return;
-
         }
 
-        toast(
-            "Promo berhasil dihapus"
+
+        this.showToast(
+            status
+            ? 'Promo diaktifkan'
+            : 'Promo dinonaktifkan'
         );
 
-        this.loadPromos();
+
+        await this.loadPromos();
+
+        await this.loadStats();
 
     },
 
 
-    async loadHistory(){
+    deletePromo:async function(id){
 
-        const tbody =
-            document.getElementById(
-                "historyTable"
+        if(!confirm(
+            'Hapus promo ini?'
+        )) return;
+
+
+        const {error} =
+            await supabase
+            .from('promos')
+            .delete()
+            .eq('id',id);
+
+
+        if(error){
+
+            this.showToast(
+                error.message,
+                true
             );
 
-        tbody.innerHTML=
-            `<tr>
-            <td colspan="4">
-            Memuat...
-            </td>
-            </tr>`;
-
-        try{
-
-            const {data,error} =
-                await supabase
-                .from("spins")
-                .select(`
-                    *,
-                    customers(phone),
-                    spin_rewards(name),
-                    card_codes(code)
-                `)
-                .order(
-                    "created_at",
-                    {ascending:false}
-                )
-                .limit(200);
-
-            if(error) throw error;
-
-            if(!data?.length){
-
-                tbody.innerHTML=
-                    `<tr>
-                    <td colspan="4">
-                    Belum ada riwayat spin.
-                    </td>
-                    </tr>`;
-
-                return;
-
-            }
-
-            tbody.innerHTML =
-                data.map(s=>{
-
-                    const date =
-                        s.created_at
-                        ? new Date(
-                            s.created_at
-                          ).toLocaleString(
-                            "id-ID"
-                          )
-                        :"—";
-
-                    return `
-                    <tr>
-
-                        <td>${date}</td>
-
-                        <td>
-                            ${escapeHtml(
-                                s.customers?.phone||"—"
-                            )}
-                        </td>
-
-                        <td>
-                            <span class="badge gold">
-                                ${escapeHtml(
-                                    s.spin_rewards?.name||"—"
-                                )}
-                            </span>
-                        </td>
-
-                        <td>
-                            ${escapeHtml(
-                                s.card_codes?.code||"—"
-                            )}
-                        </td>
-
-                    </tr>`;
-
-                }).join("");
-
-        }catch(e){
-
-            console.error(e);
-
-            tbody.innerHTML=
-                `<tr>
-                <td colspan="4">
-                Gagal memuat riwayat.
-                </td>
-                </tr>`;
-
+            return;
         }
+
+
+        this.showToast(
+            'Promo berhasil dihapus'
+        );
+
+
+        await this.loadPromos();
+
+        await this.loadStats();
 
     },
 
 
-    async loadCodes(){
+    /* ================= TOAST ================= */
 
-        const tbody =
-            document.getElementById(
-                "codesTable"
-            );
+    showToast:function(message,isError=false){
 
-        tbody.innerHTML=
-            `<tr>
-            <td colspan="4">
-            Memuat...
-            </td>
-            </tr>`;
+        const toast =
+            document
+            .getElementById('toast');
 
-        try{
 
-            const {data,error} =
-                await supabase
-                .from("card_codes")
-                .select(`
-                    *,
-                    customers(phone)
-                `)
-                .order(
-                    "created_at",
-                    {ascending:false}
-                )
-                .limit(300);
+        toast.textContent=message;
 
-            if(error) throw error;
+        toast.classList.toggle(
+            'error',
+            isError
+        );
 
-            if(!data?.length){
+        toast.classList.add('show');
 
-                tbody.innerHTML=
-                    `<tr>
-                    <td colspan="4">
-                    Belum ada card code.
-                    </td>
-                    </tr>`;
 
-                return;
-
-            }
-
-            tbody.innerHTML =
-                data.map(c=>{
-
-                    const used =
-                        c.is_used;
-
-                    const usedAt =
-                        c.used_at
-                        ? new Date(
-                            c.used_at
-                          ).toLocaleString(
-                            "id-ID"
-                          )
-                        :"—";
-
-                    return `
-                    <tr>
-
-                        <td>
-                            <strong>
-                                ${escapeHtml(
-                                    c.code||""
-                                )}
-                            </strong>
-                        </td>
-
-                        <td>
-                            ${
-                                used
-                                ?
-                                `<span class="badge red">
-                                    USED
-                                </span>`
-                                :
-                                `<span class="badge active">
-                                    AVAILABLE
-                                </span>`
-                            }
-                        </td>
-
-                        <td>
-                            ${escapeHtml(
-                                c.customers?.phone||"—"
-                            )}
-                        </td>
-
-                        <td>
-                            ${usedAt}
-                        </td>
-
-                    </tr>`;
-
-                }).join("");
-
-        }catch(e){
-
-            console.error(e);
-
-            tbody.innerHTML=
-                `<tr>
-                <td colspan="4">
-                Gagal memuat card codes.
-                </td>
-                </tr>`;
-
-        }
+        setTimeout(()=>{
+            toast.classList.remove('show');
+        },2500);
 
     },
 
 
-    closeModal(id){
+    /* ================= SECURITY ================= */
 
-        document.getElementById(
-            id
-        ).classList.remove("show");
+    escape:function(value){
+
+        return String(value ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+
+    },
+
+
+    escapeAttr:function(value){
+
+        return this.escape(value);
 
     }
 
@@ -2773,74 +2385,31 @@ const admin = {
 
 
 /* =========================================================
-   HELPERS
-========================================================= */
-
-function escapeHtml(value){
-
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-function escapeAttr(value){
-
-    return escapeHtml(value);
-
-}
-
-
-function toast(message,isError=false){
-
-    const old =
-        document.querySelector(
-            ".toast"
-        );
-
-    if(old) old.remove();
-
-    const el =
-        document.createElement(
-            "div"
-        );
-
-    el.className =
-        "toast"+
-        (isError?" error":"");
-
-    el.textContent=message;
-
-    document.body.appendChild(el);
-
-    setTimeout(()=>{
-        el.remove();
-    },3000);
-
-}
-
-
-/* =========================================================
    START
 ========================================================= */
 
 document.addEventListener(
-    "DOMContentLoaded",
+    'DOMContentLoaded',
     ()=>{
         admin.init();
     }
 );
 
-document.getElementById(
-    "adminPassword"
-).addEventListener(
-    "keydown",
-    e=>{
-        if(e.key==="Enter")
-            admin.login();
+
+/* =========================================================
+   CLOSE MODAL OUTSIDE
+========================================================= */
+
+document
+.getElementById('promoModal')
+.addEventListener(
+    'click',
+    function(e){
+
+        if(e.target===this){
+            admin.closePromoModal();
+        }
+
     }
 );
 
