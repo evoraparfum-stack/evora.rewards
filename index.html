@@ -2126,6 +2126,14 @@ const supabase =
         SUPABASE_KEY
     );
 
+// Prevent login/dashboard from hanging forever if Supabase is unreachable.
+function withTimeout(promise, ms=8000){
+    return Promise.race([
+        promise,
+        new Promise((_, reject)=>setTimeout(()=>reject(new Error('Koneksi server terlalu lama. Coba refresh halaman.')), ms))
+    ]);
+}
+
 
 /* =====================================================
    APP
@@ -2246,9 +2254,11 @@ const app = {
 
 
         if(view==='dashboard'){
-
-            await this.loadDashboard();
-
+            this.loadDashboard().catch(err=>{
+                console.error('DASHBOARD ERROR:',err);
+                const el=document.getElementById('login-error');
+                if(el && !this.customer){ el.textContent=err?.message||'Gagal memuat data.'; el.style.display='block'; }
+            });
         }
 
 
@@ -2315,7 +2325,7 @@ const app = {
 
             // Jalur utama: RPC login.
             try{
-                const {data,error:rpcError}=await supabase.rpc('evora_login',{p_phone:phone});
+                const {data,error:rpcError}=await withTimeout(supabase.rpc('evora_login',{p_phone:phone}),8000);
                 if(!rpcError && data){
                     // Support RPC yang mengembalikan object maupun array.
                     if(Array.isArray(data)) customer=data[0]||null;
@@ -2336,11 +2346,11 @@ const app = {
 
             // Fallback: query customer langsung. Ini menangani kondisi RPC lama/tidak tersedia.
             if(!customer || !customer.phone){
-                const {data:directData,error:directError}=await supabase
+                const {data:directData,error:directError}=await withTimeout(supabase
                     .from('customers')
                     .select('*')
                     .eq('phone',phone)
-                    .maybeSingle();
+                    .maybeSingle(),8000);
 
                 if(directError) throw new Error(directError.message||rpcMessage||'Gagal menghubungi server.');
                 if(!directData){
@@ -2357,7 +2367,7 @@ const app = {
             localStorage.setItem('evora_phone',phone);
             localStorage.removeItem('evora_test_mode');
 
-            await this.navigate('dashboard');
+            this.navigate('dashboard').catch(err=>console.error('NAV ERROR:',err));
 
         }catch(e){
             console.error('LOGIN ERROR:',e);
