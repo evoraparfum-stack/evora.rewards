@@ -1187,7 +1187,7 @@ button{
 
     backdrop-filter:blur(20px);
 
-    border:1px solid #292929;
+    border:1px solid #eadfcf;
 
     border-radius:25px;
 
@@ -1195,7 +1195,7 @@ button{
 
     display:none;
 
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(5,1fr);
 
     box-shadow:0 15px 45px rgba(73,61,43,.14);
 }
@@ -1368,6 +1368,41 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
 .promo-admin textarea{min-height:82px;resize:vertical}
 .promo-admin input:focus,.promo-admin textarea:focus{border-color:#c9a85f;box-shadow:0 0 0 4px rgba(201,168,95,.10)}
 .promo-admin-status{font-size:11px;margin-top:10px;line-height:1.5}
+.promo-admin-page{
+    max-width:760px;
+    margin:0 auto;
+}
+.promo-upload-box{
+    border:1px dashed #d8c8ad;
+    border-radius:16px;
+    padding:16px;
+    background:#fffdf8;
+}
+.promo-upload-box input[type=file]{
+    width:100%;
+    box-sizing:border-box;
+    padding:10px;
+    border:1px solid #d8c8ad;
+    border-radius:11px;
+    background:#fff;
+    color:var(--ink);
+}
+.promo-upload-preview{
+    display:none;
+    margin-top:12px;
+    border-radius:14px;
+    overflow:hidden;
+    border:1px solid #e8dcc5;
+    background:#fff;
+}
+.promo-upload-preview img{
+    display:block;
+    width:100%;
+    max-height:300px;
+    object-fit:cover;
+}
+.admin-nav.hidden{display:none!important}
+
 .loyalty-code-box{margin:16px 0;padding:15px;border-radius:16px;background:#fff8e8;border:1px dashed #c9a85f;text-align:center}
 .loyalty-code-label{font-size:10px;letter-spacing:1.5px;color:#8c671c;font-weight:800}
 .loyalty-code{font-size:22px;font-weight:800;letter-spacing:2px;color:#9b721d;margin:7px 0;word-break:break-all}
@@ -1538,25 +1573,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
             <button class="btn admin-danger" onclick="app.adminExit()">KELUAR TEST LAB</button>
         </div>
     </div>
-
-    <div id="promo-admin-controls" class="promo-admin hidden">
-        <h4>Kelola Promo</h4>
-        <div class="promo-admin-note">Buat promo yang akan tampil di halaman Promo customer. Gunakan URL gambar publik (contoh dari CDN/Storage).</div>
-        <div class="promo-admin-grid">
-            <input id="promo-admin-title" placeholder="Judul promo, contoh: Promo Merdeka">
-            <input id="promo-admin-image" placeholder="URL gambar promo">
-            <textarea id="promo-admin-description" class="full" placeholder="Teks/deskripsi promo"></textarea>
-            <input id="promo-admin-button-text" placeholder="Teks tombol, contoh: BELI SEKARANG">
-            <input id="promo-admin-button-url" placeholder="URL tujuan tombol (opsional)">
-        </div>
-        <div class="admin-grid" style="margin-top:10px">
-            <button class="btn btn-primary" onclick="app.adminSavePromo()">SIMPAN & TAMPILKAN</button>
-            <button class="btn btn-outline" onclick="app.adminClearPromoForm()">BERSIHKAN</button>
-        </div>
-        <div id="promo-admin-status" class="promo-admin-status"></div>
-    </div>
-
-    <div class="card progress-card">
+<div class="card progress-card">
 
         <div class="stat-label">
             LOYALTY PROGRESS
@@ -1933,6 +1950,116 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
 
 </section>
 
+
+<!-- ==================================================
+     ADMIN PROMO PANEL
+================================================== -->
+
+<section
+    id="view-admin-promos"
+    class="view"
+>
+
+    <div class="promo-admin-page">
+
+        <h2 class="page-title">
+            KELOLA PROMO
+        </h2>
+
+        <p class="page-subtitle">
+            Buat promo dari panel admin. Promo aktif akan tampil di halaman Promo customer.
+        </p>
+
+        <div class="card promo-admin">
+
+            <h4>Tambah Promo Baru</h4>
+
+            <div class="promo-admin-note">
+                Upload gambar promo langsung dari komputer. Gambar akan dikompres otomatis agar lebih ringan.
+            </div>
+
+            <div class="promo-admin-grid">
+
+                <input
+                    id="promo-admin-title"
+                    class="full"
+                    placeholder="Judul promo, contoh: Promo Merdeka"
+                >
+
+                <div class="promo-upload-box full">
+
+                    <div style="font-weight:700;font-size:13px;margin-bottom:8px">
+                        GAMBAR PROMO
+                    </div>
+
+                    <input
+                        id="promo-admin-image-file"
+                        type="file"
+                        accept="image/*"
+                        onchange="app.previewPromoImage(event)"
+                    >
+
+                    <div
+                        id="promo-admin-image-preview"
+                        class="promo-upload-preview"
+                    >
+                        <img id="promo-admin-preview-img" alt="Preview promo">
+                    </div>
+
+                </div>
+
+                <textarea
+                    id="promo-admin-description"
+                    class="full"
+                    placeholder="Teks/deskripsi promo"
+                ></textarea>
+
+                <input
+                    id="promo-admin-button-text"
+                    placeholder="Teks tombol, contoh: BELI SEKARANG"
+                >
+
+                <input
+                    id="promo-admin-button-url"
+                    placeholder="Link tujuan tombol (opsional)"
+                >
+
+            </div>
+
+            <div class="admin-grid" style="margin-top:12px">
+
+                <button
+                    class="btn btn-primary"
+                    onclick="app.adminSavePromo()"
+                >
+                    SIMPAN & TAMPILKAN
+                </button>
+
+                <button
+                    class="btn btn-outline"
+                    onclick="app.adminClearPromoForm()"
+                >
+                    BERSIHKAN
+                </button>
+
+            </div>
+
+            <div
+                id="promo-admin-status"
+                class="promo-admin-status"
+            ></div>
+
+        </div>
+
+        <div
+            id="admin-promo-list"
+            style="margin-top:18px"
+        ></div>
+
+    </div>
+
+</section>
+
 </div>
 
 
@@ -1982,6 +2109,15 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
     >
         <span class="nav-icon">◆</span>
         PROMO
+    </button>
+
+    <button
+        id="nav-admin-promos"
+        class="nav admin-nav hidden"
+        onclick="app.navigate('admin-promos')"
+    >
+        <span class="nav-icon">✦</span>
+        KELOLA PROMO
     </button>
 
 </nav>
@@ -2260,6 +2396,8 @@ const app = {
 
     init:function(){
 
+        this._promoImageData='';
+
         this.testMode=localStorage.getItem('evora_test_mode')==='1';
 
         if(this.testMode){
@@ -2288,6 +2426,10 @@ const app = {
     navigate:async function(view){
 
         if(this.isSpinning){
+            return;
+        }
+
+        if(view==='admin-promos' && !this.testMode){
             return;
         }
 
@@ -2376,6 +2518,12 @@ const app = {
         if(view==='promo'){
 
             await this.loadPromos();
+
+        }
+
+        if(view==='admin-promos'){
+
+            this.loadAdminPromoList();
 
         }
 
@@ -2527,13 +2675,13 @@ const app = {
             document.getElementById('dash-progress-message').textContent=(this.progress>=10?'FREE BOTTLE UNLOCKED!':(10-this.progress)+' pembelian lagi untuk mendapatkan FREE EVORA BOTTLE.');
             document.getElementById('test-badge')?.classList.remove('hidden');
             document.getElementById('admin-controls')?.classList.remove('hidden');
-            document.getElementById('promo-admin-controls')?.classList.remove('hidden');
+            document.getElementById('nav-admin-promos')?.classList.remove('hidden');
             return;
         }
 
         document.getElementById('test-badge')?.classList.add('hidden');
         document.getElementById('admin-controls')?.classList.add('hidden');
-        document.getElementById('promo-admin-controls')?.classList.add('hidden');
+        document.getElementById('nav-admin-promos')?.classList.add('hidden');
 
         if(!this.userPhone){
 
@@ -3880,37 +4028,199 @@ const app = {
     /* ===============================================
        PROMO ADMIN
     =============================================== */
+
+    previewPromoImage:function(event){
+        const file=event?.target?.files?.[0];
+        const preview=document.getElementById('promo-admin-image-preview');
+        const img=document.getElementById('promo-admin-preview-img');
+
+        if(!file){
+            if(preview) preview.style.display='none';
+            if(img) img.removeAttribute('src');
+            this._promoImageData='';
+            return;
+        }
+
+        if(!file.type.startsWith('image/')){
+            alert('File harus berupa gambar.');
+            event.target.value='';
+            return;
+        }
+
+        const reader=new FileReader();
+
+        reader.onload=()=>{
+            this._promoImageData=reader.result;
+            if(img) img.src=reader.result;
+            if(preview) preview.style.display='block';
+        };
+
+        reader.readAsDataURL(file);
+    },
+
+    loadAdminPromoList:function(){
+        const box=document.getElementById('admin-promo-list');
+        if(!box) return;
+
+        let list=[];
+        try{
+            list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
+        }catch(e){
+            list=[];
+        }
+
+        if(!list.length){
+            box.innerHTML=`
+                <div class="card empty">
+                    <h3>Belum Ada Promo Test</h3>
+                    <p>Promo yang kamu buat dari panel ini akan muncul di sini.</p>
+                </div>
+            `;
+            return;
+        }
+
+        box.innerHTML=list.map((promo,index)=>`
+            <div class="card promo-card" style="margin-bottom:12px">
+                ${
+                    promo.image_url
+                    ? `<img class="promo-image" src="${this.escape(promo.image_url)}" loading="lazy">`
+                    : ''
+                }
+                <div class="promo-content">
+                    <div class="promo-title">${this.escape(promo.title||'Promo EVORA')}</div>
+                    <div class="promo-description">${this.escape(promo.description||'')}</div>
+                    <div style="font-size:10px;color:#9a8c78;margin-top:8px">
+                        ${promo.remote_saved ? 'Tersimpan di database' : 'Test Lab lokal'}
+                    </div>
+                    <button
+                        class="btn btn-outline"
+                        style="margin-top:10px"
+                        onclick="app.adminDeletePromo(${index})"
+                    >
+                        HAPUS
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    },
+
+    adminDeletePromo:function(index){
+        const list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
+        if(!list[index]) return;
+
+        if(!confirm('Hapus promo test ini?')) return;
+
+        list.splice(index,1);
+        localStorage.setItem('evora_admin_promos',JSON.stringify(list));
+        this.loadAdminPromoList();
+        this.loadPromos();
+    },
+
     adminClearPromoForm:function(){
-        ['promo-admin-title','promo-admin-image','promo-admin-description','promo-admin-button-text','promo-admin-button-url'].forEach(id=>{
-            const el=document.getElementById(id); if(el) el.value='';
+        [
+            'promo-admin-title',
+            'promo-admin-description',
+            'promo-admin-button-text',
+            'promo-admin-button-url'
+        ].forEach(id=>{
+            const el=document.getElementById(id);
+            if(el) el.value='';
         });
+
+        const file=document.getElementById('promo-admin-image-file');
+        if(file) file.value='';
+
+        const preview=document.getElementById('promo-admin-image-preview');
+        const img=document.getElementById('promo-admin-preview-img');
+
+        if(preview) preview.style.display='none';
+        if(img) img.removeAttribute('src');
+
+        this._promoImageData='';
+
         const st=document.getElementById('promo-admin-status');
         if(st) st.textContent='';
     },
 
     adminSavePromo:async function(){
+
         if(!this.testMode) return;
+
         const title=(document.getElementById('promo-admin-title')?.value||'').trim();
-        const image_url=(document.getElementById('promo-admin-image')?.value||'').trim();
         const description=(document.getElementById('promo-admin-description')?.value||'').trim();
         const button_text=(document.getElementById('promo-admin-button-text')?.value||'').trim() || 'LIHAT PROMO';
         const button_url=(document.getElementById('promo-admin-button-url')?.value||'').trim();
+        const image_url=this._promoImageData||'';
         const status=document.getElementById('promo-admin-status');
-        if(!title || !description){ if(status) status.textContent='Judul dan deskripsi wajib diisi.'; return; }
-        const promo={id:'admin-'+Date.now(),title,description,image_url,button_text,button_url,is_active:true,created_at:new Date().toISOString()};
-        const remotePromo={title,description,image_url,button_text,button_url,is_active:true};
+
+        if(!title || !description){
+            if(status) status.innerHTML='<span style="color:#b45b3c">Judul dan deskripsi wajib diisi.</span>';
+            return;
+        }
+
+        if(!image_url){
+            if(status) status.innerHTML='<span style="color:#b45b3c">Silakan upload gambar promo.</span>';
+            return;
+        }
+
+        const promo={
+            id:'admin-'+Date.now(),
+            title,
+            description,
+            image_url,
+            button_text,
+            button_url,
+            is_active:true,
+            created_at:new Date().toISOString(),
+            remote_saved:false
+        };
+
+        const remotePromo={
+            title,
+            description,
+            image_url,
+            button_text,
+            button_url,
+            is_active:true
+        };
+
         let savedRemote=false;
+
         try{
-            const {error}=await supabase.from('promos').insert([remotePromo]);
+
+            const {error}=await supabase
+                .from('promos')
+                .insert([remotePromo]);
+
             if(error) throw error;
+
             savedRemote=true;
+            promo.remote_saved=true;
+
         }catch(e){
+
+            const list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
+            list.unshift(promo);
+            localStorage.setItem('evora_admin_promos',JSON.stringify(list));
+
+        }
+
+        if(savedRemote){
+            // Keep a local copy too, so the admin can immediately see it.
             const list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
             list.unshift(promo);
             localStorage.setItem('evora_admin_promos',JSON.stringify(list));
         }
+
         this.adminClearPromoForm();
-        if(status) status.innerHTML=savedRemote ? '<span style="color:#2f7a50">✓ Promo tersimpan di database dan bisa dilihat customer.</span>' : '<span style="color:#9b721d">✓ Promo tersimpan untuk Test Lab. Jika ingin customer di perangkat lain melihatnya, tabel promos harus mengizinkan INSERT untuk admin/server.</span>';
+
+        if(status){
+            status.innerHTML=savedRemote
+                ? '<span style="color:#2f7a50">✓ Promo tersimpan di database dan bisa dilihat customer.</span>'
+                : '<span style="color:#9b721d">✓ Promo tersimpan di Test Lab. Agar customer di perangkat lain melihatnya, izinkan INSERT pada tabel promos.</span>';
+        }
+
+        this.loadAdminPromoList();
         await this.loadPromos();
     },
 
