@@ -694,6 +694,7 @@ button{
 .wheel-line{
 
     position:absolute;
+    z-index:2;
 
     width:2px;
 
@@ -1403,10 +1404,548 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
 }
 .admin-nav.hidden{display:none!important}
 
+/* V9 layout refinements */
+.admin-promo-entry{margin-top:12px}
+.admin-promo-entry .btn{width:100%}
+.promo-admin-page{width:100%;max-width:720px;margin:0 auto}
+.promo-admin .promo-upload-box{margin-top:2px}
+.promo-upload-preview img{max-height:280px;object-fit:contain;background:#f8f4ec}
+.promo-card{border:1px solid #ece3d5;border-radius:20px;box-shadow:0 10px 28px rgba(73,61,43,.07)}
+.promo-card .promo-image{height:220px;object-fit:cover}
+.promo-card .promo-content{padding:18px}
+.promo-card .btn{min-height:44px}
+.promo-admin-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.promo-admin-message{padding:11px 12px;border-radius:12px;background:#fffaf0;border:1px solid #ead9b5;font-size:11px;line-height:1.5;margin-top:10px}
+@media(max-width:520px){
+  .app{padding-left:14px;padding-right:14px}
+  .bottom-nav{width:calc(100% - 18px);bottom:9px;border-radius:20px;padding:6px}
+  .nav{padding:9px 2px;font-size:8px}
+  .nav-icon{font-size:17px}
+  .promo-admin-grid{grid-template-columns:1fr}
+  .promo-admin-grid .full{grid-column:auto}
+  .promo-admin-actions{grid-template-columns:1fr}
+  .promo-card .promo-image{height:190px}
+}
+
 .loyalty-code-box{margin:16px 0;padding:15px;border-radius:16px;background:#fff8e8;border:1px dashed #c9a85f;text-align:center}
 .loyalty-code-label{font-size:10px;letter-spacing:1.5px;color:#8c671c;font-weight:800}
 .loyalty-code{font-size:22px;font-weight:800;letter-spacing:2px;color:#9b721d;margin:7px 0;word-break:break-all}
 .loyalty-code-note{font-size:10px;color:#8f867a}
+
+
+/* =========================================================
+   V10 — LAYOUT / RESPONSIVE POLISH
+========================================================= */
+
+body{
+    padding-bottom:128px;
+}
+
+.app{
+    max-width:520px;
+    padding:18px 16px 150px;
+}
+
+.view{
+    width:100%;
+    max-width:100%;
+    overflow:visible;
+}
+
+.view.active{
+    min-height:calc(100vh - 36px);
+}
+
+.card{
+    width:100%;
+    max-width:100%;
+    overflow:hidden;
+}
+
+.btn,
+.input,
+.admin-number,
+textarea,
+select{
+    max-width:100%;
+}
+
+.bottom-nav{
+    width:min(520px,calc(100% - 24px));
+    bottom:12px;
+    padding:7px;
+    border-radius:22px;
+    grid-template-columns:repeat(4,1fr);
+    box-shadow:0 12px 35px rgba(73,61,43,.16);
+}
+
+.nav{
+    min-width:0;
+    height:62px;
+    padding:8px 3px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    border-radius:16px;
+}
+
+.nav-icon{
+    margin-bottom:0;
+    line-height:1;
+    font-size:18px;
+}
+
+.nav.active{
+    box-shadow:inset 0 0 0 1px rgba(184,138,36,.10);
+}
+
+/* ---------- Spin page ---------- */
+
+#view-spin{
+    padding-top:4px;
+    padding-bottom:150px;
+}
+
+#view-spin .spin-header{
+    margin:4px auto 14px;
+    max-width:420px;
+}
+
+#view-spin .spin-header h2{
+    font-size:clamp(30px,8vw,40px);
+    line-height:1.05;
+    margin-bottom:6px;
+}
+
+#view-spin .credits{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 12px;
+    border:1px solid #eadfcf;
+    background:#fffdf8;
+    border-radius:999px;
+    box-shadow:0 5px 16px rgba(91,73,48,.06);
+}
+
+/* The wheel gets its own stable square box. */
+#view-spin .wheel-wrap{
+    width:min(78vw,318px);
+    height:min(78vw,318px);
+    aspect-ratio:1/1;
+    margin:18px auto 20px;
+}
+
+#view-spin .wheel{
+    width:100%;
+    height:100%;
+    border-width:4px;
+    box-shadow:
+        0 0 0 2px #fff,
+        0 12px 30px rgba(184,138,36,.14);
+}
+
+/* Clean, consistent prize positioning. */
+#view-spin .wheel-label,
+#view-spin .wheel-label.wl1,
+#view-spin .wheel-label.wl2,
+#view-spin .wheel-label.wl3,
+#view-spin .wheel-label.wl4,
+#view-spin .wheel-label.wl5,
+#view-spin .wheel-label.wl6,
+#view-spin .wheel-label.wl7{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:82px;
+    height:46px;
+    margin:-23px 0 0 -41px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    transform:rotate(var(--a)) translateY(-96px) !important;
+    transform-origin:center;
+    color:var(--ink);
+    font-size:8px;
+    line-height:1.15;
+    letter-spacing:.15px;
+    font-weight:800;
+    pointer-events:none;
+}
+
+#view-spin .wheel-label span{
+    width:100%;
+    display:block;
+    transform:rotate(calc(var(--a) * -1)) !important;
+    text-shadow:none;
+}
+
+#view-spin .wheel-label.wl7{
+    color:#fff;
+}
+
+#view-spin .wheel-center{
+    width:70px;
+    height:70px;
+    border-width:2px;
+    font-size:14px;
+    background:#fffdf9;
+    box-shadow:0 5px 18px rgba(91,73,48,.14);
+}
+
+#view-spin .wheel-pointer{
+    top:-7px;
+    border-left-width:13px;
+    border-right-width:13px;
+    border-top-width:25px;
+    filter:drop-shadow(0 3px 5px rgba(91,73,48,.22));
+}
+
+#spin-action{
+    width:100%;
+    max-width:360px;
+    margin:0 auto;
+}
+
+#spin-action .btn{
+    min-height:54px;
+    border-radius:16px;
+}
+
+#spin-action .card{
+    margin-top:8px;
+    text-align:center;
+}
+
+/* ---------- Promo / rewards cards ---------- */
+
+#view-promo,
+#view-rewards,
+#view-admin-promos{
+    padding-bottom:35px;
+}
+
+#promo-list,
+#rewards-list,
+#admin-promo-list{
+    width:100%;
+}
+
+.promo-card,
+.reward-card{
+    width:100%;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.promo-card .promo-image,
+.promo-image{
+    width:100%;
+    max-height:250px;
+    object-fit:cover;
+    display:block;
+}
+
+.promo-content{
+    padding:18px 20px 20px;
+}
+
+.promo-title{
+    line-height:1.2;
+    word-break:break-word;
+}
+
+.promo-description{
+    line-height:1.55;
+    word-break:break-word;
+}
+
+/* ---------- Admin panel ---------- */
+
+.promo-admin-page{
+    width:100%;
+    max-width:520px;
+    margin:0 auto;
+}
+
+.promo-admin-page .page-title{
+    font-size:clamp(28px,7vw,36px);
+}
+
+.promo-admin-grid{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.promo-admin-grid .full{
+    grid-column:1/-1;
+}
+
+.promo-upload-box{
+    width:100%;
+}
+
+.promo-upload-box input[type=file]{
+    width:100%;
+    min-height:46px;
+}
+
+.promo-upload-preview{
+    width:100%;
+}
+
+.promo-upload-preview img{
+    width:100%;
+    height:auto;
+    max-height:260px;
+    object-fit:cover;
+}
+
+/* ---------- General mobile corrections ---------- */
+
+@media(max-width:600px){
+    .logo-area{
+        padding-top:22px;
+        margin-bottom:30px;
+    }
+
+    .logo{
+        font-size:clamp(42px,14vw,58px);
+    }
+
+    .tagline{
+        font-size:9px;
+        letter-spacing:3px;
+    }
+
+    .page-title{
+        font-size:clamp(28px,8vw,36px);
+    }
+
+    .card{
+        padding:18px;
+        border-radius:18px;
+    }
+
+    .promo-admin-grid{
+        grid-template-columns:1fr;
+    }
+
+    .promo-admin-grid .full{
+        grid-column:auto;
+    }
+
+    #view-spin .wheel-wrap{
+        width:min(76vw,300px);
+        height:min(76vw,300px);
+        margin-top:14px;
+    }
+
+    #view-spin .wheel-label,
+    #view-spin .wheel-label.wl1,
+    #view-spin .wheel-label.wl2,
+    #view-spin .wheel-label.wl3,
+    #view-spin .wheel-label.wl4,
+    #view-spin .wheel-label.wl5,
+    #view-spin .wheel-label.wl6,
+    #view-spin .wheel-label.wl7{
+        width:74px;
+        height:42px;
+        margin:-21px 0 0 -37px;
+        font-size:7.5px;
+        transform:rotate(var(--a)) translateY(-88px) !important;
+    }
+
+    #view-spin .wheel-center{
+        width:64px;
+        height:64px;
+        font-size:13px;
+    }
+}
+
+@media(max-width:380px){
+    #view-spin .wheel-wrap{
+        width:270px;
+        height:270px;
+    }
+
+    #view-spin .wheel-label,
+    #view-spin .wheel-label.wl1,
+    #view-spin .wheel-label.wl2,
+    #view-spin .wheel-label.wl3,
+    #view-spin .wheel-label.wl4,
+    #view-spin .wheel-label.wl5,
+    #view-spin .wheel-label.wl6,
+    #view-spin .wheel-label.wl7{
+        width:68px;
+        height:38px;
+        margin:-19px 0 0 -34px;
+        font-size:7px;
+        transform:rotate(var(--a)) translateY(-79px) !important;
+    }
+
+    #view-spin .wheel-center{
+        width:58px;
+        height:58px;
+        font-size:12px;
+    }
+
+    .bottom-nav{
+        width:calc(100% - 16px);
+        bottom:8px;
+        padding:6px;
+    }
+
+    .nav{
+        height:58px;
+    }
+}
+
+/* Never let fixed navigation visually cover the active page's controls. */
+#view-spin{
+    scroll-margin-bottom:160px;
+}
+
+
+/* ============================================================
+   V11 — PRECISION SPIN WHEEL LABELS
+   7 segments × 51.428571°
+   Pointer is fixed at 12 o'clock.
+============================================================ */
+
+#view-spin .wheel{
+    position:relative;
+    overflow:hidden;
+}
+
+/* Every prize label is positioned from the wheel center.
+   The angle is the CENTER of its corresponding segment:
+   25.714, 77.143, 128.571, 180, 231.429, 282.857, 334.286 */
+#view-spin .wheel-label{
+    position:absolute !important;
+    left:50% !important;
+    top:50% !important;
+
+    width:88px !important;
+    min-width:88px !important;
+    height:44px !important;
+    margin:-22px 0 0 -44px !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    text-align:center !important;
+    white-space:normal !important;
+
+    transform:
+        rotate(var(--a))
+        translateY(-103px) !important;
+
+    transform-origin:50% 50% !important;
+
+    font-size:8px !important;
+    line-height:1.12 !important;
+    letter-spacing:.05px !important;
+    font-weight:800 !important;
+
+    color:#5c4a2b !important;
+    text-shadow:none !important;
+
+    pointer-events:none !important;
+    z-index:5;
+}
+
+/* Counter-rotate only the text so it stays horizontal.
+   This makes the prize text sit naturally inside the wedge. */
+#view-spin .wheel-label span{
+    display:block !important;
+    width:100% !important;
+    transform:
+        rotate(calc(var(--a) * -1))
+        !important;
+    text-align:center !important;
+}
+
+/* The gold wedge at the last segment needs light text. */
+#view-spin .wheel-label.wl7{
+    color:#fff !important;
+}
+
+/* Slightly smaller long prizes so they don't cross a segment border. */
+#view-spin .wheel-label.wl1 span,
+#view-spin .wheel-label.wl3 span,
+#view-spin .wheel-label.wl6 span,
+#view-spin .wheel-label.wl7 span{
+    font-size:7.6px !important;
+}
+
+/* Keep the label radial position proportional when the wheel shrinks. */
+@media (max-width:390px){
+    #view-spin .wheel-label{
+        width:76px !important;
+        min-width:76px !important;
+        height:40px !important;
+        margin:-20px 0 0 -38px !important;
+        transform:
+            rotate(var(--a))
+            translateY(-91px) !important;
+        font-size:7px !important;
+    }
+
+    #view-spin .wheel-label.wl1 span,
+    #view-spin .wheel-label.wl3 span,
+    #view-spin .wheel-label.wl6 span,
+    #view-spin .wheel-label.wl7 span{
+        font-size:6.7px !important;
+    }
+}
+
+
+/* ============================================================
+   V12 — ADMIN SETTINGS / PIN
+============================================================ */
+.admin-settings-page{
+    max-width:760px;
+    margin:0 auto;
+}
+.pin-setting-card{
+    max-width:520px;
+    margin:0 auto;
+}
+.pin-setting-card input{
+    letter-spacing:6px;
+    text-align:center;
+    font-weight:800;
+    font-size:20px;
+}
+.pin-setting-help{
+    font-size:11px;
+    line-height:1.55;
+    color:#8d7d68;
+    margin:8px 0 14px;
+}
+.pin-setting-status{
+    min-height:20px;
+    margin-top:10px;
+    font-size:12px;
+    font-weight:700;
+}
+
+
+/* V13 — PROMO CUSTOMER/ADMIN BRIDGE */
+#promo-admin-toolbar{
+    box-sizing:border-box;
+}
+#promo-admin-toolbar .btn{
+    min-height:48px;
+    border-radius:14px;
+}
 
 </style>
 
@@ -1571,6 +2110,13 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
             <button class="btn btn-outline" onclick="app.adminSetCredits(100)">SET 100 CREDITS</button>
             <button class="btn admin-danger" onclick="app.adminResetTest()">RESET TEST</button>
             <button class="btn admin-danger" onclick="app.adminExit()">KELUAR TEST LAB</button>
+        </div>
+        <div class="admin-promo-entry">
+            <button class="btn btn-outline" onclick="app.navigate('admin-promos')">✦ KELOLA PROMO</button>
+        </div>
+
+        <div class="admin-settings-entry" style="margin-top:10px">
+            <button class="btn btn-outline" onclick="app.navigate('admin-settings')">⚙ PENGATURAN ADMIN</button>
         </div>
     </div>
 <div class="card progress-card">
@@ -1818,55 +2364,14 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
             <div class="wheel-line"
                  style="transform:rotate(308.568deg)">
             </div>
-            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
-            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
-            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
-            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
-            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
-            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
-            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
-            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
-            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
-            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
-            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
-            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
-            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
-            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
-            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
-            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
-            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
-            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
-            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
-            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
-            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
-            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
-            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
-            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
-            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
-            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
-            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
-            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
-            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
-            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
-            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
-            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
-            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
-            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
-            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
-            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
-            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
-            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
-            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
-            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
-            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
-            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
-            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
-            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
-            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
-            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
-            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
-            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
-            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
+
+<div class="wheel-label wl1" style="--a:25.714deg"><span>FREE<br>POCKET 20ML</span></div>
+<div class="wheel-label wl2" style="--a:77.143deg"><span>DISKON<br>Rp5.000</span></div>
+<div class="wheel-label wl3" style="--a:128.571deg"><span>DISKON<br>Rp10.000</span></div>
+<div class="wheel-label wl4" style="--a:180deg"><span>DISKON<br>20%</span></div>
+<div class="wheel-label wl5" style="--a:231.429deg"><span>DISKON<br>10%</span></div>
+<div class="wheel-label wl6" style="--a:282.857deg"><span>EMAS<br>0,0001G</span></div>
+<div class="wheel-label wl7" style="--a:334.286deg"><span>PARFUM<br>30ML</span></div>
 
 
             <div class="wheel-center">
@@ -1936,6 +2441,29 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
     </p>
 
 
+
+    <div
+        id="promo-admin-toolbar"
+        class="card"
+        style="display:none;margin:0 0 16px;padding:14px;border:1px solid #e3c98f;background:#fffaf0"
+    >
+        <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;color:#8c671c;margin-bottom:5px">
+            ADMIN TEST MODE
+        </div>
+
+        <div style="font-size:12px;color:#6f6252;line-height:1.45;margin-bottom:10px">
+            Kamu sedang melihat halaman Promo sebagai admin. Tambahkan promo dari panel terpisah.
+        </div>
+
+        <button
+            class="btn btn-primary"
+            style="width:100%"
+            onclick="app.navigate('admin-promos')"
+        >
+            + TAMBAH PROMO UNTUK CUSTOMER
+        </button>
+    </div>
+
     <div id="promo-list">
 
         <div class="loading">
@@ -1967,8 +2495,10 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
         </h2>
 
         <p class="page-subtitle">
-            Buat promo dari panel admin. Promo aktif akan tampil di halaman Promo customer.
+            Tambahkan promo di sini. Setelah tersimpan di database, promo akan tampil di halaman PROMO customer.
         </p>
+
+        <button class="btn btn-outline" style="margin-bottom:12px" onclick="app.navigate('dashboard')">← KEMBALI KE TEST LAB</button>
 
         <div class="card promo-admin">
 
@@ -2049,12 +2579,103 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
                 class="promo-admin-status"
             ></div>
 
+            <div style="margin-top:10px;font-size:10px;line-height:1.5;color:#8d7d68">
+                Promo customer menggunakan data server. Jika muncul "permission denied",
+                perbaiki RLS tabel <b>promos</b> satu kali melalui SQL Editor Supabase.
+            </div>
+
         </div>
 
         <div
             id="admin-promo-list"
             style="margin-top:18px"
         ></div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==================================================
+     ADMIN SETTINGS
+================================================== -->
+
+<section id="view-admin-settings" class="view">
+
+    <div class="admin-settings-page">
+
+        <h2 class="page-title">
+            PENGATURAN ADMIN
+        </h2>
+
+        <p class="page-subtitle">
+            Kelola keamanan Test Lab dan ubah PIN admin kapan saja.
+        </p>
+
+        <div class="card pin-setting-card">
+
+            <h4>UBAH PIN ADMIN</h4>
+
+            <div class="pin-setting-help">
+                PIN digunakan untuk masuk ke Admin Test. Gunakan 4–8 angka.
+                PIN baru akan tersimpan di browser ini dan tetap digunakan
+                setelah halaman ditutup.
+            </div>
+
+            <input
+                id="admin-current-pin"
+                type="password"
+                inputmode="numeric"
+                maxlength="8"
+                placeholder="PIN saat ini"
+                autocomplete="current-password"
+            >
+
+            <input
+                id="admin-new-pin"
+                type="password"
+                inputmode="numeric"
+                maxlength="8"
+                placeholder="PIN baru"
+                autocomplete="new-password"
+                style="margin-top:10px"
+            >
+
+            <input
+                id="admin-confirm-pin"
+                type="password"
+                inputmode="numeric"
+                maxlength="8"
+                placeholder="Ulangi PIN baru"
+                autocomplete="new-password"
+                style="margin-top:10px"
+            >
+
+            <button
+                class="btn btn-primary"
+                style="width:100%;margin-top:14px"
+                onclick="app.changeAdminPin()"
+            >
+                SIMPAN PIN BARU
+            </button>
+
+            <div
+                id="admin-pin-status"
+                class="pin-setting-status"
+            ></div>
+
+        </div>
+
+        <div class="card" style="max-width:520px;margin:14px auto 0">
+            <h4>PIN DEFAULT</h4>
+            <p style="font-size:12px;line-height:1.5;color:#8d7d68">
+                Instalasi baru menggunakan PIN default
+                <strong>2255</strong>.
+                Jika kamu sudah pernah mengganti PIN sebelumnya,
+                gunakan PIN yang terakhir kamu simpan.
+            </p>
+        </div>
 
     </div>
 
@@ -2109,15 +2730,6 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
     >
         <span class="nav-icon">◆</span>
         PROMO
-    </button>
-
-    <button
-        id="nav-admin-promos"
-        class="nav admin-nav hidden"
-        onclick="app.navigate('admin-promos')"
-    >
-        <span class="nav-icon">✦</span>
-        KELOLA PROMO
     </button>
 
 </nav>
@@ -2328,6 +2940,32 @@ const supabase = {
             select(columns = '*') { state.select = columns; return builder; },
             eq(column, value) { state.filters.push([column, value]); return builder; },
             order(column, options = {}) { state.order = { column, ascending: options.ascending !== false }; return builder; },
+            async insert(rows = []) {
+                try {
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/${encodeURIComponent(state.table)}`, {
+                        method: 'POST',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'Prefer': 'return=representation'
+                        },
+                        body: JSON.stringify(rows)
+                    });
+                    const text = await res.text();
+                    let data = null;
+                    try { data = text ? JSON.parse(text) : null; } catch (_) { data = text; }
+                    if (!res.ok) return { data: null, error: { message: (data && (data.message || data.error || data.hint || data.details)) || `HTTP ${res.status}` } };
+                    return { data, error: null };
+                } catch (e) {
+                    return { data: null, error: { message: e?.message || 'Koneksi Supabase gagal.' } };
+                }
+            },
+            async delete() {
+                state.deleteMode = true;
+                return builder;
+            },
             async maybeSingle() {
                 try {
                     const params = new URLSearchParams();
@@ -2433,6 +3071,10 @@ const app = {
             return;
         }
 
+        if(view==='admin-settings' && !this.testMode){
+            return;
+        }
+
         document
             .querySelectorAll('.view')
             .forEach(el=>{
@@ -2517,6 +3159,7 @@ const app = {
 
         if(view==='promo'){
 
+            this.updatePromoAdminToolbar();
             await this.loadPromos();
 
         }
@@ -2524,6 +3167,13 @@ const app = {
         if(view==='admin-promos'){
 
             this.loadAdminPromoList();
+
+        }
+
+
+        if(view==='admin-settings'){
+
+            this.loadAdminPinSettings();
 
         }
 
@@ -2675,13 +3325,11 @@ const app = {
             document.getElementById('dash-progress-message').textContent=(this.progress>=10?'FREE BOTTLE UNLOCKED!':(10-this.progress)+' pembelian lagi untuk mendapatkan FREE EVORA BOTTLE.');
             document.getElementById('test-badge')?.classList.remove('hidden');
             document.getElementById('admin-controls')?.classList.remove('hidden');
-            document.getElementById('nav-admin-promos')?.classList.remove('hidden');
             return;
         }
 
         document.getElementById('test-badge')?.classList.add('hidden');
         document.getElementById('admin-controls')?.classList.add('hidden');
-        document.getElementById('nav-admin-promos')?.classList.add('hidden');
 
         if(!this.userPhone){
 
@@ -2710,7 +3358,16 @@ const app = {
 
             if(error){
 
-                throw error;
+                list.innerHTML=`
+                    <div class="card empty">
+                        <div class="empty-icon">!</div>
+                        <h3>Promo gagal dimuat</h3>
+                        <p style="word-break:break-word">${this.escape(error.message||'Gagal membaca promo dari Supabase.')}</p>
+                        <button class="btn btn-outline" onclick="app.loadPromos()">COBA LAGI</button>
+                    </div>
+                `;
+                console.error('PROMO LOAD ERROR:', error);
+                return;
 
             }
 
@@ -3824,10 +4481,6 @@ const app = {
                 await supabase
                 .from('promos')
                 .select('*')
-                .eq(
-                    'is_active',
-                    true
-                )
                 .order(
                     'created_at',
                     {
@@ -3843,8 +4496,11 @@ const app = {
             }
 
 
+            const remotePromos = Array.isArray(data) ? data : [];
             const localPromos = this.testMode ? JSON.parse(localStorage.getItem('evora_admin_promos')||'[]') : [];
-            const mergedPromos = [...localPromos, ...(data||[])];
+            const remoteIds = new Set(remotePromos.map(p=>String(p.id||'')));
+            const localOnly = localPromos.filter(p=>!p.remote_saved && !remoteIds.has(String(p.id||'')));
+            const mergedPromos = [...remotePromos, ...localOnly];
 
             if(
                 mergedPromos.length===0
@@ -3863,8 +4519,7 @@ const app = {
                         </h3>
 
                         <p>
-                            Promo terbaru EVORA
-                            akan muncul di halaman ini.
+                            Promo aktif dari admin akan muncul di halaman ini.
                         </p>
 
                     </div>
@@ -4029,10 +4684,69 @@ const app = {
        PROMO ADMIN
     =============================================== */
 
+    loadAdminPinSettings:function(){
+        const status=document.getElementById('admin-pin-status');
+        if(status) status.textContent='';
+    },
+
+    changeAdminPin:function(){
+
+        const current=(document.getElementById('admin-current-pin')?.value||'').trim();
+        const next=(document.getElementById('admin-new-pin')?.value||'').trim();
+        const confirmPin=(document.getElementById('admin-confirm-pin')?.value||'').trim();
+        const status=document.getElementById('admin-pin-status');
+
+        const stored=localStorage.getItem('evora_admin_pin') || '2255';
+
+        if(!/^\d{4,8}$/.test(next)){
+            if(status){
+                status.innerHTML='<span style="color:#b45b3c">PIN baru harus terdiri dari 4–8 angka.</span>';
+            }
+            return;
+        }
+
+        if(current !== stored){
+            if(status){
+                status.innerHTML='<span style="color:#b45b3c">PIN saat ini salah.</span>';
+            }
+            return;
+        }
+
+        if(next !== confirmPin){
+            if(status){
+                status.innerHTML='<span style="color:#b45b3c">Konfirmasi PIN tidak sama.</span>';
+            }
+            return;
+        }
+
+        if(next === current){
+            if(status){
+                status.innerHTML='<span style="color:#9b721d">PIN baru sama dengan PIN lama.</span>';
+            }
+            return;
+        }
+
+        localStorage.setItem('evora_admin_pin', next);
+
+        [
+            'admin-current-pin',
+            'admin-new-pin',
+            'admin-confirm-pin'
+        ].forEach(id=>{
+            const el=document.getElementById(id);
+            if(el) el.value='';
+        });
+
+        if(status){
+            status.innerHTML='<span style="color:#2f7a50">✓ PIN admin berhasil diubah.</span>';
+        }
+    },
+
     previewPromoImage:function(event){
         const file=event?.target?.files?.[0];
         const preview=document.getElementById('promo-admin-image-preview');
         const img=document.getElementById('promo-admin-preview-img');
+        const status=document.getElementById('promo-admin-status');
 
         if(!file){
             if(preview) preview.style.display='none';
@@ -4042,20 +4756,55 @@ const app = {
         }
 
         if(!file.type.startsWith('image/')){
-            alert('File harus berupa gambar.');
+            if(status) status.innerHTML='<span style="color:#b45b3c">File harus berupa gambar.</span>';
+            event.target.value='';
+            return;
+        }
+
+        if(file.size>8*1024*1024){
+            if(status) status.innerHTML='<span style="color:#b45b3c">Ukuran gambar maksimal 8 MB.</span>';
             event.target.value='';
             return;
         }
 
         const reader=new FileReader();
-
         reader.onload=()=>{
-            this._promoImageData=reader.result;
-            if(img) img.src=reader.result;
-            if(preview) preview.style.display='block';
+            const source=new Image();
+            source.onload=()=>{
+                const max=1200;
+                const scale=Math.min(1,max/Math.max(source.width,source.height));
+                const canvas=document.createElement('canvas');
+                canvas.width=Math.max(1,Math.round(source.width*scale));
+                canvas.height=Math.max(1,Math.round(source.height*scale));
+                const ctx=canvas.getContext('2d');
+                ctx.fillStyle='#fff';
+                ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.drawImage(source,0,0,canvas.width,canvas.height);
+                let data=canvas.toDataURL('image/webp',0.76);
+                if(data.length>450000) data=canvas.toDataURL('image/jpeg',0.68);
+                if(data.length>700000){
+                    if(status) status.innerHTML='<span style="color:#b45b3c">Gambar masih terlalu besar setelah kompresi. Pilih gambar yang lebih kecil.</span>';
+                    this._promoImageData='';
+                    if(preview) preview.style.display='none';
+                    return;
+                }
+                this._promoImageData=data;
+                if(img) img.src=data;
+                if(preview) preview.style.display='block';
+                if(status) status.innerHTML='<span style="color:#2f7a50">✓ Gambar siap diupload.</span>';
+            };
+            source.onerror=()=>{
+                if(status) status.innerHTML='<span style="color:#b45b3c">Gambar tidak dapat dibaca.</span>';
+            };
+            source.src=reader.result;
         };
-
         reader.readAsDataURL(file);
+    },
+
+    updatePromoAdminToolbar:function(){
+        const el=document.getElementById('promo-admin-toolbar');
+        if(!el) return;
+        el.style.display=this.testMode ? 'block' : 'none';
     },
 
     loadAdminPromoList:function(){
@@ -4090,7 +4839,7 @@ const app = {
                     <div class="promo-title">${this.escape(promo.title||'Promo EVORA')}</div>
                     <div class="promo-description">${this.escape(promo.description||'')}</div>
                     <div style="font-size:10px;color:#9a8c78;margin-top:8px">
-                        ${promo.remote_saved ? 'Tersimpan di database' : 'Test Lab lokal'}
+                        ${promo.remote_saved ? '✓ Tersimpan di server • tampil untuk customer' : 'Test Lab lokal • belum tersinkron'}
                     </div>
                     <button
                         class="btn btn-outline"
@@ -4106,17 +4855,20 @@ const app = {
 
     adminDeletePromo:function(index){
         const list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
-        if(!list[index]) return;
-
+        const promo=list[index];
+        if(!promo) return;
+        if(promo.remote_saved){
+            alert('Promo ini sudah tersimpan di server. Penghapusan dari server perlu izin DELETE pada tabel promos.');
+            return;
+        }
         if(!confirm('Hapus promo test ini?')) return;
-
         list.splice(index,1);
         localStorage.setItem('evora_admin_promos',JSON.stringify(list));
         this.loadAdminPromoList();
         this.loadPromos();
     },
 
-    adminClearPromoForm:function(){
+    adminClearPromoForm:function(keepStatus=false){
         [
             'promo-admin-title',
             'promo-admin-description',
@@ -4139,7 +4891,7 @@ const app = {
         this._promoImageData='';
 
         const st=document.getElementById('promo-admin-status');
-        if(st) st.textContent='';
+        if(st && !keepStatus) st.textContent='';
     },
 
     adminSavePromo:async function(){
@@ -4157,71 +4909,39 @@ const app = {
             if(status) status.innerHTML='<span style="color:#b45b3c">Judul dan deskripsi wajib diisi.</span>';
             return;
         }
-
         if(!image_url){
             if(status) status.innerHTML='<span style="color:#b45b3c">Silakan upload gambar promo.</span>';
             return;
         }
 
-        const promo={
-            id:'admin-'+Date.now(),
-            title,
-            description,
-            image_url,
-            button_text,
-            button_url,
-            is_active:true,
-            created_at:new Date().toISOString(),
-            remote_saved:false
-        };
-
-        const remotePromo={
-            title,
-            description,
-            image_url,
-            button_text,
-            button_url,
-            is_active:true
-        };
-
-        let savedRemote=false;
+        const remotePromo={title,description,image_url,button_text,button_url,is_active:true};
+        if(status) status.innerHTML='<span style="color:#9b721d">Menyimpan promo ke server...</span>';
 
         try{
+            const result=await withTimeout(supabase.from('promos').insert([remotePromo]),10000);
+            if(result.error) throw new Error(result.error.message||'Promo gagal disimpan.');
 
-            const {error}=await supabase
-                .from('promos')
-                .insert([remotePromo]);
+            const saved=Array.isArray(result.data) ? result.data[0] : result.data;
+            const localCopy={
+                ...(saved||remotePromo),
+                id:(saved&&saved.id)||('local-'+Date.now()),
+                remote_saved:true,
+                created_at:(saved&&saved.created_at)||new Date().toISOString()
+            };
+            const list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
+            list.unshift(localCopy);
+            localStorage.setItem('evora_admin_promos',JSON.stringify(list));
 
-            if(error) throw error;
-
-            savedRemote=true;
-            promo.remote_saved=true;
+            this.adminClearPromoForm(true);
+            if(status) status.innerHTML='<span style="color:#2f7a50">✓ Promo berhasil disimpan ke server. Customer sekarang bisa melihatnya.</span>';
+            this.loadAdminPromoList();
+            await this.loadPromos();
 
         }catch(e){
-
-            const list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
-            list.unshift(promo);
-            localStorage.setItem('evora_admin_promos',JSON.stringify(list));
-
+            console.error('PROMO SAVE ERROR:',e);
+            const msg=e?.message||'Promo gagal disimpan.';
+            if(status) status.innerHTML='<div class="promo-admin-message"><b>Promo belum tersimpan.</b><br>'+this.escape(msg)+'<br><br>Periksa pesan error di atas. Jika muncul <b>permission denied</b>, periksa policy RLS tabel <b>promos</b> di Supabase.</div>';
         }
-
-        if(savedRemote){
-            // Keep a local copy too, so the admin can immediately see it.
-            const list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
-            list.unshift(promo);
-            localStorage.setItem('evora_admin_promos',JSON.stringify(list));
-        }
-
-        this.adminClearPromoForm();
-
-        if(status){
-            status.innerHTML=savedRemote
-                ? '<span style="color:#2f7a50">✓ Promo tersimpan di database dan bisa dilihat customer.</span>'
-                : '<span style="color:#9b721d">✓ Promo tersimpan di Test Lab. Agar customer di perangkat lain melihatnya, izinkan INSERT pada tabel promos.</span>';
-        }
-
-        this.loadAdminPromoList();
-        await this.loadPromos();
     },
 
     adminGenerateFreeCode:function(){
@@ -4268,7 +4988,9 @@ const app = {
 
     adminLogin:function(){
         const pin=(document.getElementById('admin-pin')?.value||'').trim();
-        if(pin!=='2468'){
+        const savedPin=localStorage.getItem('evora_admin_pin') || '2255';
+
+        if(pin!==savedPin){
             alert('PIN Admin Test salah.');
             return;
         }
