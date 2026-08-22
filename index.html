@@ -2281,171 +2281,93 @@ const app = {
 
     login:async function(){
 
-        const input =
-            document.getElementById(
-                'login-phone'
-            );
+        const input = document.getElementById('login-phone');
+        const btn = document.getElementById('btn-login');
+        const error = document.getElementById('login-error');
 
-        const btn =
-            document.getElementById(
-                'btn-login'
-            );
-
-        const error =
-            document.getElementById(
-                'login-error'
-            );
-
-
-        let phone =
-            input.value.trim();
-
-
+        let phone = (input?.value || '').trim();
         error.style.display='none';
 
-
         if(!phone){
-
-            error.textContent =
-                'Masukkan nomor WhatsApp kamu.';
-
+            error.textContent='Masukkan nomor WhatsApp kamu.';
             error.style.display='block';
-
+            input?.focus();
             return;
-
         }
 
-
-        phone =
-            phone.replace(/\s+/g,'');
-
-
-        if(phone.startsWith('+62')){
-
-            phone =
-                '0'+phone.substring(3);
-
-        }
-
-
-        if(phone.startsWith('62')){
-
-            phone =
-                '0'+phone.substring(2);
-
-        }
-
+        phone=phone.replace(/\s+/g,'').replace(/[-()]/g,'');
+        if(phone.startsWith('+62')) phone='0'+phone.substring(3);
+        if(phone.startsWith('62')) phone='0'+phone.substring(2);
 
         if(!/^08\d{8,13}$/.test(phone)){
-
-            error.textContent =
-                'Nomor WhatsApp tidak valid. Contoh: 081234567890';
-
+            error.textContent='Nomor WhatsApp tidak valid. Contoh: 081234567890';
             error.style.display='block';
-
+            input?.focus();
             return;
-
         }
-
 
         btn.disabled=true;
-
         btn.textContent='MEMPROSES...';
 
-
         try{
+            let customer=null;
+            let rpcMessage='';
 
-            const {
-                data,
-                error:rpcError
-            } =
-                await supabase.rpc(
-                    'evora_login',
-                    {
-                        p_phone:phone
+            // Jalur utama: RPC login.
+            try{
+                const {data,error:rpcError}=await supabase.rpc('evora_login',{p_phone:phone});
+                if(!rpcError && data){
+                    // Support RPC yang mengembalikan object maupun array.
+                    if(Array.isArray(data)) customer=data[0]||null;
+                    else if(data.customer && typeof data.customer==='object') customer=data.customer;
+                    else customer=data;
+
+                    // Jika RPC mengembalikan success:false, anggap belum login.
+                    if(customer && customer.success===false){
+                        rpcMessage=customer.message||'Login gagal.';
+                        customer=null;
                     }
-                );
-
-
-            if(rpcError){
-
-                throw new Error(
-                    rpcError.message
-                );
-
+                }else if(rpcError){
+                    rpcMessage=rpcError.message||'';
+                }
+            }catch(rpcErr){
+                rpcMessage=rpcErr?.message||'';
             }
 
+            // Fallback: query customer langsung. Ini menangani kondisi RPC lama/tidak tersedia.
+            if(!customer || !customer.phone){
+                const {data:directData,error:directError}=await supabase
+                    .from('customers')
+                    .select('*')
+                    .eq('phone',phone)
+                    .maybeSingle();
 
-            if(!data){
-
-                throw new Error(
-                    'Server tidak mengembalikan data.'
-                );
-
+                if(directError) throw new Error(directError.message||rpcMessage||'Gagal menghubungi server.');
+                if(!directData){
+                    throw new Error('Nomor WhatsApp belum terdaftar di EVORA.');
+                }
+                customer=directData;
             }
-
-
-            if(data.success === false){
-
-                throw new Error(
-                    data.message ||
-                    'Login gagal.'
-                );
-
-            }
-
 
             this.userPhone=phone;
+            this.customer=customer;
+            this.credits=Number(customer.spin_credits||0);
+            this.progress=Number(customer.progress||0);
 
-            this.customer=data;
+            localStorage.setItem('evora_phone',phone);
+            localStorage.removeItem('evora_test_mode');
 
-            this.credits =
-                Number(
-                    data.spin_credits || 0
-                );
-
-            this.progress =
-                Number(
-                    data.progress || 0
-                );
-
-
-            localStorage.setItem(
-                'evora_phone',
-                phone
-            );
-
-
-            await this.navigate(
-                'dashboard'
-            );
-
+            await this.navigate('dashboard');
 
         }catch(e){
-
-            console.error(
-                'LOGIN ERROR:',
-                e
-            );
-
-
-            error.textContent =
-                e.message ||
-                'Gagal masuk ke akun.';
-
-
+            console.error('LOGIN ERROR:',e);
+            error.textContent=e?.message||'Gagal masuk ke akun. Coba lagi.';
             error.style.display='block';
-
-
         }finally{
-
             btn.disabled=false;
-
             btn.textContent='MASUK';
-
         }
-
-    },
+    },,
 
 
     /* ===============================================
