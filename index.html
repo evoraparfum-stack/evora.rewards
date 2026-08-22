@@ -1355,6 +1355,24 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
 .admin-danger{color:#a34c4c!important;border-color:#d9a5a5!important;background:#fff5f5!important}
 .test-badge{display:inline-flex;align-items:center;padding:5px 9px;border-radius:99px;background:#fff3cf;color:#876116;border:1px solid #e3c47a;font-size:9px;font-weight:800;letter-spacing:1px;margin-top:8px}
 
+
+/* =========================
+   PROMO ADMIN / LOYALTY CODE
+========================= */
+.promo-admin{margin-top:16px;padding:16px;border:1px solid #dfc99d;border-radius:18px;background:#fffaf1}
+.promo-admin h4{margin:0 0 5px;font-family:var(--heading);font-size:20px;color:var(--ink)}
+.promo-admin-note{font-size:11px;color:#8f867a;line-height:1.5;margin-bottom:12px}
+.promo-admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.promo-admin-grid .full{grid-column:1/-1}
+.promo-admin input,.promo-admin textarea{width:100%;box-sizing:border-box;border:1px solid #d8c8ad;border-radius:11px;background:#fff;color:var(--ink);padding:11px 12px;font:inherit;font-size:12px;outline:none}
+.promo-admin textarea{min-height:82px;resize:vertical}
+.promo-admin input:focus,.promo-admin textarea:focus{border-color:#c9a85f;box-shadow:0 0 0 4px rgba(201,168,95,.10)}
+.promo-admin-status{font-size:11px;margin-top:10px;line-height:1.5}
+.loyalty-code-box{margin:16px 0;padding:15px;border-radius:16px;background:#fff8e8;border:1px dashed #c9a85f;text-align:center}
+.loyalty-code-label{font-size:10px;letter-spacing:1.5px;color:#8c671c;font-weight:800}
+.loyalty-code{font-size:22px;font-weight:800;letter-spacing:2px;color:#9b721d;margin:7px 0;word-break:break-all}
+.loyalty-code-note{font-size:10px;color:#8f867a}
+
 </style>
 
 </head>
@@ -1519,6 +1537,23 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
             <button class="btn admin-danger" onclick="app.adminResetTest()">RESET TEST</button>
             <button class="btn admin-danger" onclick="app.adminExit()">KELUAR TEST LAB</button>
         </div>
+    </div>
+
+    <div id="promo-admin-controls" class="promo-admin hidden">
+        <h4>Kelola Promo</h4>
+        <div class="promo-admin-note">Buat promo yang akan tampil di halaman Promo customer. Gunakan URL gambar publik (contoh dari CDN/Storage).</div>
+        <div class="promo-admin-grid">
+            <input id="promo-admin-title" placeholder="Judul promo, contoh: Promo Merdeka">
+            <input id="promo-admin-image" placeholder="URL gambar promo">
+            <textarea id="promo-admin-description" class="full" placeholder="Teks/deskripsi promo"></textarea>
+            <input id="promo-admin-button-text" placeholder="Teks tombol, contoh: BELI SEKARANG">
+            <input id="promo-admin-button-url" placeholder="URL tujuan tombol (opsional)">
+        </div>
+        <div class="admin-grid" style="margin-top:10px">
+            <button class="btn btn-primary" onclick="app.adminSavePromo()">SIMPAN & TAMPILKAN</button>
+            <button class="btn btn-outline" onclick="app.adminClearPromoForm()">BERSIHKAN</button>
+        </div>
+        <div id="promo-admin-status" class="promo-admin-status"></div>
     </div>
 
     <div class="card progress-card">
@@ -2082,12 +2117,16 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
             color:#888;
             font-size:13px;
             line-height:1.6;
-            margin-bottom:20px;
+            margin-bottom:10px;
         ">
-            Kamu telah mengumpulkan
-            10 pembelian dan mendapatkan
-            reward FREE EVORA.
+            Kamu telah mengumpulkan 10 pembelian dan mendapatkan reward FREE EVORA.
         </p>
+
+        <div class="loyalty-code-box">
+            <div class="loyalty-code-label">KODE FREE BOTTLE</div>
+            <div id="free-bottle-code" class="loyalty-code">EVORA-FREE</div>
+            <div class="loyalty-code-note">Simpan kode ini untuk penukaran reward.</div>
+        </div>
 
         <button
             class="btn btn-primary"
@@ -2488,11 +2527,13 @@ const app = {
             document.getElementById('dash-progress-message').textContent=(this.progress>=10?'FREE BOTTLE UNLOCKED!':(10-this.progress)+' pembelian lagi untuk mendapatkan FREE EVORA BOTTLE.');
             document.getElementById('test-badge')?.classList.remove('hidden');
             document.getElementById('admin-controls')?.classList.remove('hidden');
+            document.getElementById('promo-admin-controls')?.classList.remove('hidden');
             return;
         }
 
         document.getElementById('test-badge')?.classList.add('hidden');
         document.getElementById('admin-controls')?.classList.add('hidden');
+        document.getElementById('promo-admin-controls')?.classList.add('hidden');
 
         if(!this.userPhone){
 
@@ -2680,6 +2721,11 @@ const app = {
                 if(this.customer.progress>=10){
                     this.customer.progress=0;
                     this.customer.total_free_bottles=Number(this.customer.total_free_bottles||0)+1;
+                    this.customer.free_bottle_codes=Array.isArray(this.customer.free_bottle_codes)?this.customer.free_bottle_codes:[];
+                    const freeCode=this.adminGenerateFreeCode();
+                    this.customer.free_bottle_codes.push({code:freeCode,created_at:new Date().toISOString(),used:false});
+                    this.setFreeBottleCode(freeCode);
+                    document.getElementById('modal-free')?.classList.add('active');
                 }
                 this.customer.spin_credits=Number(this.customer.spin_credits||0)+1;
                 this.saveTestCustomer();
@@ -2755,6 +2801,7 @@ const app = {
                 data.reward_unlocked
             ){
 
+                this.setFreeBottleCode(data.free_bottle_code || data.reward_code || data.code || 'KODE AKAN DIBERIKAN SERVER');
                 this.closeModal(
                     'modal-success'
                 );
@@ -3648,9 +3695,11 @@ const app = {
             }
 
 
+            const localPromos = this.testMode ? JSON.parse(localStorage.getItem('evora_admin_promos')||'[]') : [];
+            const mergedPromos = [...localPromos, ...(data||[])];
+
             if(
-                !data ||
-                data.length===0
+                mergedPromos.length===0
             ){
 
                 list.innerHTML=`
@@ -3682,7 +3731,7 @@ const app = {
             let html='';
 
 
-            data.forEach(
+            mergedPromos.forEach(
                 promo=>{
 
                     const image =
@@ -3829,6 +3878,55 @@ const app = {
 
 
     /* ===============================================
+       PROMO ADMIN
+    =============================================== */
+    adminClearPromoForm:function(){
+        ['promo-admin-title','promo-admin-image','promo-admin-description','promo-admin-button-text','promo-admin-button-url'].forEach(id=>{
+            const el=document.getElementById(id); if(el) el.value='';
+        });
+        const st=document.getElementById('promo-admin-status');
+        if(st) st.textContent='';
+    },
+
+    adminSavePromo:async function(){
+        if(!this.testMode) return;
+        const title=(document.getElementById('promo-admin-title')?.value||'').trim();
+        const image_url=(document.getElementById('promo-admin-image')?.value||'').trim();
+        const description=(document.getElementById('promo-admin-description')?.value||'').trim();
+        const button_text=(document.getElementById('promo-admin-button-text')?.value||'').trim() || 'LIHAT PROMO';
+        const button_url=(document.getElementById('promo-admin-button-url')?.value||'').trim();
+        const status=document.getElementById('promo-admin-status');
+        if(!title || !description){ if(status) status.textContent='Judul dan deskripsi wajib diisi.'; return; }
+        const promo={id:'admin-'+Date.now(),title,description,image_url,button_text,button_url,is_active:true,created_at:new Date().toISOString()};
+        const remotePromo={title,description,image_url,button_text,button_url,is_active:true};
+        let savedRemote=false;
+        try{
+            const {error}=await supabase.from('promos').insert([remotePromo]);
+            if(error) throw error;
+            savedRemote=true;
+        }catch(e){
+            const list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
+            list.unshift(promo);
+            localStorage.setItem('evora_admin_promos',JSON.stringify(list));
+        }
+        this.adminClearPromoForm();
+        if(status) status.innerHTML=savedRemote ? '<span style="color:#2f7a50">✓ Promo tersimpan di database dan bisa dilihat customer.</span>' : '<span style="color:#9b721d">✓ Promo tersimpan untuk Test Lab. Jika ingin customer di perangkat lain melihatnya, tabel promos harus mengizinkan INSERT untuk admin/server.</span>';
+        await this.loadPromos();
+    },
+
+    adminGenerateFreeCode:function(){
+        const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let out='';
+        for(let i=0;i<8;i++) out+=chars[Math.floor(Math.random()*chars.length)];
+        return 'EVORA-FREE-'+out;
+    },
+
+    setFreeBottleCode:function(code){
+        const el=document.getElementById('free-bottle-code');
+        if(el) el.textContent=code||'EVORA-FREE';
+    },
+
+    /* ===============================================
        MODAL
     =============================================== */
 
@@ -3876,7 +3974,7 @@ const app = {
 
     testCustomer:function(){
         const saved=JSON.parse(localStorage.getItem('evora_test_customer')||'null');
-        return saved || {phone:'0812-TEST-EVORA',spin_credits:100,progress:0,total_free_bottles:0};
+        return saved || {phone:'0812-TEST-EVORA',spin_credits:100,progress:0,total_free_bottles:0,free_bottle_codes:[]};
     },
 
     saveTestCustomer:function(){
@@ -3912,20 +4010,31 @@ const app = {
         const amount=this.adminAmount();
         const old=Number(this.customer.progress||0);
         const total=old+amount;
+        const unlocked=Math.floor(total/10);
         this.customer.progress=total%10;
-        this.customer.total_free_bottles=Number(this.customer.total_free_bottles||0)+Math.floor(total/10);
+        this.customer.total_free_bottles=Number(this.customer.total_free_bottles||0)+unlocked;
+        this.customer.free_bottle_codes=Array.isArray(this.customer.free_bottle_codes)?this.customer.free_bottle_codes:[];
+        for(let i=0;i<unlocked;i++){
+            this.customer.free_bottle_codes.push({code:this.adminGenerateFreeCode(),created_at:new Date().toISOString(),used:false});
+        }
         this.customer.spin_credits=Number(this.customer.spin_credits||0)+amount;
         this.credits=this.customer.spin_credits;
         this.progress=this.customer.progress;
         this.saveTestCustomer();
         this.loadDashboard();
         this.loadSpin();
-        alert(`Test berhasil: +${amount} purchase, +${amount} spin credit.`);
+        if(unlocked>0){
+            const latest=this.customer.free_bottle_codes[this.customer.free_bottle_codes.length-1]?.code;
+            this.setFreeBottleCode(latest);
+            document.getElementById('modal-free')?.classList.add('active');
+        }
+        alert(`Test berhasil: +${amount} purchase, +${amount} spin credit${unlocked?` dan ${unlocked} FREE BOTTLE terbuka.`:'.'}`);
     },
 
     adminResetTest:function(){
         if(!confirm('Reset seluruh data Test Lab?')) return;
         localStorage.removeItem('evora_test_customer');
+        localStorage.removeItem('evora_admin_promos');
         this.customer=this.testCustomer();
         this.credits=this.customer.spin_credits;
         this.progress=this.customer.progress;
