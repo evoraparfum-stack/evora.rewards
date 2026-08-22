@@ -291,11 +291,11 @@ button{
 
     border-radius:14px;
 
-    border:1px solid #303030;
+    border:1px solid var(--border);
 
-    background:#fffdf9;
+    background:#ffffff;
 
-    color:#fff;
+    color:var(--ink);
 
     padding:0 17px;
 
@@ -318,6 +318,15 @@ button{
 
 .input::placeholder{
     color:#9b948b;
+}
+
+.input{
+    -webkit-text-fill-color:var(--ink);
+    caret-color:var(--gold3);
+}
+
+.input:disabled{
+    opacity:.65;
 }
 
 /* =========================
