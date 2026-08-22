@@ -10,7 +10,7 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
 >
 
-<meta name="theme-color" content="#080808">
+<meta name="theme-color" content="#f7f4ef">
 
 <title>EVORA REWARDS</title>
 
@@ -27,24 +27,26 @@
 
 :root {
 
-    --black:#070707;
-    --black2:#0d0d0d;
-    --card:#111111;
-    --card2:#151515;
+    --bg:#f7f4ef;
+    --bg2:#fffdf9;
+    --card:#ffffff;
+    --card2:#fffaf1;
 
-    --gold:#d4af37;
-    --gold2:#f3d66b;
-    --gold3:#9c7c18;
+    --gold:#b88a24;
+    --gold2:#d7ad4d;
+    --gold3:#8d6817;
 
     --white:#ffffff;
-    --cream:#f5f0e8;
+    --cream:#fff8e9;
 
-    --gray:#8b8b8b;
-    --gray2:#555555;
+    --ink:#2b2926;
+    --gray:#77716a;
+    --gray2:#a59f96;
 
-    --red:#ff5c5c;
+    --red:#c95757;
+    --green:#3d8b68;
 
-    --border:#292929;
+    --border:#e8e0d4;
 
     --heading:'Playfair Display',serif;
     --body:'DM Sans',sans-serif;
@@ -62,16 +64,11 @@ html{
 }
 
 body{
-
     background:
-        radial-gradient(
-            circle at 50% -10%,
-            rgba(212,175,55,.08),
-            transparent 35%
-        ),
-        var(--black);
+        radial-gradient(circle at 50% -10%, rgba(215,173,77,.18), transparent 38%),
+        linear-gradient(180deg,#fbf9f5 0%,#f5f0e8 100%);
 
-    color:var(--white);
+    color:var(--ink);
 
     font-family:var(--body);
 
@@ -180,10 +177,8 @@ button{
 
     line-height:1;
 
-    color:#fff;
-
-    text-shadow:
-        0 0 30px rgba(255,255,255,.08);
+    color:var(--ink);
+    text-shadow:0 8px 28px rgba(184,138,36,.12);
 }
 
 .tagline{
@@ -248,13 +243,7 @@ button{
 
 .card{
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.045),
-            rgba(255,255,255,.015)
-        );
-
+    background:rgba(255,255,255,.86);
     border:1px solid var(--border);
 
     border-radius:22px;
@@ -263,8 +252,7 @@ button{
 
     margin-bottom:16px;
 
-    box-shadow:
-        0 20px 50px rgba(0,0,0,.25);
+    box-shadow:0 18px 45px rgba(91,73,48,.09);
 }
 
 /* =========================
@@ -305,7 +293,7 @@ button{
 
     border:1px solid #303030;
 
-    background:#090909;
+    background:#fffdf9;
 
     color:#fff;
 
@@ -329,7 +317,7 @@ button{
 }
 
 .input::placeholder{
-    color:#555;
+    color:#9b948b;
 }
 
 /* =========================
@@ -372,7 +360,7 @@ button{
             var(--gold)
         );
 
-    color:#080808;
+    color:#fffdf9;
 
     box-shadow:
         0 10px 30px rgba(212,175,55,.18);
@@ -394,7 +382,7 @@ button{
 
 .btn-outline:hover{
 
-    background:rgba(212,175,55,.06);
+    background:rgba(184,138,36,.10);
 }
 
 .btn:disabled{
@@ -473,11 +461,7 @@ button{
 
 .stat{
 
-    background:linear-gradient(
-        145deg,
-        #161616,
-        #0d0d0d
-    );
+    background:linear-gradient(145deg,#fffdf9,#f4ede2);
 
     border:1px solid var(--border);
 
@@ -550,7 +534,7 @@ button{
 
     height:9px;
 
-    background:#242424;
+    background:#e9e0d3;
 
     border-radius:10px;
 
@@ -657,7 +641,7 @@ button{
 
     border-right:16px solid transparent;
 
-    border-top:30px solid #fff;
+    border-top:30px solid var(--gold);
 
     filter:
         drop-shadow(
@@ -681,18 +665,15 @@ button{
 
     background:
         conic-gradient(
-            #171717 0deg 51.428deg,
-            #222 51.428deg 102.856deg,
-            #171717 102.856deg 154.284deg,
-            #222 154.284deg 205.712deg,
-            #171717 205.712deg 257.14deg,
-            #222 257.14deg 308.568deg,
-            #b28d1f 308.568deg 360deg
+            #fff7df 0deg 51.428deg,
+            #f1e6d1 51.428deg 102.856deg,
+            #fff7df 102.856deg 154.284deg,
+            #f1e6d1 154.284deg 205.712deg,
+            #fff7df 205.712deg 257.14deg,
+            #f1e6d1 257.14deg 308.568deg,
+            #e1bd65 308.568deg 360deg
         );
-
-    box-shadow:
-        0 0 0 2px #080808,
-        0 0 45px rgba(212,175,55,.15);
+    box-shadow:0 0 0 2px #fff,0 15px 40px rgba(184,138,36,.18);
 
     transition:
         transform 5.5s
@@ -794,7 +775,7 @@ button{
 
 .wheel-label:nth-of-type(7){
     transform:rotate(334.284deg);
-    color:#080808;
+    color:#fffdf9;
 }
 
 .wheel-center{
@@ -813,7 +794,7 @@ button{
 
     border-radius:50%;
 
-    background:#080808;
+    background:#fffdf9;
 
     border:2px solid var(--gold);
 
@@ -893,7 +874,7 @@ button{
 
 .reward-date{
 
-    color:#666;
+    color:#918a81;
 
     font-size:11px;
 }
@@ -917,7 +898,7 @@ button{
 
 .reward-code{
 
-    background:#070707;
+    background:#fbf7ef;
 
     border:1px dashed #444;
 
@@ -932,7 +913,7 @@ button{
 
 .reward-code-label{
 
-    color:#666;
+    color:#918a81;
 
     font-size:9px;
 
@@ -975,7 +956,7 @@ button{
 
     display:block;
 
-    background:#151515;
+    background:#eee6da;
 }
 
 .promo-content{
@@ -1069,7 +1050,7 @@ button{
 
     inset:0;
 
-    background:rgba(0,0,0,.82);
+    background:rgba(73,61,43,.35);
 
     backdrop-filter:blur(12px);
 
@@ -1095,11 +1076,7 @@ button{
     max-width:390px;
 
     background:
-        linear-gradient(
-            145deg,
-            #191919,
-            #0e0e0e
-        );
+        linear-gradient(145deg,#fffdf9,#f4eadb);
 
     border:1px solid var(--gold);
 
@@ -1109,8 +1086,7 @@ button{
 
     text-align:center;
 
-    box-shadow:
-        0 30px 100px rgba(0,0,0,.7);
+    box-shadow:0 30px 100px rgba(73,61,43,.22);
 
     animation:modalIn .3s ease;
 }
@@ -1161,7 +1137,7 @@ button{
 
 .modal-code{
 
-    background:#080808;
+    background:#fffdf9;
 
     border:1px dashed #555;
 
@@ -1198,8 +1174,7 @@ button{
 
     max-width:500px;
 
-    background:
-        rgba(18,18,18,.92);
+    background:rgba(255,253,249,.94);
 
     backdrop-filter:blur(20px);
 
@@ -1213,8 +1188,7 @@ button{
 
     grid-template-columns:repeat(4,1fr);
 
-    box-shadow:
-        0 15px 50px rgba(0,0,0,.5);
+    box-shadow:0 15px 45px rgba(73,61,43,.14);
 }
 
 .nav{
@@ -1223,7 +1197,7 @@ button{
 
     background:transparent;
 
-    color:#666;
+    color:#918a81;
 
     padding:11px 4px;
 
@@ -1242,7 +1216,7 @@ button{
 
     color:var(--gold);
 
-    background:rgba(212,175,55,.06);
+    background:rgba(184,138,36,.10);
 }
 
 .nav-icon{
@@ -1262,7 +1236,7 @@ button{
 
     text-align:center;
 
-    color:#555;
+    color:#9b948b;
 
     font-size:11px;
 
@@ -1292,7 +1266,7 @@ button{
 
     height:40px;
 
-    border:3px solid #292929;
+    border:3px solid #e7dfd3;
 
     border-top-color:var(--gold);
 
@@ -1322,6 +1296,55 @@ button{
     }
 
 }
+
+
+/* =========================
+   EVORA LIGHT UI REFRESH
+   ========================= */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.55),transparent 45%);z-index:-1}
+.app{max-width:560px;padding-left:16px;padding-right:16px}
+.logo-area{padding-top:24px;margin-bottom:32px}
+.logo{font-size:54px;letter-spacing:7px}
+.tagline{color:var(--gold);font-size:10px;letter-spacing:4px}
+.page-title,.login-title{color:var(--ink)}
+.card{backdrop-filter:blur(12px)}
+.btn-primary{color:#fff;background:linear-gradient(135deg,#c89b39,#a97817);box-shadow:0 10px 25px rgba(184,138,36,.18)}
+.btn-outline{color:var(--gold);border-color:#c9a85f;background:#fffaf0}
+.input:focus{border-color:#c9a85f;box-shadow:0 0 0 4px rgba(201,168,95,.12)}
+.stat-value,.progress-number,.credits strong,.modal-reward,.reward-code-value{color:var(--gold)}
+.reward-status{color:#8a661a;border-color:#d9bd7d;background:#fffaf0}
+.nav.active{color:#9b721d}
+.nav-icon{font-size:20px}
+.promo-card{background:#fff}
+.modal-box{border-color:#d6b66b}
+
+/* Fix wheel label selector bug: nth-of-type was counting wheel-line divs. */
+.wheel-label:nth-of-type(1),
+.wheel-label:nth-of-type(2),
+.wheel-label:nth-of-type(3),
+.wheel-label:nth-of-type(4),
+.wheel-label:nth-of-type(5),
+.wheel-label:nth-of-type(6),
+.wheel-label:nth-of-type(7){transform:none;color:var(--ink)}
+.wheel-label{transform:none!important}
+.wheel-label span{transform:none;position:static}
+.wheel-label.wl1,.wheel-label.wl2,.wheel-label.wl3,.wheel-label.wl4,.wheel-label.wl5,.wheel-label.wl6,.wheel-label.wl7{
+ position:absolute;left:50%;top:50%;width:100px;height:54px;margin:-27px 0 0 -50px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:9px;font-weight:800;line-height:1.15;transform:rotate(var(--a)) translateY(-108px)!important;color:var(--ink)
+}
+.wheel-label.wl1 span,.wheel-label.wl2 span,.wheel-label.wl3 span,.wheel-label.wl4 span,.wheel-label.wl5 span,.wheel-label.wl6 span,.wheel-label.wl7 span{transform:rotate(calc(var(--a) * -1));display:block}
+.wheel-label.wl7{color:#fff}
+.wheel-center{color:var(--gold);box-shadow:0 5px 20px rgba(184,138,36,.15)}
+@media(max-width:390px){.wheel-wrap{width:290px;height:290px}.wheel-label.wl1,.wheel-label.wl2,.wheel-label.wl3,.wheel-label.wl4,.wheel-label.wl5,.wheel-label.wl6,.wheel-label.wl7{transform:rotate(var(--a)) translateY(-93px)!important}}
+.admin-trigger{margin-top:14px;text-align:center;color:#b0a79b;font-size:10px;cursor:pointer;text-decoration:underline}
+.admin-panel{margin-top:16px;background:linear-gradient(145deg,#fffdf8,#f6ecdc);border:1px solid #dfc99d;border-radius:22px;padding:18px;box-shadow:0 14px 35px rgba(96,73,35,.10)}
+.admin-panel h3{font-family:var(--heading);font-size:24px;color:var(--ink);margin-bottom:5px}
+.admin-panel .admin-note{font-size:11px;color:#8f867a;line-height:1.5;margin-bottom:14px}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.admin-grid .btn{min-height:48px;font-size:11px;letter-spacing:1px}
+.admin-number{width:100%;height:48px;border:1px solid #d8c8ad;border-radius:12px;background:#fff;color:var(--ink);padding:0 12px;font-size:15px;outline:none}
+.admin-pill{display:inline-flex;align-items:center;gap:7px;background:#fff7e8;border:1px solid #e3c98f;color:#8c671c;border-radius:99px;padding:7px 10px;font-size:11px;margin:4px 0 12px}
+.admin-danger{color:#a34c4c!important;border-color:#d9a5a5!important;background:#fff5f5!important}
+.test-badge{display:inline-flex;align-items:center;padding:5px 9px;border-radius:99px;background:#fff3cf;color:#876116;border:1px solid #e3c47a;font-size:9px;font-weight:800;letter-spacing:1px;margin-top:8px}
 
 </style>
 
@@ -1390,7 +1413,7 @@ button{
         </button>
 
         <p style="
-            color:#555;
+            color:#9b948b;
             text-align:center;
             font-size:11px;
             line-height:1.6;
@@ -1400,6 +1423,19 @@ button{
             Spin, Rewards, dan loyalty EVORA.
         </p>
 
+    </div>
+
+    <div class="admin-trigger" onclick="app.openAdmin()">
+        Admin / Mode Test
+    </div>
+
+    <div id="admin-box" class="admin-panel hidden">
+        <h3>EVORA Test Lab</h3>
+        <div class="admin-note">
+            Mode khusus pengujian tampilan & alur reward. Data test ini tidak memakai akun pelanggan asli.
+        </div>
+        <input id="admin-pin" class="input" type="password" inputmode="numeric" placeholder="PIN ADMIN TEST" style="margin-bottom:10px">
+        <button class="btn btn-primary" onclick="app.adminLogin()">BUKA TEST LAB</button>
     </div>
 
 </section>
@@ -1462,6 +1498,19 @@ button{
 
     </div>
 
+    <div id="admin-controls" class="admin-panel hidden">
+        <h3>Test Points</h3>
+        <div class="admin-note">Tambah kredit spin atau simulasi pembelian sebanyak yang kamu mau untuk pengujian.</div>
+        <div class="admin-pill">TEST CUSTOMER • 0812-TEST-EVORA</div>
+        <input id="admin-amount" class="admin-number" type="number" min="1" max="9999" value="10" placeholder="Jumlah">
+        <div class="admin-grid" style="margin-top:10px">
+            <button class="btn btn-primary" onclick="app.adminAddCredits()">+ SPIN CREDITS</button>
+            <button class="btn btn-outline" onclick="app.adminAddPurchases()">+ PURCHASE</button>
+            <button class="btn btn-outline" onclick="app.adminSetCredits(100)">SET 100 CREDITS</button>
+            <button class="btn admin-danger" onclick="app.adminResetTest()">RESET TEST</button>
+            <button class="btn admin-danger" onclick="app.adminExit()">KELUAR TEST LAB</button>
+        </div>
+    </div>
 
     <div class="card progress-card">
 
@@ -1708,62 +1757,55 @@ button{
             <div class="wheel-line"
                  style="transform:rotate(308.568deg)">
             </div>
-
-
-            <div class="wheel-label">
-                <span>
-                    FREE<br>
-                    POCKET 20ML
-                </span>
-            </div>
-
-
-            <div class="wheel-label">
-                <span>
-                    DISKON<br>
-                    Rp5.000
-                </span>
-            </div>
-
-
-            <div class="wheel-label">
-                <span>
-                    DISKON<br>
-                    Rp10.000
-                </span>
-            </div>
-
-
-            <div class="wheel-label">
-                <span>
-                    DISKON<br>
-                    20%
-                </span>
-            </div>
-
-
-            <div class="wheel-label">
-                <span>
-                    DISKON<br>
-                    10%
-                </span>
-            </div>
-
-
-            <div class="wheel-label">
-                <span>
-                    EMAS<br>
-                    0,0001G
-                </span>
-            </div>
-
-
-            <div class="wheel-label">
-                <span>
-                    PARFUM<br>
-                    30ML
-                </span>
-            </div>
+            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
+            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
+            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
+            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
+            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
+            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
+            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
+            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
+            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
+            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
+            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
+            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
+            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
+            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
+            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
+            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
+            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
+            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
+            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
+            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
+            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
+            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
+            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
+            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
+            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
+            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
+            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
+            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
+            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
+            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
+            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
+            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
+            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
+            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
+            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
+            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
+            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
+            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
+            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
+            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
+            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
+            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
+            <div class="wheel-label wl1" style="--a:0deg"><span>FREE<br>POCKET 20ML</span></div>
+            <div class="wheel-label wl2" style="--a:51.428deg"><span>DISKON<br>Rp5.000</span></div>
+            <div class="wheel-label wl3" style="--a:102.856deg"><span>DISKON<br>Rp10.000</span></div>
+            <div class="wheel-label wl4" style="--a:154.284deg"><span>DISKON<br>20%</span></div>
+            <div class="wheel-label wl5" style="--a:205.712deg"><span>DISKON<br>10%</span></div>
+            <div class="wheel-label wl6" style="--a:257.14deg"><span>EMAS<br>0,0001G</span></div>
+            <div class="wheel-label wl7" style="--a:308.568deg"><span>PARFUM<br>30ML</span></div>
 
 
             <div class="wheel-center">
@@ -2095,6 +2137,7 @@ const app = {
     isSpinning:false,
 
     wheelRotation:0,
+    testMode:false,
 
 
     /* ===============================================
@@ -2103,7 +2146,15 @@ const app = {
 
     init:function(){
 
-        if(this.userPhone){
+        this.testMode=localStorage.getItem('evora_test_mode')==='1';
+
+        if(this.testMode){
+            this.userPhone='0812-TEST-EVORA';
+            this.customer=this.testCustomer();
+            this.credits=this.customer.spin_credits;
+            this.progress=this.customer.progress;
+            this.navigate('dashboard');
+        }else if(this.userPhone){
 
             this.navigate('dashboard');
 
@@ -2394,6 +2445,11 @@ const app = {
 
     logout:function(){
 
+        if(this.testMode){
+            this.adminExit();
+            return;
+        }
+
         localStorage.removeItem(
             'evora_phone'
         );
@@ -2420,6 +2476,24 @@ const app = {
     =============================================== */
 
     loadDashboard:async function(){
+
+        if(this.testMode){
+            this.customer=this.testCustomer();
+            this.credits=Number(this.customer.spin_credits||0);
+            this.progress=Number(this.customer.progress||0);
+            document.getElementById('dash-phone').textContent='0812-TEST-EVORA';
+            document.getElementById('dash-credits').textContent=this.credits;
+            document.getElementById('dash-free').textContent=Number(this.customer.total_free_bottles||0);
+            document.getElementById('dash-progress').textContent=this.progress;
+            document.getElementById('dash-progress-bar').style.width=Math.min(this.progress*10,100)+'%';
+            document.getElementById('dash-progress-message').textContent=(this.progress>=10?'FREE BOTTLE UNLOCKED!':(10-this.progress)+' pembelian lagi untuk mendapatkan FREE EVORA BOTTLE.');
+            document.getElementById('test-badge')?.classList.remove('hidden');
+            document.getElementById('admin-controls')?.classList.remove('hidden');
+            return;
+        }
+
+        document.getElementById('test-badge')?.classList.add('hidden');
+        document.getElementById('admin-controls')?.classList.add('hidden');
 
         if(!this.userPhone){
 
@@ -2601,6 +2675,23 @@ const app = {
 
         try{
 
+            if(this.testMode){
+                this.customer=this.testCustomer();
+                this.customer.progress=Number(this.customer.progress||0)+1;
+                if(this.customer.progress>=10){
+                    this.customer.progress=0;
+                    this.customer.total_free_bottles=Number(this.customer.total_free_bottles||0)+1;
+                }
+                this.customer.spin_credits=Number(this.customer.spin_credits||0)+1;
+                this.saveTestCustomer();
+                this.credits=this.customer.spin_credits;
+                this.progress=this.customer.progress;
+                input.value='';
+                this.loadDashboard();
+                document.getElementById('modal-success').classList.add('active');
+                return;
+            }
+
             const {
                 data,
                 error:rpcError
@@ -2674,7 +2765,8 @@ const app = {
                         'modal-free'
                     )
                     .classList.add('active');
-
+                input.value='';
+                await this.loadDashboard();
                 return;
 
             }
@@ -2723,7 +2815,10 @@ const app = {
 
     loadSpin:async function(){
 
-        try{
+        if(this.testMode){
+            this.customer=this.testCustomer();
+            this.credits=Number(this.customer.spin_credits||0);
+        }else try{
 
             if(
                 this.customer &&
@@ -2868,6 +2963,33 @@ const app = {
 
 
         try{
+
+            if(this.testMode){
+                const rewards=[
+                    {name:'Free Pocket 20ML',code:'TEST-POCKET'},
+                    {name:'Kode Diskon Rp5.000',code:'TEST-5000'},
+                    {name:'Kode Diskon Rp10.000',code:'TEST-10000'},
+                    {name:'Diskon 20%',code:'TEST-20PCT'},
+                    {name:'Diskon 10%',code:'TEST-10PCT'},
+                    {name:'Emas 0,0001g',code:'TEST-GOLD'},
+                    {name:'Parfum 30ML',code:'TEST-PARFUM'}
+                ];
+                const picked=rewards[Math.floor(Math.random()*rewards.length)];
+                this.customer=this.testCustomer();
+                this.customer.spin_credits=Math.max(0,Number(this.customer.spin_credits||0)-1);
+                this.credits=this.customer.spin_credits;
+                this.saveTestCustomer();
+                const index=rewards.findIndex(r=>r.name===picked.name);
+                const segment=360/7, center=index*segment+segment/2;
+                this.wheelRotation+=360*6+(360-center);
+                document.getElementById('wheel').style.transform=`rotate(${this.wheelRotation}deg)`;
+                setTimeout(()=>{
+                    this.showReward(picked.name,picked.code);
+                    this.isSpinning=false;
+                    this.loadSpin();
+                },5600);
+                return;
+            }
 
             const {
                 data,
@@ -3128,6 +3250,17 @@ const app = {
                 'rewards-list'
             );
 
+        if(this.testMode){
+            list.innerHTML=`
+                <div class="card empty">
+                    <div class="empty-icon">✓</div>
+                    <h3>Test Rewards</h3>
+                    <p>Mode test aktif. Jalankan Spin untuk menguji reward tanpa mengubah data pelanggan asli.</p>
+                    <button class="btn btn-primary" onclick="app.navigate('spin')">SPIN SEKARANG</button>
+                </div>`;
+            return;
+        }
+
 
         list.innerHTML=`
 
@@ -3339,7 +3472,7 @@ const app = {
 
                                         <div
                                             style="
-                                                color:#666;
+                                                color:#918a81;
                                                 font-size:9px;
                                                 letter-spacing:2px;
                                                 margin-bottom:5px;
@@ -3384,7 +3517,7 @@ const app = {
                                     style="
                                         display:flex;
                                         justify-content:space-between;
-                                        color:#555;
+                                        color:#9b948b;
                                         font-size:10px;
                                     "
                                 >
@@ -3715,6 +3848,104 @@ const app = {
 
     },
 
+
+    /* ===============================================
+       ADMIN TEST LAB
+    =============================================== */
+    openAdmin:function(){
+        const box=document.getElementById('admin-box');
+        if(box) box.classList.toggle('hidden');
+        const pin=document.getElementById('admin-pin');
+        if(pin) setTimeout(()=>pin.focus(),80);
+    },
+
+    adminLogin:function(){
+        const pin=(document.getElementById('admin-pin')?.value||'').trim();
+        if(pin!=='2468'){
+            alert('PIN Admin Test salah.');
+            return;
+        }
+        this.testMode=true;
+        this.userPhone='0812-TEST-EVORA';
+        this.customer=this.testCustomer();
+        this.credits=this.customer.spin_credits;
+        this.progress=this.customer.progress;
+        localStorage.setItem('evora_test_mode','1');
+        localStorage.setItem('evora_phone',this.userPhone);
+        this.navigate('dashboard');
+    },
+
+    testCustomer:function(){
+        const saved=JSON.parse(localStorage.getItem('evora_test_customer')||'null');
+        return saved || {phone:'0812-TEST-EVORA',spin_credits:100,progress:0,total_free_bottles:0};
+    },
+
+    saveTestCustomer:function(){
+        if(this.testMode && this.customer){
+            localStorage.setItem('evora_test_customer',JSON.stringify(this.customer));
+        }
+    },
+
+    adminAmount:function(){
+        return Math.max(1,Math.min(9999,Number(document.getElementById('admin-amount')?.value||1)));
+    },
+
+    adminAddCredits:function(){
+        if(!this.testMode) return;
+        this.customer.spin_credits=Number(this.customer.spin_credits||0)+this.adminAmount();
+        this.credits=this.customer.spin_credits;
+        this.saveTestCustomer();
+        this.loadDashboard();
+        this.loadSpin();
+    },
+
+    adminSetCredits:function(value){
+        if(!this.testMode) return;
+        this.customer.spin_credits=Number(value);
+        this.credits=this.customer.spin_credits;
+        this.saveTestCustomer();
+        this.loadDashboard();
+        this.loadSpin();
+    },
+
+    adminAddPurchases:function(){
+        if(!this.testMode) return;
+        const amount=this.adminAmount();
+        const old=Number(this.customer.progress||0);
+        const total=old+amount;
+        this.customer.progress=total%10;
+        this.customer.total_free_bottles=Number(this.customer.total_free_bottles||0)+Math.floor(total/10);
+        this.customer.spin_credits=Number(this.customer.spin_credits||0)+amount;
+        this.credits=this.customer.spin_credits;
+        this.progress=this.customer.progress;
+        this.saveTestCustomer();
+        this.loadDashboard();
+        this.loadSpin();
+        alert(`Test berhasil: +${amount} purchase, +${amount} spin credit.`);
+    },
+
+    adminResetTest:function(){
+        if(!confirm('Reset seluruh data Test Lab?')) return;
+        localStorage.removeItem('evora_test_customer');
+        this.customer=this.testCustomer();
+        this.credits=this.customer.spin_credits;
+        this.progress=this.customer.progress;
+        this.saveTestCustomer();
+        this.loadDashboard();
+        this.loadSpin();
+        this.loadRewards();
+    },
+
+    adminExit:function(){
+        this.testMode=false;
+        localStorage.removeItem('evora_test_mode');
+        localStorage.removeItem('evora_phone');
+        this.userPhone=null;
+        this.customer=null;
+        this.credits=0;
+        this.progress=0;
+        this.navigate('login');
+    },
 
     /* ===============================================
        ESCAPE HTML
