@@ -21,7 +21,7 @@
     rel="stylesheet"
 >
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 
 <style>
 
@@ -2120,11 +2120,69 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
     'sb_publishable_dp2VMN6xlQVY1SsxXrUPkg_Wi5BXoYs';
 
-const supabase =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+// Lightweight Supabase REST client.
+// Tidak bergantung pada CDN supabase-js, sehingga halaman tetap bisa login
+// walaupun library eksternal gagal dimuat/diblokir browser.
+const supabase = {
+    async rpc(fn, args = {}) {
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${encodeURIComponent(fn)}`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(args)
+            });
+            const text = await res.text();
+            let data = null;
+            try { data = text ? JSON.parse(text) : null; } catch (_) { data = text; }
+            if (!res.ok) {
+                return { data: null, error: { message: (data && (data.message || data.error || data.hint)) || `HTTP ${res.status}` } };
+            }
+            return { data, error: null };
+        } catch (e) {
+            return { data: null, error: { message: e?.message || 'Koneksi Supabase gagal.' } };
+        }
+    },
+    from(table) {
+        const state = { table, select: '*', filters: [], order: null };
+        const builder = {
+            select(columns = '*') { state.select = columns; return builder; },
+            eq(column, value) { state.filters.push([column, value]); return builder; },
+            order(column, options = {}) { state.order = { column, ascending: options.ascending !== false }; return builder; },
+            async maybeSingle() {
+                try {
+                    const params = new URLSearchParams();
+                    params.set('select', state.select);
+                    for (const [column, value] of state.filters) params.set(column, `eq.${value}`);
+                    if (state.order) params.set('order', `${state.order.column}.${state.order.ascending ? 'asc' : 'desc'}`);
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/${encodeURIComponent(state.table)}?${params.toString()}`, {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+                    const text = await res.text();
+                    let data = null;
+                    try { data = text ? JSON.parse(text) : null; } catch (_) { data = text; }
+                    if (!res.ok) return { data: null, error: { message: (data && (data.message || data.error || data.hint)) || `HTTP ${res.status}` } };
+                    if (Array.isArray(data)) {
+                        if (data.length > 1) return { data: null, error: { message: 'Lebih dari satu data ditemukan.' } };
+                        return { data: data[0] || null, error: null };
+                    }
+                    return { data, error: null };
+                } catch (e) {
+                    return { data: null, error: { message: e?.message || 'Koneksi Supabase gagal.' } };
+                }
+            }
+        };
+        return builder;
+    }
+};
 
 // Prevent login/dashboard from hanging forever if Supabase is unreachable.
 function withTimeout(promise, ms=8000){
