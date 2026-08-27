@@ -2620,6 +2620,15 @@ body{padding-bottom:96px}
     <div id="admin-spin-rewards" style="margin-top:8px"><div class="loading"><div class="loading-spinner"></div>Memuat reward...</div></div>
     <button class="btn btn-primary" style="margin-top:12px" onclick="app.saveAllSpinRewards()">SIMPAN SEMUA PERUBAHAN</button>
     <div id="admin-spin-status" class="admin-status"></div>
+
+    <div style="height:1px;background:#eadfcf;margin:18px 0"></div>
+    <div class="admin-section-title" style="font-size:17px">Simulasi Peluang</div>
+    <div class="admin-muted">Menguji distribusi hadiah dari persentase yang sedang tampil. Simulasi tidak mengurangi credit dan tidak membuat reward customer.</div>
+    <div class="admin-grid" style="margin-top:12px">
+      <button class="btn btn-outline" onclick="app.simulateSpinDistribution(100)">SIMULASI 100 SPIN</button>
+      <button class="btn btn-outline" onclick="app.simulateSpinDistribution(1000)">SIMULASI 1.000 SPIN</button>
+    </div>
+    <div id="admin-spin-simulation" class="admin-status" style="margin-top:12px"></div>
   </div>
 
   <div class="card">
@@ -4117,21 +4126,18 @@ const app = {
         try{
 
             if(this.testMode){
-                const rewards=[
-                    {name:'Free Pocket 20ML',code:'TEST-POCKET'},
-                    {name:'Kode Diskon Rp5.000',code:'TEST-5000'},
-                    {name:'Kode Diskon Rp10.000',code:'TEST-10000'},
-                    {name:'Diskon 20%',code:'TEST-20PCT'},
-                    {name:'Diskon 10%',code:'TEST-10PCT'},
-                    {name:'Emas 0,0001g',code:'TEST-GOLD'},
-                    {name:'Parfum 30ML',code:'TEST-PARFUM'}
-                ];
-                const picked=rewards[Math.floor(Math.random()*rewards.length)];
+                const rewards=await this.getTestSpinRewards();
+                const picked=this.pickWeightedReward(rewards);
+                if(!picked) throw new Error('Konfigurasi persentase reward belum tersedia. Buka Admin Live dan pastikan total peluang 100%.');
+
                 this.customer=this.testCustomer();
                 this.customer.spin_credits=Math.max(0,Number(this.customer.spin_credits||0)-1);
                 this.credits=this.customer.spin_credits;
                 this.saveTestCustomer();
-                const index=rewards.findIndex(r=>r.name===picked.name);
+
+                // Roda customer masih terdiri dari 7 segmen. Cocokkan berdasarkan ID/index
+                // konfigurasi server supaya visual mengikuti hasil weighted random Test Lab.
+                const index=Math.max(0,Math.min(6,Number(picked._wheelIndex ?? rewards.indexOf(picked))));
                 const segment=360/7, center=index*segment+segment/2;
                 const target=(360-center)%360;
                 const current=((this.wheelRotation%360)+360)%360;
@@ -4139,7 +4145,7 @@ const app = {
                 this.wheelRotation+=delta;
                 document.getElementById('wheel').style.transform=`rotate(${this.wheelRotation}deg)`;
                 setTimeout(()=>{
-                    this.showReward(picked.name,picked.code);
+                    this.showReward(picked.name,'TEST-'+String(Date.now()).slice(-8));
                     this.isSpinning=false;
                     this.loadSpin();
                 },5600);
@@ -5460,9 +5466,81 @@ const app = {
             if(status) status.textContent='Menyimpan perubahan...';
             const {data,error}=await supabase.rpc('evora_admin_save_spin_rewards',{p_pin:this.adminPin,p_rows:rows});
             if(error || data!==true) throw new Error(error?.message||'Server menolak perubahan reward.');
-            if(status) status.innerHTML='<span style="color:#2f7a50">✓ Semua reward dan persentase berhasil disimpan.</span>';
+            if(status) status.innerHTML='<span style="color:#2f7a50">✓ Semua reward dan probability berhasil disimpan. Test Lab sekarang mengikuti konfigurasi ini.</span>';
+            const sim=document.getElementById('admin-spin-simulation'); if(sim) sim.innerHTML='';
             await this.loadAdminSpinRewards();
         }catch(e){ if(status) status.innerHTML=`<span style="color:#b45b3c">${this.escape(e.message||'Gagal menyimpan.')}</span>`; }
+    },
+
+    normalizeSpinRewardRows:function(rows){
+        const source=Array.isArray(rows)?rows:[];
+        return source.map((r,i)=>({
+            id:r.id ?? r.reward_id ?? i+1,
+            name:String(r.reward_name ?? r.name ?? r.title ?? ('Reward '+(i+1))),
+            probability:Math.max(0,Number(r.probability ?? r.percentage ?? r.chance_percent ?? r.weight ?? 0)),
+            stock:Number(r.stock ?? 999999),
+            is_active:r.is_active !== false,
+            _wheelIndex:i
+        })).filter(r=>r.is_active && r.stock>0 && r.probability>0);
+    },
+
+    getTestSpinRewards:async function(){
+        // Test Lab memakai konfigurasi LIVE dari Supabase bila sesi admin tersedia.
+        // Fallback ke data yang sudah dimuat di Admin Live agar tetap bisa dites tanpa query ulang.
+        if(this.adminPin){
+            try{
+                const {data,error}=await supabase.rpc('evora_admin_get_spin_rewards',{p_pin:this.adminPin});
+                if(!error && Array.isArray(data) && data.length){
+                    this.adminSpinRewards=data;
+                    return this.normalizeSpinRewardRows(data);
+                }
+            }catch(e){
+                console.warn('TEST SPIN CONFIG ERROR:',e);
+            }
+        }
+        return this.normalizeSpinRewardRows(this.adminSpinRewards||[]);
+    },
+
+    pickWeightedReward:function(rewards){
+        const rows=Array.isArray(rewards)?rewards.filter(r=>Number(r.probability)>0):[];
+        const total=rows.reduce((s,r)=>s+Number(r.probability||0),0);
+        if(total<=0) return null;
+        let rand=Math.random()*total;
+        for(const row of rows){
+            rand-=Number(row.probability||0);
+            if(rand<0) return row;
+        }
+        return rows[rows.length-1]||null;
+    },
+
+    simulateSpinDistribution:function(count){
+        const box=document.getElementById('admin-spin-simulation');
+        const rows=(this.adminSpinRewards||[]).map((row,i)=>({
+            id:row.id ?? row.reward_id ?? i+1,
+            name:(document.getElementById('spin-name-'+i)?.value || row.reward_name || row.name || row.title || ('Reward '+(i+1))).trim(),
+            probability:Math.max(0,Number(document.getElementById('spin-pct-'+i)?.value ?? row.probability ?? row.percentage ?? 0)),
+            stock:Number(row.stock ?? 999999),
+            is_active:row.is_active !== false,
+            _wheelIndex:i
+        })).filter(r=>r.is_active && r.stock>0 && r.probability>0);
+
+        const total=rows.reduce((s,r)=>s+r.probability,0);
+        if(Math.abs(total-100)>0.001){
+            if(box) box.innerHTML='<span style="color:#b45b3c">Total persentase harus 100% sebelum simulasi.</span>';
+            return;
+        }
+        count=Math.max(1,Math.min(100000,Number(count)||100));
+        const result=new Map(rows.map(r=>[String(r.id),0]));
+        for(let i=0;i<count;i++){
+            const picked=this.pickWeightedReward(rows);
+            if(picked) result.set(String(picked.id),(result.get(String(picked.id))||0)+1);
+        }
+        const html=rows.map(r=>{
+            const got=result.get(String(r.id))||0;
+            const actual=(got/count*100);
+            return `<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:8px 0;border-bottom:1px solid #eee4d5"><span>${this.escape(r.name)}</span><b>${got}x • ${actual.toFixed(1)}% <span style="font-weight:500;color:#8f867a">(target ${r.probability.toFixed(2)}%)</span></b></div>`;
+        }).join('');
+        if(box) box.innerHTML=`<div style="font-size:12px;margin-bottom:8px"><b>Hasil simulasi ${count.toLocaleString('id-ID')} spin</b><br><span style="color:#8f867a">Hasil acak dapat berbeda dari target pada sampel kecil.</span></div>${html}`;
     },
 
     testCustomer:function(){
