@@ -2036,6 +2036,24 @@ body{padding-bottom:96px}
     }
 }
 
+
+/* ========================= ADMIN LIVE ANALYTICS ========================= */
+.admin-live-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.admin-live-stat{background:#fff;border:1px solid var(--border);border-radius:16px;padding:15px;text-align:center}
+.admin-live-stat b{display:block;font-family:var(--heading);font-size:28px;color:var(--gold);margin-top:4px}
+.admin-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:16px;background:#fff}
+.admin-table{width:100%;border-collapse:collapse;min-width:660px;font-size:11px}
+.admin-table th,.admin-table td{padding:10px;border-bottom:1px solid #eee5d8;text-align:left;vertical-align:top}
+.admin-table th{position:sticky;top:0;background:#fff8e9;color:#7e652c;font-size:9px;letter-spacing:.8px;z-index:1}
+.admin-table tr:last-child td{border-bottom:0}
+.admin-reward-edit{display:grid;grid-template-columns:1.6fr .7fr;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #eee5d8}
+.admin-reward-edit:last-child{border-bottom:0}
+.admin-reward-edit input{height:42px;border:1px solid var(--border);border-radius:10px;padding:0 10px;min-width:0}
+.admin-section-title{font-family:var(--heading);font-size:22px;margin-bottom:7px}
+.admin-muted{font-size:11px;color:var(--gray);line-height:1.5}
+.admin-status{font-size:11px;line-height:1.5;margin-top:10px}
+@media(max-width:520px){.admin-live-grid{grid-template-columns:1fr 1fr}.admin-reward-edit{grid-template-columns:1fr 90px}.admin-reward-edit .btn{grid-column:1/-1}}
+
 </style>
 
 </head>
@@ -2043,6 +2061,8 @@ body{padding-bottom:96px}
 <body>
 
 <div class="app">
+
+<!-- EVORA Rewards audited/fixed 2026-08-27 -->
 
 <!-- ==================================================
      LOGO
@@ -2116,16 +2136,17 @@ body{padding-bottom:96px}
     </div>
 
     <div class="admin-trigger" onclick="app.openAdmin()">
-        Admin / Mode Test
+        Admin EVORA
     </div>
 
     <div id="admin-box" class="admin-panel hidden">
-        <h3>EVORA Test Lab</h3>
+        <h3>Admin EVORA</h3>
         <div class="admin-note">
-            Mode khusus pengujian tampilan & alur reward. Data test ini tidak memakai akun pelanggan asli.
+            Masuk ke dashboard admin untuk melihat data customer, kunjungan, reward, promo, dan pengaturan spin.
         </div>
-        <input id="admin-pin" class="input" type="password" inputmode="numeric" placeholder="PIN ADMIN TEST" style="margin-bottom:10px">
-        <button class="btn btn-primary" onclick="app.adminLogin()">BUKA TEST LAB</button>
+        <input id="admin-pin" class="input" type="password" inputmode="numeric" placeholder="PIN ADMIN" style="margin-bottom:10px" onkeydown="if(event.key==='Enter'){app.adminLogin()}">
+        <button id="btn-admin-login" class="btn btn-primary" onclick="app.adminLogin()">MASUK ADMIN</button>
+        <div id="admin-login-status" class="admin-status" style="margin-top:10px;min-height:18px"></div>
     </div>
 
 </section>
@@ -2569,6 +2590,50 @@ body{padding-bottom:96px}
 
 
 <!-- ==================================================
+     ADMIN LIVE DASHBOARD
+================================================== -->
+<section id="view-admin-dashboard" class="view">
+  <h2 class="page-title">ADMIN EVORA</h2>
+  <p class="page-subtitle">Data live customer, kunjungan web, reward dan pengaturan spin.</p>
+
+  <div class="admin-live-grid">
+    <div class="admin-live-stat">Total Buka Web<b id="admin-total-visits">-</b></div>
+    <div class="admin-live-stat">Visitor Unik<b id="admin-unique-visitors">-</b></div>
+    <div class="admin-live-stat">Customer WA<b id="admin-total-customers">-</b></div>
+    <div class="admin-live-stat">Total Spin Credit<b id="admin-total-credits">-</b></div>
+  </div>
+
+  <div class="card">
+    <div class="admin-section-title">Data Customer</div>
+    <div class="admin-muted">Nomor WA, progress loyalty, kredit spin, free bottle dan reward customer.</div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin:12px 0">
+      <input id="admin-customer-search" class="input" style="margin:0;height:44px" placeholder="Cari nomor WA..." oninput="app.renderAdminCustomers()">
+      <button class="btn btn-outline" style="width:auto;min-height:44px" onclick="app.loadAdminAnalytics()">REFRESH</button>
+    </div>
+    <div id="admin-customer-table"><div class="loading"><div class="loading-spinner"></div>Memuat data...</div></div>
+  </div>
+
+  <div class="card">
+    <div class="admin-section-title">Reward Spin & Persentase</div>
+    <div class="admin-muted">Ubah nama reward dan peluang menang. Total persentase harus tepat 100%.</div>
+    <div id="admin-spin-total" class="admin-status"></div>
+    <div id="admin-spin-rewards" style="margin-top:8px"><div class="loading"><div class="loading-spinner"></div>Memuat reward...</div></div>
+    <button class="btn btn-primary" style="margin-top:12px" onclick="app.saveAllSpinRewards()">SIMPAN SEMUA PERUBAHAN</button>
+    <div id="admin-spin-status" class="admin-status"></div>
+  </div>
+
+  <div class="card">
+    <div class="admin-section-title">Tools Admin</div>
+    <div class="admin-grid">
+      <button class="btn btn-outline" onclick="app.navigate('admin-promos')">KELOLA PROMO</button>
+      <button class="btn btn-outline" onclick="app.navigate('admin-settings')">PENGATURAN PIN</button>
+      <button class="btn btn-outline" onclick="app.enterTestMode()">BUKA TEST LAB</button>
+      <button class="btn admin-danger" onclick="app.adminLogout()">KELUAR ADMIN</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================
      ADMIN PROMO PANEL
 ================================================== -->
 
@@ -2587,7 +2652,7 @@ body{padding-bottom:96px}
             Tambahkan promo di sini. Setelah tersimpan di database, promo akan tampil di halaman PROMO customer.
         </p>
 
-        <button class="btn btn-outline" style="margin-bottom:12px" onclick="app.navigate('dashboard')">← KEMBALI KE TEST LAB</button>
+        <button class="btn btn-outline" style="margin-bottom:12px" onclick="app.navigate('admin-dashboard')">← KEMBALI KE ADMIN</button>
 
         <div class="card promo-admin">
 
@@ -2699,17 +2764,17 @@ body{padding-bottom:96px}
         </h2>
 
         <p class="page-subtitle">
-            Kelola keamanan Test Lab dan ubah PIN admin kapan saja.
+            Kelola keamanan admin dan ubah PIN server kapan saja.
         </p>
+
+        <button class="btn btn-outline" style="margin-bottom:12px" onclick="app.navigate('admin-dashboard')">← KEMBALI KE ADMIN</button>
 
         <div class="card pin-setting-card">
 
             <h4>UBAH PIN ADMIN</h4>
 
             <div class="pin-setting-help">
-                PIN digunakan untuk masuk ke Admin Test. Gunakan 4–8 angka.
-                PIN baru akan tersimpan di browser ini dan tetap digunakan
-                setelah halaman ditutup.
+                PIN digunakan untuk masuk ke Admin EVORA. Gunakan 4–8 angka. Perubahan PIN disimpan di server Supabase.
             </div>
 
             <input
@@ -3024,7 +3089,7 @@ const supabase = {
         }
     },
     from(table) {
-        const state = { table, select: '*', filters: [], order: null };
+        const state = { table, select: '*', filters: [], order: null, deleteMode: false };
         const builder = {
             select(columns = '*') { state.select = columns; return builder; },
             eq(column, value) { state.filters.push([column, value]); return builder; },
@@ -3046,15 +3111,21 @@ const supabase = {
                         );
                     }
 
+                    const requestOptions = {
+                        method: state.deleteMode ? 'DELETE' : 'GET',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Accept': 'application/json'
+                        }
+                    };
+                    if(state.deleteMode){
+                        requestOptions.headers['Prefer']='return=representation';
+                    }
+
                     const res = await fetch(
                         `${SUPABASE_URL}/rest/v1/${encodeURIComponent(state.table)}?${params.toString()}`,
-                        {
-                            headers: {
-                                'apikey': SUPABASE_KEY,
-                                'Authorization': `Bearer ${SUPABASE_KEY}`,
-                                'Accept': 'application/json'
-                            }
-                        }
+                        requestOptions
                     );
 
                     const text = await res.text();
@@ -3118,7 +3189,7 @@ const supabase = {
                     return { data: null, error: { message: e?.message || 'Koneksi Supabase gagal.' } };
                 }
             },
-            async delete() {
+            delete() {
                 state.deleteMode = true;
                 return builder;
             },
@@ -3182,6 +3253,10 @@ const app = {
 
     wheelRotation:0,
     testMode:false,
+    adminMode:false,
+    adminPin:sessionStorage.getItem('evora_admin_session_pin') || '',
+    adminCustomers:[],
+    adminSpinRewards:[],
 
 
     /* ===============================================
@@ -3193,8 +3268,12 @@ const app = {
         this._promoImageData='';
 
         this.testMode=localStorage.getItem('evora_test_mode')==='1';
+        this.adminMode=!!this.adminPin;
+        this.trackVisit();
 
-        if(this.testMode){
+        if(this.adminMode && !this.testMode){
+            this.navigate('admin-dashboard');
+        }else if(this.testMode){
             this.userPhone='0812-TEST-EVORA';
             this.customer=this.testCustomer();
             this.credits=this.customer.spin_credits;
@@ -3223,11 +3302,7 @@ const app = {
             return;
         }
 
-        if(view==='admin-promos' && !this.testMode){
-            return;
-        }
-
-        if(view==='admin-settings' && !this.testMode){
+        if(['admin-dashboard','admin-promos','admin-settings'].includes(view) && !this.adminMode){
             return;
         }
 
@@ -3333,6 +3408,11 @@ const app = {
 
         }
 
+        if(view==='admin-dashboard'){
+            await this.loadAdminAnalytics();
+            await this.loadAdminSpinRewards();
+        }
+
     },
 
 
@@ -3395,7 +3475,7 @@ const app = {
                 rpcMessage=rpcErr?.message||'';
             }
 
-            // Fallback: query customer langsung. Ini menangani kondisi RPC lama/tidak tersedia.
+            // Fallback: cari customer langsung. Jika nomor benar-benar baru, buat akun otomatis.
             if(!customer || !customer.phone){
                 const {data:directData,error:directError}=await withTimeout(supabase
                     .from('customers')
@@ -3404,10 +3484,46 @@ const app = {
                     .maybeSingle(),8000);
 
                 if(directError) throw new Error(directError.message||rpcMessage||'Gagal menghubungi server.');
-                if(!directData){
-                    throw new Error('Nomor WhatsApp belum terdaftar di EVORA.');
+
+                if(directData){
+                    customer=directData;
+                }else{
+                    // Customer baru: buat record dengan nilai awal.
+                    // Field dibuat eksplisit agar dashboard langsung punya state yang konsisten.
+                    const newCustomer={
+                        phone,
+                        spin_credits:0,
+                        progress:0,
+                        total_free_bottles:0
+                    };
+
+                    const {data:created,error:createError}=await withTimeout(
+                        supabase.from('customers').insert([newCustomer]),
+                        8000
+                    );
+
+                    if(createError){
+                        // Ada kemungkinan request paralel/RPC sudah membuat nomor yang sama.
+                        // Query ulang sebelum menyatakan gagal.
+                        const {data:retryData,error:retryError}=await withTimeout(supabase
+                            .from('customers')
+                            .select('*')
+                            .eq('phone',phone)
+                            .maybeSingle(),8000);
+
+                        if(retryData){
+                            customer=retryData;
+                        }else{
+                            throw new Error(
+                                retryError?.message ||
+                                createError.message ||
+                                'Akun customer baru gagal dibuat. Pastikan tabel customers mengizinkan INSERT.'
+                            );
+                        }
+                    }else{
+                        customer=Array.isArray(created) ? (created[0]||newCustomer) : (created||newCustomer);
+                    }
                 }
-                customer=directData;
             }
 
             this.userPhone=phone;
@@ -3416,6 +3532,7 @@ const app = {
             this.progress=Number(customer.progress||0);
 
             localStorage.setItem('evora_phone',phone);
+            this.trackVisit(phone);
             localStorage.removeItem('evora_test_mode');
 
             this.navigate('dashboard').catch(err=>console.error('NAV ERROR:',err));
@@ -3513,49 +3630,51 @@ const app = {
 
 
             if(error){
-
-                list.innerHTML=`
-                    <div class="card empty">
-                        <div class="empty-icon">!</div>
-                        <h3>Promo gagal dimuat</h3>
-                        <p style="word-break:break-word">${this.escape(error.message||'Gagal membaca promo dari Supabase.')}</p>
-                        <button class="btn btn-outline" onclick="app.loadPromos()">COBA LAGI</button>
-                    </div>
-                `;
-                console.error('PROMO LOAD ERROR:', error);
-                return;
-
+                throw new Error(error.message || 'Gagal membaca data customer dari server.');
             }
 
 
-            if(!data){
+            let customerData=data;
 
-                throw new Error(
-                    'Data customer tidak ditemukan.'
+            // Safety net: sesi menyimpan nomor valid tetapi record customer belum ada
+            // (contoh: customer baru tepat setelah deploy / race condition).
+            if(!customerData){
+                const starter={
+                    phone:this.userPhone,
+                    spin_credits:0,
+                    progress:0,
+                    total_free_bottles:0
+                };
+                const {data:created,error:createError}=await withTimeout(
+                    supabase.from('customers').insert([starter]),
+                    8000
                 );
-
+                if(createError){
+                    throw new Error(createError.message || 'Data customer tidak ditemukan dan akun baru gagal dibuat.');
+                }
+                customerData=Array.isArray(created) ? (created[0]||starter) : (created||starter);
             }
 
 
-            this.customer=data;
+            this.customer=customerData;
 
 
             this.credits =
                 Number(
-                    data.spin_credits || 0
+                    customerData.spin_credits || 0
                 );
 
 
             this.progress =
                 Number(
-                    data.progress || 0
+                    customerData.progress || 0
                 );
 
 
             document.getElementById(
                 'dash-phone'
             ).textContent =
-                data.phone || this.userPhone;
+                customerData.phone || this.userPhone;
 
 
             document.getElementById(
@@ -3568,7 +3687,7 @@ const app = {
                 'dash-free'
             ).textContent =
                 Number(
-                    data.total_free_bottles || 0
+                    customerData.total_free_bottles || 0
                 );
 
 
@@ -3615,10 +3734,30 @@ const app = {
 
         }catch(e){
 
-            console.error(
-                'DASHBOARD ERROR:',
-                e
-            );
+            console.error('DASHBOARD ERROR:',e);
+
+            const msg=String(e?.message||'Gagal memuat data customer.');
+            const invalidSession=/tidak ditemukan|belum terdaftar/i.test(msg);
+
+            if(invalidSession){
+                localStorage.removeItem('evora_phone');
+                this.userPhone=null;
+                this.customer=null;
+                this.credits=0;
+                this.progress=0;
+                const loginError=document.getElementById('login-error');
+                if(loginError){
+                    loginError.textContent='Sesi sudah tidak valid. Silakan masuk kembali.';
+                    loginError.style.display='block';
+                }
+                await this.navigate('login');
+                return;
+            }
+
+            const message=document.getElementById('dash-progress-message');
+            if(message){
+                message.textContent='Gagal menyinkronkan data. Periksa koneksi lalu coba lagi.';
+            }
 
         }
 
@@ -3679,6 +3818,7 @@ const app = {
             if(this.testMode){
                 this.customer=this.testCustomer();
                 this.customer.progress=Number(this.customer.progress||0)+1;
+                let unlockedFreeBottle=false;
                 if(this.customer.progress>=10){
                     this.customer.progress=0;
                     this.customer.total_free_bottles=Number(this.customer.total_free_bottles||0)+1;
@@ -3686,15 +3826,19 @@ const app = {
                     const freeCode=this.adminGenerateFreeCode();
                     this.customer.free_bottle_codes.push({code:freeCode,created_at:new Date().toISOString(),used:false});
                     this.setFreeBottleCode(freeCode);
-                    document.getElementById('modal-free')?.classList.add('active');
+                    unlockedFreeBottle=true;
                 }
                 this.customer.spin_credits=Number(this.customer.spin_credits||0)+1;
                 this.saveTestCustomer();
                 this.credits=this.customer.spin_credits;
                 this.progress=this.customer.progress;
                 input.value='';
-                this.loadDashboard();
-                document.getElementById('modal-success').classList.add('active');
+                await this.loadDashboard();
+                if(unlockedFreeBottle){
+                    document.getElementById('modal-free')?.classList.add('active');
+                }else{
+                    document.getElementById('modal-success')?.classList.add('active');
+                }
                 return;
             }
 
@@ -3787,6 +3931,7 @@ const app = {
 
 
             input.value='';
+            await this.loadDashboard();
 
 
         }catch(e){
@@ -3988,7 +4133,10 @@ const app = {
                 this.saveTestCustomer();
                 const index=rewards.findIndex(r=>r.name===picked.name);
                 const segment=360/7, center=index*segment+segment/2;
-                this.wheelRotation+=360*6+(360-center);
+                const target=(360-center)%360;
+                const current=((this.wheelRotation%360)+360)%360;
+                const delta=360*6+((target-current+360)%360);
+                this.wheelRotation+=delta;
                 document.getElementById('wheel').style.transform=`rotate(${this.wheelRotation}deg)`;
                 setTimeout(()=>{
                     this.showReward(picked.name,picked.code);
@@ -4067,6 +4215,10 @@ const app = {
                         this.credits-1
                     )
                 );
+
+            if(this.customer){
+                this.customer.spin_credits=this.credits;
+            }
 
 
             document.getElementById(
@@ -4154,16 +4306,22 @@ const app = {
 
 
             const target =
-                360-center;
+                (360-center)%360;
 
 
             const extra =
                 360*6;
 
+            const current =
+                ((this.wheelRotation%360)+360)%360;
+
+            const delta =
+                extra+
+                ((target-current+360)%360);
+
 
             this.wheelRotation +=
-                extra+
-                target;
+                delta;
 
 
             const wheel =
@@ -4514,7 +4672,7 @@ const app = {
                                     </div>
 
                                     <div class="reward-code-value">
-                                        ${code}
+                                        ${this.escape(code)}
                                     </div>
 
                                 </div>
@@ -4652,8 +4810,16 @@ const app = {
             }
 
 
-            const remotePromos = Array.isArray(data) ? data : [];
-            const localPromos = this.testMode ? JSON.parse(localStorage.getItem('evora_admin_promos')||'[]') : [];
+            const remotePromos = (Array.isArray(data) ? data : []).filter(p=>p.is_active!==false);
+            let localPromos=[];
+            if(this.testMode){
+                try{
+                    localPromos=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
+                    if(!Array.isArray(localPromos)) localPromos=[];
+                }catch(_){
+                    localPromos=[];
+                }
+            }
             const remoteIds = new Set(remotePromos.map(p=>String(p.id||'')));
             const localOnly = localPromos.filter(p=>!p.remote_saved && !remoteIds.has(String(p.id||'')));
             const mergedPromos = [...remotePromos, ...localOnly];
@@ -4706,6 +4872,8 @@ const app = {
                         promo.description ||
                         'Dapatkan promo terbaru dari EVORA.';
 
+                    const safeButtonUrl=this.safeUrl(promo.button_url);
+
 
                     html += `
 
@@ -4754,13 +4922,11 @@ const app = {
 
 
                                 ${
-                                    promo.button_url
+                                    safeButtonUrl
                                     ?
                                     `
                                     <a
-                                        href="${this.escape(
-                                            promo.button_url
-                                        )}"
+                                        href="${this.escape(safeButtonUrl)}"
                                         target="_blank"
                                         rel="noopener"
                                         class="btn btn-outline"
@@ -4845,57 +5011,20 @@ const app = {
         if(status) status.textContent='';
     },
 
-    changeAdminPin:function(){
-
+    changeAdminPin:async function(){
         const current=(document.getElementById('admin-current-pin')?.value||'').trim();
         const next=(document.getElementById('admin-new-pin')?.value||'').trim();
         const confirmPin=(document.getElementById('admin-confirm-pin')?.value||'').trim();
         const status=document.getElementById('admin-pin-status');
-
-        const stored=localStorage.getItem('evora_admin_pin') || '2255';
-
-        if(!/^\d{4,8}$/.test(next)){
-            if(status){
-                status.innerHTML='<span style="color:#b45b3c">PIN baru harus terdiri dari 4–8 angka.</span>';
-            }
-            return;
-        }
-
-        if(current !== stored){
-            if(status){
-                status.innerHTML='<span style="color:#b45b3c">PIN saat ini salah.</span>';
-            }
-            return;
-        }
-
-        if(next !== confirmPin){
-            if(status){
-                status.innerHTML='<span style="color:#b45b3c">Konfirmasi PIN tidak sama.</span>';
-            }
-            return;
-        }
-
-        if(next === current){
-            if(status){
-                status.innerHTML='<span style="color:#9b721d">PIN baru sama dengan PIN lama.</span>';
-            }
-            return;
-        }
-
-        localStorage.setItem('evora_admin_pin', next);
-
-        [
-            'admin-current-pin',
-            'admin-new-pin',
-            'admin-confirm-pin'
-        ].forEach(id=>{
-            const el=document.getElementById(id);
-            if(el) el.value='';
-        });
-
-        if(status){
-            status.innerHTML='<span style="color:#2f7a50">✓ PIN admin berhasil diubah.</span>';
-        }
+        if(!/^\d{4,8}$/.test(next)){ if(status) status.innerHTML='<span style="color:#b45b3c">PIN baru harus 4–8 angka.</span>'; return; }
+        if(next!==confirmPin){ if(status) status.innerHTML='<span style="color:#b45b3c">Konfirmasi PIN tidak sama.</span>'; return; }
+        try{
+            const {data,error}=await supabase.rpc('evora_admin_change_pin',{p_current_pin:current,p_new_pin:next});
+            if(error || data!==true) throw new Error(error?.message||'PIN saat ini salah.');
+            this.adminPin=next; sessionStorage.setItem('evora_admin_session_pin',next);
+            ['admin-current-pin','admin-new-pin','admin-confirm-pin'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+            if(status) status.innerHTML='<span style="color:#2f7a50">✓ PIN admin server berhasil diubah.</span>';
+        }catch(e){ if(status) status.innerHTML=`<span style="color:#b45b3c">${this.escape(e.message||'Gagal mengubah PIN.')}</span>`; }
     },
 
     previewPromoImage:function(event){
@@ -5009,19 +5138,36 @@ const app = {
         `).join('');
     },
 
-    adminDeletePromo:function(index){
-        const list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
+    adminDeletePromo:async function(index){
+        let list=[];
+        try{
+            list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
+            if(!Array.isArray(list)) list=[];
+        }catch(_){
+            list=[];
+        }
+
         const promo=list[index];
         if(!promo) return;
-        if(promo.remote_saved){
-            alert('Promo ini sudah tersimpan di server. Penghapusan dari server perlu izin DELETE pada tabel promos.');
-            return;
+        if(!confirm('Hapus promo ini?')) return;
+
+        try{
+            if(promo.remote_saved && promo.id && !String(promo.id).startsWith('local-')){
+                const result=await withTimeout(
+                    supabase.from('promos').delete().eq('id',promo.id),
+                    10000
+                );
+                if(result.error) throw new Error(result.error.message||'Gagal menghapus promo dari server.');
+            }
+
+            list.splice(index,1);
+            localStorage.setItem('evora_admin_promos',JSON.stringify(list));
+            this.loadAdminPromoList();
+            await this.loadPromos();
+        }catch(e){
+            console.error('PROMO DELETE ERROR:',e);
+            alert('Promo gagal dihapus. '+(e?.message||''));
         }
-        if(!confirm('Hapus promo test ini?')) return;
-        list.splice(index,1);
-        localStorage.setItem('evora_admin_promos',JSON.stringify(list));
-        this.loadAdminPromoList();
-        this.loadPromos();
     },
 
     adminClearPromoForm:function(keepStatus=false){
@@ -5142,27 +5288,191 @@ const app = {
         if(pin) setTimeout(()=>pin.focus(),80);
     },
 
-    adminLogin:function(){
-        const pin=(document.getElementById('admin-pin')?.value||'').trim();
-        const savedPin=localStorage.getItem('evora_admin_pin') || '2255';
+    adminLogin:async function(){
+        const input=document.getElementById('admin-pin');
+        const btn=document.getElementById('btn-admin-login');
+        const status=document.getElementById('admin-login-status');
+        const pin=(input?.value||'').trim();
 
-        if(pin!==savedPin){
-            alert('PIN Admin Test salah.');
+        const setStatus=(message,type='error')=>{
+            if(!status) return;
+            const color=type==='ok'?'#2f7a50':type==='info'?'#9b721d':'#b45b3c';
+            status.innerHTML=`<span style="color:${color};font-weight:700">${this.escape(message)}</span>`;
+        };
+
+        if(!/^\d{4,8}$/.test(pin)){
+            setStatus('PIN admin harus 4–8 angka.');
+            input?.focus();
             return;
         }
+
+        if(btn){ btn.disabled=true; btn.textContent='MEMVERIFIKASI...'; }
+        setStatus('Memverifikasi PIN admin...','info');
+
+        try{
+            const timeout=new Promise((_,reject)=>
+                setTimeout(()=>reject(new Error('Koneksi ke server terlalu lama. Coba lagi.')),12000)
+            );
+            const rpc=Promise.resolve(supabase.rpc('evora_admin_verify',{p_pin:pin}));
+            const result=await Promise.race([rpc,timeout]);
+            const data=result?.data;
+            const error=result?.error;
+
+            if(error){
+                const msg=String(error.message||error.details||'Gagal memverifikasi admin.');
+                if(/could not find|schema cache|function|404/i.test(msg)){
+                    throw new Error('Fungsi Admin Supabase belum aktif. Jalankan EVORA_ADMIN_SETUP.sql di Supabase SQL Editor lalu refresh web.');
+                }
+                throw new Error(msg);
+            }
+
+            const verified = data===true || data==='true' || data===1 || data?.success===true || data?.verified===true;
+            if(!verified){
+                setStatus('PIN Admin salah.');
+                input?.select();
+                return;
+            }
+
+            this.adminPin=pin;
+            this.adminMode=true;
+            this.testMode=false;
+            localStorage.removeItem('evora_test_mode');
+            sessionStorage.setItem('evora_admin_session_pin',pin);
+            if(input) input.value='';
+            setStatus('Login berhasil. Membuka dashboard...','ok');
+            await this.navigate('admin-dashboard');
+        }catch(e){
+            console.error('ADMIN LOGIN ERROR:',e);
+            setStatus(e?.message || 'Login admin gagal.');
+        }finally{
+            if(btn){ btn.disabled=false; btn.textContent='MASUK ADMIN'; }
+        }
+    },
+
+    adminLogout:function(){
+        this.adminMode=false;
+        this.adminPin='';
+        this.testMode=false;
+        sessionStorage.removeItem('evora_admin_session_pin');
+        localStorage.removeItem('evora_test_mode');
+        localStorage.removeItem('evora_phone');
+        this.userPhone=null;
+        this.customer=null;
+        this.navigate('login');
+    },
+
+    enterTestMode:function(){
+        if(!this.adminMode) return;
         this.testMode=true;
         this.userPhone='0812-TEST-EVORA';
         this.customer=this.testCustomer();
         this.credits=this.customer.spin_credits;
         this.progress=this.customer.progress;
         localStorage.setItem('evora_test_mode','1');
-        localStorage.setItem('evora_phone',this.userPhone);
         this.navigate('dashboard');
     },
 
+    trackVisit:async function(phone=null){
+        try{
+            let visitorId=localStorage.getItem('evora_visitor_id');
+            if(!visitorId){
+                visitorId=(crypto?.randomUUID?.() || ('v-'+Date.now()+'-'+Math.random().toString(36).slice(2)));
+                localStorage.setItem('evora_visitor_id',visitorId);
+            }
+            await supabase.rpc('evora_track_visit',{
+                p_visitor_id:visitorId,
+                p_phone:phone || (this.testMode?null:this.userPhone) || null,
+                p_path:location.pathname || '/'
+            });
+        }catch(_){ }
+    },
+
+    loadAdminAnalytics:async function(){
+        if(!this.adminMode || !this.adminPin) return;
+        const box=document.getElementById('admin-customer-table');
+        if(box) box.innerHTML='<div class="loading"><div class="loading-spinner"></div>Memuat data customer...</div>';
+        try{
+            const {data,error}=await supabase.rpc('evora_admin_analytics',{p_pin:this.adminPin});
+            if(error) throw new Error(error.message);
+            const payload=(data && typeof data==='object')?data:{};
+            document.getElementById('admin-total-visits').textContent=Number(payload.total_visits||0).toLocaleString('id-ID');
+            document.getElementById('admin-unique-visitors').textContent=Number(payload.unique_visitors||0).toLocaleString('id-ID');
+            document.getElementById('admin-total-customers').textContent=Number(payload.total_customers||0).toLocaleString('id-ID');
+            document.getElementById('admin-total-credits').textContent=Number(payload.total_spin_credits||0).toLocaleString('id-ID');
+            this.adminCustomers=Array.isArray(payload.customers)?payload.customers:[];
+            this.renderAdminCustomers();
+        }catch(e){
+            if(box) box.innerHTML=`<div class="error" style="display:block">${this.escape(e.message||'Gagal memuat data admin.')}</div>`;
+        }
+    },
+
+    renderAdminCustomers:function(){
+        const box=document.getElementById('admin-customer-table'); if(!box) return;
+        const q=(document.getElementById('admin-customer-search')?.value||'').trim().toLowerCase();
+        const rows=(this.adminCustomers||[]).filter(c=>!q || String(c.phone||'').toLowerCase().includes(q));
+        if(!rows.length){ box.innerHTML='<div class="empty"><h3>Tidak Ada Data</h3><p>Customer belum ditemukan.</p></div>'; return; }
+        let html='<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>NO WA</th><th>SPIN</th><th>PROGRESS</th><th>FREE BOTTLE</th><th>REWARD</th><th>TERDAFTAR</th></tr></thead><tbody>';
+        for(const c of rows){
+            const rewards=Array.isArray(c.rewards)?c.rewards:[];
+            const rewardText=rewards.length ? rewards.map(r=>`${r.reward||r.name||r.title||'Reward'}${r.code?' • '+r.code:''}${r.status?' ('+r.status+')':''}`).join('<br>') : '-';
+            const created=c.created_at?new Date(c.created_at).toLocaleDateString('id-ID'):'-';
+            html+=`<tr><td><b>${this.escape(c.phone||'-')}</b></td><td>${Number(c.spin_credits||0)}</td><td>${Number(c.progress||0)}/10</td><td>${Number(c.total_free_bottles||0)}</td><td>${rewardText}</td><td>${created}</td></tr>`;
+        }
+        html+='</tbody></table></div>';
+        box.innerHTML=html;
+    },
+
+    loadAdminSpinRewards:async function(){
+        if(!this.adminMode || !this.adminPin) return;
+        const box=document.getElementById('admin-spin-rewards');
+        try{
+            const {data,error}=await supabase.rpc('evora_admin_get_spin_rewards',{p_pin:this.adminPin});
+            if(error) throw new Error(error.message);
+            this.adminSpinRewards=Array.isArray(data)?data:[];
+            if(!this.adminSpinRewards.length){
+                box.innerHTML='<div class="empty"><h3>Reward Spin Belum Ditemukan</h3><p>Pastikan tabel spin_rewards tersedia.</p></div>';
+                this.updateSpinPercentTotal(); return;
+            }
+            box.innerHTML=this.adminSpinRewards.map((r,i)=>`<div class="admin-reward-edit"><input id="spin-name-${i}" value="${this.escape(r.reward_name||r.name||r.title||'Reward')}" aria-label="Nama reward"><input id="spin-pct-${i}" type="number" min="0" max="100" step="0.01" value="${Number(r.percentage ?? r.chance_percent ?? r.probability ?? r.weight ?? 0)}" oninput="app.updateSpinPercentTotal()" aria-label="Persentase"></div>`).join('');
+            this.updateSpinPercentTotal();
+        }catch(e){
+            box.innerHTML=`<div class="error" style="display:block">${this.escape(e.message||'Gagal memuat reward spin.')}</div>`;
+        }
+    },
+
+    updateSpinPercentTotal:function(){
+        const total=(this.adminSpinRewards||[]).reduce((sum,_,i)=>sum+Math.max(0,Number(document.getElementById('spin-pct-'+i)?.value||0)),0);
+        const el=document.getElementById('admin-spin-total');
+        if(el) el.innerHTML=`Total peluang: <b style="color:${Math.abs(total-100)<0.001?'#2f7a50':'#b45b3c'}">${total.toFixed(2)}%</b> ${Math.abs(total-100)<0.001?'✓':'• harus 100%'}`;
+        return total;
+    },
+
+    saveAllSpinRewards:async function(){
+        const status=document.getElementById('admin-spin-status');
+        if(Math.abs(this.updateSpinPercentTotal()-100)>0.001){ alert('Total persentase harus tepat 100%.'); return; }
+        try{
+            const rows=(this.adminSpinRewards||[]).map((row,i)=>({
+                id:String(row.id ?? row.reward_id ?? i+1),
+                reward_name:(document.getElementById('spin-name-'+i)?.value||'').trim(),
+                percentage:Number(document.getElementById('spin-pct-'+i)?.value||0)
+            }));
+            if(rows.some(r=>!r.reward_name || !Number.isFinite(r.percentage) || r.percentage<0 || r.percentage>100)) throw new Error('Ada nama atau persentase reward yang tidak valid.');
+            if(status) status.textContent='Menyimpan perubahan...';
+            const {data,error}=await supabase.rpc('evora_admin_save_spin_rewards',{p_pin:this.adminPin,p_rows:rows});
+            if(error || data!==true) throw new Error(error?.message||'Server menolak perubahan reward.');
+            if(status) status.innerHTML='<span style="color:#2f7a50">✓ Semua reward dan persentase berhasil disimpan.</span>';
+            await this.loadAdminSpinRewards();
+        }catch(e){ if(status) status.innerHTML=`<span style="color:#b45b3c">${this.escape(e.message||'Gagal menyimpan.')}</span>`; }
+    },
+
     testCustomer:function(){
-        const saved=JSON.parse(localStorage.getItem('evora_test_customer')||'null');
-        return saved || {phone:'0812-TEST-EVORA',spin_credits:100,progress:0,total_free_bottles:0,free_bottle_codes:[]};
+        try{
+            const saved=JSON.parse(localStorage.getItem('evora_test_customer')||'null');
+            if(saved && typeof saved==='object') return saved;
+        }catch(_){
+            localStorage.removeItem('evora_test_customer');
+        }
+        return {phone:'0812-TEST-EVORA',spin_credits:100,progress:0,total_free_bottles:0,free_bottle_codes:[]};
     },
 
     saveTestCustomer:function(){
@@ -5244,6 +5554,21 @@ const app = {
     },
 
     /* ===============================================
+       SAFE EXTERNAL URL
+    =============================================== */
+
+    safeUrl:function(value){
+        const raw=String(value||'').trim();
+        if(!raw) return '';
+        try{
+            const url=new URL(raw,window.location.href);
+            return ['http:','https:'].includes(url.protocol) ? url.href : '';
+        }catch(_){
+            return '';
+        }
+    },
+
+    /* ===============================================
        ESCAPE HTML
     =============================================== */
 
@@ -5313,7 +5638,7 @@ document
     .getElementById(
         'login-phone'
     )
-    .addEventListener(
+    ?.addEventListener(
         'keydown',
         e=>{
 
@@ -5335,7 +5660,7 @@ document
     .getElementById(
         'claim-code'
     )
-    .addEventListener(
+    ?.addEventListener(
         'keydown',
         e=>{
 
