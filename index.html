@@ -2748,6 +2748,7 @@ body{padding-bottom:96px}
 ================================================== -->
 <section id="view-admin-dashboard" class="view">
   <h2 class="page-title">ADMIN EVORA</h2>
+  <div style="font-size:9px;color:#9b721d;font-weight:800;letter-spacing:1px;margin:-8px 0 12px">SYSTEM VERSION: CONFIRM-FINAL-01</div>
   <p class="page-subtitle">Semua kontrol utama admin dalam satu dashboard yang lebih ringkas.</p>
 
   <div class="admin-live-grid">
@@ -4030,7 +4031,7 @@ const app = {
                 error:rpcError
             } =
                 await supabase.rpc(
-                    'claim_evora_card',
+                    'evora_claim_purchase_code',
                     {
                         p_phone:
                             this.userPhone,
@@ -4089,12 +4090,11 @@ const app = {
                 data.reward_unlocked
             ){
 
-                const freeCode=data.free_bottle_code || data.reward_code || data.code || '';
+                const freeCode=data.free_bottle_code || data.reward_code || '';
                 if(freeCode){
-                    await this.registerFreeReward(freeCode);
                     this.setFreeBottleCode(freeCode);
                 }else{
-                    this.setFreeBottleCode('KODE AKAN DIBERIKAN SERVER');
+                    this.setFreeBottleCode('KODE FREE TERSIMPAN DI MY REWARDS');
                 }
                 this.closeModal(
                     'modal-success'
@@ -5842,13 +5842,6 @@ const app = {
                 </div>`;
         }).join('');
 
-        // Reliable click binding for every visible confirm button.
-        box.querySelectorAll('.admin-free-confirm').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                const code=btn.dataset.rewardCode||'';
-                this.adminConfirmAnyReward(code,btn);
-            });
-        });
     },
 
     adminConfirmFreeReward:async function(code){
@@ -5857,68 +5850,62 @@ const app = {
 
     adminConfirmAnyReward:async function(code,button){
         code=String(code||'').trim();
+        const btn=button || null;
 
         if(!code){
             alert('Kode reward tidak ditemukan.');
             return;
         }
 
-        if(!this.adminPin){
-            alert('PIN admin tidak ditemukan. Silakan login admin kembali.');
+        if(btn && btn.dataset.processing==='1'){
             return;
         }
 
-        if(!confirm(`Konfirmasi kode ${code}?
-
-Kode akan langsung ditandai SUDAH DIGUNAKAN dan tidak bisa dipakai lagi.`)){
+        if(!this.adminPin){
+            if(btn){
+                btn.textContent='LOGIN ULANG';
+            }
+            alert('Sesi admin tidak aktif. Silakan login admin kembali.');
             return;
         }
 
         const status=document.getElementById('admin-free-status');
-        const btn=button || null;
 
         if(btn){
+            btn.dataset.processing='1';
             btn.disabled=true;
             btn.textContent='MEMPROSES...';
         }
 
         if(status){
-            status.innerHTML=`<span style="color:#9b721d">Memproses ${this.escape(code)}...</span>`;
+            status.innerHTML=`<span style="color:#9b721d;font-weight:700">Memproses ${this.escape(code)}...</span>`;
         }
 
         try{
-            const request=supabase.rpc(
-                'evora_admin_confirm_any_reward',
-                {
+            const {data,error}=await Promise.race([
+                supabase.rpc('evora_admin_confirm_any_reward',{
                     p_pin:this.adminPin,
                     p_code:code
-                }
-            );
-
-            const {data,error}=await Promise.race([
-                request,
-                new Promise((_,reject)=>{
-                    setTimeout(()=>reject(new Error('Server tidak merespons dalam 12 detik.')),12000);
-                })
+                }),
+                new Promise((_,reject)=>setTimeout(
+                    ()=>reject(new Error('Server tidak merespons. Pastikan SQL Universal sudah dijalankan.')),
+                    12000
+                ))
             ]);
 
             if(error){
-                throw new Error(error.message||'Gagal menghubungi server.');
+                throw new Error(error.message||'RPC konfirmasi gagal.');
             }
 
             if(!data){
-                throw new Error('Server tidak mengembalikan hasil konfirmasi.');
+                throw new Error('Server tidak mengembalikan respons.');
             }
 
             if(data.success===false){
                 throw new Error(data.message||'Kode tidak dapat dikonfirmasi.');
             }
 
-            if(status){
-                status.innerHTML=`<span style="color:#2f7a50">✓ ${this.escape(code)} berhasil dikonfirmasi.</span>`;
-            }
-
-            // Immediately update visible row.
+            // Update row immediately
             if(Array.isArray(this.adminAllRewardCodes)){
                 const row=this.adminAllRewardCodes.find(
                     r=>String(r.code||'').toUpperCase()===code.toUpperCase()
@@ -5930,19 +5917,25 @@ Kode akan langsung ditandai SUDAH DIGUNAKAN dan tidak bisa dipakai lagi.`)){
                 this.renderAdminAllRewardCodes();
             }
 
-            // Then reload authoritative server data.
-            await this.loadAdminAllRewardCodes();
+            if(status){
+                status.innerHTML=`<span style="color:#2f7a50;font-weight:800">✓ ${this.escape(code)} SUDAH DIKONFIRMASI</span>`;
+            }
+
+            try{
+                await this.loadAdminAllRewardCodes();
+            }catch(_){}
 
         }catch(e){
             const msg=e?.message||'Gagal mengonfirmasi kode.';
 
             if(btn){
+                btn.dataset.processing='0';
                 btn.disabled=false;
-                btn.textContent='KONFIRMASI';
+                btn.textContent='COBA LAGI';
             }
 
             if(status){
-                status.innerHTML=`<span style="color:#b45b3c">✕ ${this.escape(msg)}</span>`;
+                status.innerHTML=`<span style="color:#b45b3c;font-weight:800">✕ ${this.escape(msg)}</span>`;
             }
 
             alert(msg);
@@ -6271,6 +6264,23 @@ document
 
         }
     );
+
+
+
+/* =====================================================
+   GLOBAL ADMIN REWARD CONFIRM HANDLER
+   Delegated handler = works even after list re-renders.
+===================================================== */
+document.addEventListener('click',function(e){
+    const btn=e.target.closest('.admin-free-confirm');
+    if(!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const code=btn.getAttribute('data-reward-code') || '';
+    app.adminConfirmAnyReward(code,btn);
+});
 
 
 /* =====================================================
