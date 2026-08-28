@@ -5836,78 +5836,115 @@ const app = {
                         <span class="admin-free-badge ${done?'used':'valid'}">${statusText}</span>
                         ${done
                             ? ''
-                            : `<button class="btn btn-primary admin-free-confirm" onclick='app.adminConfirmAnyReward(${JSON.stringify(String(r.code||""))},${JSON.stringify(String(r.source||"spin"))})'>KONFIRMASI</button>`
+                            : `<button type="button" class="btn btn-primary admin-free-confirm" data-reward-code="${this.escape(String(r.code||''))}">KONFIRMASI</button>`
                         }
                     </div>
                 </div>`;
         }).join('');
+
+        // Reliable click binding for every visible confirm button.
+        box.querySelectorAll('.admin-free-confirm').forEach(btn=>{
+            btn.addEventListener('click',()=>{
+                const code=btn.dataset.rewardCode||'';
+                this.adminConfirmAnyReward(code,btn);
+            });
+        });
     },
 
     adminConfirmFreeReward:async function(code){
-        return this.adminConfirmAnyReward(code,'free');
+        return this.adminConfirmAnyReward(code);
     },
 
-    adminConfirmAnyReward:async function(code,source){
+    adminConfirmAnyReward:async function(code,button){
+        code=String(code||'').trim();
+
         if(!code){
             alert('Kode reward tidak ditemukan.');
             return;
         }
-        if(!this.adminMode || !this.adminPin){
-            alert('Sesi admin tidak aktif. Silakan login admin kembali.');
+
+        if(!this.adminPin){
+            alert('PIN admin tidak ditemukan. Silakan login admin kembali.');
             return;
         }
 
-        const ok=confirm(`Konfirmasi kode ${code}? Setelah dikonfirmasi kode tidak dapat dipakai lagi.`);
-        if(!ok) return;
+        if(!confirm(`Konfirmasi kode ${code}?
+
+Kode akan langsung ditandai SUDAH DIGUNAKAN dan tidak bisa dipakai lagi.`)){
+            return;
+        }
 
         const status=document.getElementById('admin-free-status');
-        const buttons=[...document.querySelectorAll('.admin-free-confirm')];
-        const target=buttons.find(b=>(b.getAttribute('onclick')||'').includes(code));
-        if(target){
-            target.disabled=true;
-            target.textContent='MEMPROSES...';
+        const btn=button || null;
+
+        if(btn){
+            btn.disabled=true;
+            btn.textContent='MEMPROSES...';
         }
-        if(status) status.innerHTML='<span style="color:#9b721d">Mengonfirmasi kode '+this.escape(code)+'...</span>';
+
+        if(status){
+            status.innerHTML=`<span style="color:#9b721d">Memproses ${this.escape(code)}...</span>`;
+        }
 
         try{
-            const rpcName=source==='free'
-                ? 'evora_admin_confirm_free_reward'
-                : 'evora_admin_confirm_reward_code';
+            const request=supabase.rpc(
+                'evora_admin_confirm_any_reward',
+                {
+                    p_pin:this.adminPin,
+                    p_code:code
+                }
+            );
 
-            const res=await Promise.race([
-                supabase.rpc(rpcName,{p_pin:this.adminPin,p_code:code}),
-                new Promise((_,reject)=>setTimeout(()=>reject(new Error('Server tidak merespons. Coba refresh lalu konfirmasi lagi.')),12000))
+            const {data,error}=await Promise.race([
+                request,
+                new Promise((_,reject)=>{
+                    setTimeout(()=>reject(new Error('Server tidak merespons dalam 12 detik.')),12000);
+                })
             ]);
 
-            if(!res) throw new Error('Tidak ada respons dari server.');
-            if(res.error) throw new Error(res.error.message||'RPC konfirmasi gagal.');
+            if(error){
+                throw new Error(error.message||'Gagal menghubungi server.');
+            }
 
-            const data=res.data;
-            if(data && typeof data==='object' && data.success===false){
+            if(!data){
+                throw new Error('Server tidak mengembalikan hasil konfirmasi.');
+            }
+
+            if(data.success===false){
                 throw new Error(data.message||'Kode tidak dapat dikonfirmasi.');
             }
 
-            if(status) status.innerHTML='<span style="color:#2f7a50">✓ '+this.escape(code)+' berhasil dikonfirmasi.</span>';
+            if(status){
+                status.innerHTML=`<span style="color:#2f7a50">✓ ${this.escape(code)} berhasil dikonfirmasi.</span>`;
+            }
 
-            // Update UI immediately so user gets visible feedback even before refresh.
+            // Immediately update visible row.
             if(Array.isArray(this.adminAllRewardCodes)){
-                const row=this.adminAllRewardCodes.find(r=>String(r.code||'').toUpperCase()===String(code).toUpperCase());
+                const row=this.adminAllRewardCodes.find(
+                    r=>String(r.code||'').toUpperCase()===code.toUpperCase()
+                );
                 if(row){
-                    row.status=source==='free'?'used':'redeemed';
+                    row.status='used';
                     row.used_at=new Date().toISOString();
                 }
                 this.renderAdminAllRewardCodes();
             }
 
-            // Then sync latest state from server.
-            try{ await this.loadAdminAllRewardCodes(); }catch(_){}
+            // Then reload authoritative server data.
+            await this.loadAdminAllRewardCodes();
+
         }catch(e){
-            if(target){
-                target.disabled=false;
-                target.textContent='KONFIRMASI';
-            }
             const msg=e?.message||'Gagal mengonfirmasi kode.';
-            if(status) status.innerHTML='<span style="color:#b45b3c">✕ '+this.escape(msg)+'</span>';
+
+            if(btn){
+                btn.disabled=false;
+                btn.textContent='KONFIRMASI';
+            }
+
+            if(status){
+                status.innerHTML=`<span style="color:#b45b3c">✕ ${this.escape(msg)}</span>`;
+            }
+
             alert(msg);
         }
     },
