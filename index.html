@@ -2054,6 +2054,17 @@ body{padding-bottom:96px}
 .admin-status{font-size:11px;line-height:1.5;margin-top:10px}
 @media(max-width:520px){.admin-live-grid{grid-template-columns:1fr 1fr}.admin-reward-edit{grid-template-columns:1fr 90px}.admin-reward-edit .btn{grid-column:1/-1}}
 
+/* ========================= LOYALTY FREE REWARD CLAIM ========================= */
+.claim-steps{margin:14px 0;text-align:left;display:grid;gap:9px}
+.claim-step{display:grid;grid-template-columns:28px 1fr;gap:9px;align-items:start;font-size:12px;line-height:1.5;color:#6f6252}
+.claim-step b{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff5da;border:1px solid #dec17d;color:#8c671c}
+.free-reward-card{border:1px solid #e3c98f;background:linear-gradient(145deg,#fffdf8,#fff6e4)}
+.free-reward-status{display:inline-flex;padding:5px 9px;border-radius:99px;font-size:9px;font-weight:800;letter-spacing:.7px}
+.free-reward-status.valid{background:#edf8f1;color:#2f7a50;border:1px solid #b8ddc7}
+.free-reward-status.used{background:#f2efea;color:#7f766b;border:1px solid #d9d1c7}
+.free-reward-admin-row{border:1px solid #eadfcf;border-radius:14px;padding:13px;margin-top:9px;background:#fff}
+.free-reward-admin-meta{font-size:10px;color:#8f867a;line-height:1.55;margin:6px 0 10px}
+
 </style>
 
 </head>
@@ -2517,6 +2528,8 @@ body{padding-bottom:96px}
     </p>
 
 
+    <div id="free-loyalty-rewards-list"></div>
+
     <div id="rewards-list">
 
         <div class="loading">
@@ -2611,6 +2624,17 @@ body{padding-bottom:96px}
       <button class="btn btn-outline" style="width:auto;min-height:44px" onclick="app.loadAdminAnalytics()">REFRESH</button>
     </div>
     <div id="admin-customer-table"><div class="loading"><div class="loading-spinner"></div>Memuat data...</div></div>
+  </div>
+
+  <div class="card">
+    <div class="admin-section-title">Claim FREE Parfum 30ML</div>
+    <div class="admin-muted">Cek kode loyalty yang valid. Setelah order customer diverifikasi, tekan KONFIRMASI agar kode langsung berstatus USED dan tidak dapat dipakai lagi.</div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin:12px 0">
+      <input id="admin-free-search" class="input" style="margin:0;height:44px" placeholder="Cari kode / nomor WA..." oninput="app.renderAdminFreeRewards()">
+      <button class="btn btn-outline" style="width:auto;min-height:44px" onclick="app.loadAdminFreeRewards()">REFRESH</button>
+    </div>
+    <div id="admin-free-rewards"><div class="loading"><div class="loading-spinner"></div>Memuat kode loyalty...</div></div>
+    <div id="admin-free-status" class="admin-status"></div>
   </div>
 
   <div class="card">
@@ -3021,33 +3045,31 @@ body{padding-bottom:96px}
         </div>
 
         <div class="modal-reward">
-            FREE EVORA BOTTLE
+            FREE PARFUM 30ML
         </div>
 
-        <p style="
-            color:#888;
-            font-size:13px;
-            line-height:1.6;
-            margin-bottom:10px;
-        ">
-            Kamu telah mengumpulkan 10 pembelian dan mendapatkan reward FREE EVORA.
+        <p style="color:#6f6252;font-size:13px;line-height:1.65;margin-bottom:10px">
+            Selamat! Anda telah mengumpulkan 10 kode reward dan mendapatkan <b>1 Parfum EVORA 30ML GRATIS</b> pada pemesanan berikutnya.
         </p>
 
         <div class="loyalty-code-box">
-            <div class="loyalty-code-label">KODE FREE BOTTLE</div>
+            <div class="loyalty-code-label">KODE REWARD FREE PARFUM</div>
             <div id="free-bottle-code" class="loyalty-code">EVORA-FREE</div>
-            <div class="loyalty-code-note">Simpan kode ini untuk penukaran reward.</div>
+            <div class="loyalty-code-note">Kode hanya dapat digunakan 1 kali dan harus dikonfirmasi Admin EVORA.</div>
         </div>
 
-        <button
-            class="btn btn-primary"
-            onclick="
-                app.closeModal('modal-free');
-                app.navigate('rewards');
-            "
-        >
-            LIHAT REWARD
-        </button>
+        <button class="btn btn-outline" style="margin-bottom:12px" onclick="app.copyFreeBottleCode()">SALIN KODE REWARD</button>
+
+        <div style="font-family:var(--heading);font-size:18px;text-align:left;margin:6px 0 10px">Tata Cara Claim</div>
+        <div class="claim-steps">
+            <div class="claim-step"><b>1</b><span>Order produk EVORA seperti biasa.</span></div>
+            <div class="claim-step"><b>2</b><span>Salin kode reward FREE Parfum 30ML di atas.</span></div>
+            <div class="claim-step"><b>3</b><span>Masukkan kode reward pada <b>Note/Catatan</b> saat checkout. Pesanan akan otomatis diproses dengan tambahan 1 Parfum EVORA 30ML gratis setelah kode dinyatakan valid.</span></div>
+            <div class="claim-step"><b>4</b><span>Admin EVORA akan mengecek dan mengonfirmasi kode reward tersebut.</span></div>
+            <div class="claim-step"><b>5</b><span>Selesai. Setelah dikonfirmasi, kode berstatus USED dan tidak dapat dipakai kembali.</span></div>
+        </div>
+
+        <button class="btn btn-primary" onclick="app.closeModal('modal-free');app.navigate('rewards');">LIHAT MY REWARDS</button>
 
     </div>
 
@@ -3266,6 +3288,7 @@ const app = {
     adminPin:sessionStorage.getItem('evora_admin_session_pin') || '',
     adminCustomers:[],
     adminSpinRewards:[],
+    adminFreeRewards:[],
 
 
     /* ===============================================
@@ -3392,6 +3415,7 @@ const app = {
 
         if(view==='rewards'){
 
+            await this.loadFreeLoyaltyRewards();
             await this.loadRewards();
 
         }
@@ -3419,6 +3443,7 @@ const app = {
 
         if(view==='admin-dashboard'){
             await this.loadAdminAnalytics();
+            await this.loadAdminFreeRewards();
             await this.loadAdminSpinRewards();
         }
 
@@ -3915,7 +3940,13 @@ const app = {
                 data.reward_unlocked
             ){
 
-                this.setFreeBottleCode(data.free_bottle_code || data.reward_code || data.code || 'KODE AKAN DIBERIKAN SERVER');
+                const freeCode=data.free_bottle_code || data.reward_code || data.code || '';
+                if(freeCode){
+                    await this.registerFreeReward(freeCode);
+                    this.setFreeBottleCode(freeCode);
+                }else{
+                    this.setFreeBottleCode('KODE AKAN DIBERIKAN SERVER');
+                }
                 this.closeModal(
                     'modal-success'
                 );
@@ -4409,6 +4440,91 @@ const app = {
 
     },
 
+
+    /* ===============================================
+       LOYALTY FREE PARFUM 30ML
+    =============================================== */
+
+    registerFreeReward:async function(code){
+        if(this.testMode || !this.userPhone || !code) return true;
+        const {data,error}=await supabase.rpc('evora_register_free_reward',{
+            p_phone:this.userPhone,
+            p_code:String(code).trim().toUpperCase()
+        });
+        if(error){
+            console.error('FREE REWARD REGISTER ERROR:',error);
+            return false;
+        }
+        return data?.success!==false;
+    },
+
+    copyText:async function(text){
+        const value=String(text||'').trim();
+        if(!value) return false;
+        try{
+            await navigator.clipboard.writeText(value);
+            return true;
+        }catch(_){
+            const ta=document.createElement('textarea');
+            ta.value=value; ta.style.position='fixed'; ta.style.opacity='0';
+            document.body.appendChild(ta); ta.select();
+            const ok=document.execCommand('copy'); ta.remove(); return ok;
+        }
+    },
+
+    copyFreeBottleCode:async function(){
+        const code=document.getElementById('free-bottle-code')?.textContent||'';
+        const ok=await this.copyText(code);
+        alert(ok?'Kode reward berhasil disalin.':'Kode belum dapat disalin.');
+    },
+
+    copyLoyaltyCode:async function(code){
+        const ok=await this.copyText(code);
+        alert(ok?'Kode reward berhasil disalin.':'Kode belum dapat disalin.');
+    },
+
+    loadFreeLoyaltyRewards:async function(){
+        const box=document.getElementById('free-loyalty-rewards-list');
+        if(!box) return;
+
+        if(this.testMode){
+            const customer=this.testCustomer();
+            const rows=(Array.isArray(customer.free_bottle_codes)?customer.free_bottle_codes:[]).slice().reverse();
+            if(!rows.length){ box.innerHTML=''; return; }
+            box.innerHTML=rows.map(r=>this.renderFreeRewardCustomerCard({
+                code:r.code,status:r.used?'used':'valid',created_at:r.created_at,used_at:r.used_at||null
+            })).join('');
+            return;
+        }
+
+        if(!this.userPhone){ box.innerHTML=''; return; }
+        try{
+            const {data,error}=await supabase.rpc('evora_get_free_rewards',{p_phone:this.userPhone});
+            if(error) throw new Error(error.message);
+            const rows=Array.isArray(data)?data:[];
+            box.innerHTML=rows.map(r=>this.renderFreeRewardCustomerCard(r)).join('');
+        }catch(e){
+            console.error('FREE REWARDS LOAD ERROR:',e);
+            box.innerHTML='';
+        }
+    },
+
+    renderFreeRewardCustomerCard:function(r){
+        const code=String(r.code||'-');
+        const status=String(r.status||'valid').toLowerCase();
+        const used=status==='used';
+        const created=r.created_at?new Date(r.created_at).toLocaleDateString('id-ID'):'-';
+        return `<div class="card free-reward-card">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                <div><div class="admin-section-title" style="font-size:20px;margin:0">FREE PARFUM 30ML</div><div class="reward-date">Reward loyalty 10 pembelian • ${created}</div></div>
+                <span class="free-reward-status ${used?'used':'valid'}">${used?'SUDAH DIGUNAKAN':'VALID'}</span>
+            </div>
+            <div class="loyalty-code-box" style="margin-bottom:12px"><div class="loyalty-code-label">KODE REWARD</div><div class="loyalty-code">${this.escape(code)}</div></div>
+            ${!used?`<button class="btn btn-outline" style="min-height:44px" onclick="app.copyLoyaltyCode('${this.escape(code)}')">SALIN KODE</button>
+            <div class="admin-muted" style="margin-top:10px"><b>Cara claim:</b> order seperti biasa → salin kode → tulis kode di Note/Catatan checkout → Admin mengonfirmasi → FREE Parfum 30ML ikut dalam pengiriman.</div>`:
+            `<div class="admin-muted">Kode ini sudah dikonfirmasi Admin dan tidak dapat digunakan kembali.</div>`}
+        </div>`;
+    },
 
     /* ===============================================
        LOAD REWARDS
@@ -5426,6 +5542,58 @@ const app = {
         }
         html+='</tbody></table></div>';
         box.innerHTML=html;
+    },
+
+    loadAdminFreeRewards:async function(){
+        if(!this.adminMode || !this.adminPin) return;
+        const box=document.getElementById('admin-free-rewards');
+        if(box) box.innerHTML='<div class="loading"><div class="loading-spinner"></div>Memuat kode loyalty...</div>';
+        try{
+            const {data,error}=await supabase.rpc('evora_admin_free_rewards',{p_pin:this.adminPin});
+            if(error) throw new Error(error.message);
+            this.adminFreeRewards=Array.isArray(data)?data:[];
+            this.renderAdminFreeRewards();
+        }catch(e){
+            if(box) box.innerHTML=`<div class="error" style="display:block">${this.escape(e.message||'Gagal memuat kode loyalty.')}</div>`;
+        }
+    },
+
+    renderAdminFreeRewards:function(){
+        const box=document.getElementById('admin-free-rewards'); if(!box) return;
+        const q=(document.getElementById('admin-free-search')?.value||'').trim().toLowerCase();
+        const rows=(this.adminFreeRewards||[]).filter(r=>!q || String(r.code||'').toLowerCase().includes(q) || String(r.phone||'').toLowerCase().includes(q));
+        if(!rows.length){ box.innerHTML='<div class="empty" style="padding:25px 10px"><h3>Belum Ada Kode</h3><p>Tidak ada reward loyalty yang cocok.</p></div>'; return; }
+        box.innerHTML=rows.map(r=>{
+            const status=String(r.status||'valid').toLowerCase();
+            const used=status==='used';
+            const created=r.created_at?new Date(r.created_at).toLocaleString('id-ID'):'-';
+            const usedAt=r.used_at?new Date(r.used_at).toLocaleString('id-ID'):'-';
+            return `<div class="free-reward-admin-row">
+              <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                <div><b style="font-family:monospace;font-size:14px;color:#8c671c">${this.escape(r.code||'-')}</b><div style="font-size:11px;margin-top:3px">WA: <b>${this.escape(r.phone||'-')}</b></div></div>
+                <span class="free-reward-status ${used?'used':'valid'}">${used?'USED':'VALID'}</span>
+              </div>
+              <div class="free-reward-admin-meta">Diperoleh: ${created}${used?`<br>Dikonfirmasi: ${usedAt}`:''}</div>
+              ${used?'<button class="btn btn-outline" disabled style="min-height:42px">SUDAH DIGUNAKAN</button>':`<button class="btn btn-primary" style="min-height:42px" onclick="app.adminConfirmFreeReward('${this.escape(r.code||'')}')">KONFIRMASI KODE</button>`}
+            </div>`;
+        }).join('');
+    },
+
+    adminConfirmFreeReward:async function(code){
+        if(!this.adminMode || !this.adminPin || !code) return;
+        if(!confirm(`Konfirmasi kode ${code}? Setelah dikonfirmasi kode tidak dapat dipakai lagi.`)) return;
+        const status=document.getElementById('admin-free-status');
+        if(status) status.innerHTML='<span style="color:#9b721d">Mengonfirmasi kode...</span>';
+        try{
+            const {data,error}=await supabase.rpc('evora_admin_confirm_free_reward',{p_pin:this.adminPin,p_code:code});
+            if(error) throw new Error(error.message);
+            if(data?.success===false) throw new Error(data.message||'Kode tidak dapat dikonfirmasi.');
+            if(status) status.innerHTML='<span style="color:#2f7a50">✓ Kode berhasil dikonfirmasi dan sekarang berstatus USED.</span>';
+            await this.loadAdminFreeRewards();
+            await this.loadAdminAnalytics();
+        }catch(e){
+            if(status) status.innerHTML=`<span style="color:#b45b3c">${this.escape(e.message||'Gagal mengonfirmasi kode.')}</span>`;
+        }
     },
 
     loadAdminSpinRewards:async function(){
