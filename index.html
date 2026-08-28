@@ -2748,7 +2748,7 @@ body{padding-bottom:96px}
 ================================================== -->
 <section id="view-admin-dashboard" class="view">
   <h2 class="page-title">ADMIN EVORA</h2>
-  <div style="font-size:9px;color:#9b721d;font-weight:800;letter-spacing:1px;margin:-8px 0 12px">SYSTEM VERSION: CONFIRM-FINAL-01</div>
+  <div style="font-size:9px;color:#9b721d;font-weight:800;letter-spacing:1px;margin:-8px 0 12px">SYSTEM VERSION: SYNC-HOME-SPIN-01</div>
   <p class="page-subtitle">Semua kontrol utama admin dalam satu dashboard yang lebih ringkas.</p>
 
   <div class="admin-live-grid">
@@ -3548,11 +3548,16 @@ const app = {
 
 
         if(view==='dashboard'){
-            this.loadDashboard().catch(err=>{
+            try{
+                await this.loadDashboard();
+            }catch(err){
                 console.error('DASHBOARD ERROR:',err);
                 const el=document.getElementById('login-error');
-                if(el && !this.customer){ el.textContent=err?.message||'Gagal memuat data.'; el.style.display='block'; }
-            });
+                if(el && !this.customer){
+                    el.textContent=err?.message||'Gagal memuat data.';
+                    el.style.display='block';
+                }
+            }
         }
 
 
@@ -3765,6 +3770,55 @@ const app = {
 
 
     /* ===============================================
+       CUSTOMER STATE - SERVER AUTHORITATIVE
+       Semua halaman customer membaca state yang sama dari Supabase.
+    =============================================== */
+
+    refreshCustomerState:async function(){
+
+        if(this.testMode){
+            this.customer=this.testCustomer();
+            this.credits=Number(this.customer.spin_credits||0);
+            this.progress=Number(this.customer.progress||0);
+            return this.customer;
+        }
+
+        if(!this.userPhone){
+            throw new Error('Sesi customer tidak ditemukan.');
+        }
+
+        const normalizedPhone=String(this.userPhone||'')
+            .trim()
+            .replace(/\s+/g,'')
+            .replace(/[-()]/g,'');
+
+        const {data,error}=await withTimeout(
+            supabase
+                .from('customers')
+                .select('*')
+                .eq('phone',normalizedPhone)
+                .maybeSingle(),
+            8000
+        );
+
+        if(error){
+            throw new Error(error.message||'Gagal membaca data customer terbaru.');
+        }
+
+        if(!data){
+            throw new Error('Data customer tidak ditemukan.');
+        }
+
+        this.userPhone=normalizedPhone;
+        this.customer=data;
+        this.credits=Number(data.spin_credits||0);
+        this.progress=Number(data.progress||0);
+
+        return data;
+    },
+
+
+    /* ===============================================
        LOAD DASHBOARD
     =============================================== */
 
@@ -3799,60 +3853,9 @@ const app = {
 
         try{
 
-            const {
-                data,
-                error
-            } =
-                await supabase
-                .from('customers')
-                .select('*')
-                .eq(
-                    'phone',
-                    this.userPhone
-                )
-                .maybeSingle();
-
-
-            if(error){
-                throw new Error(error.message || 'Gagal membaca data customer dari server.');
-            }
-
-
-            let customerData=data;
-
-            // Safety net: sesi menyimpan nomor valid tetapi record customer belum ada
-            // (contoh: customer baru tepat setelah deploy / race condition).
-            if(!customerData){
-                const starter={
-                    phone:this.userPhone,
-                    spin_credits:0,
-                    progress:0,
-                    total_free_bottles:0
-                };
-                const {data:created,error:createError}=await withTimeout(
-                    supabase.from('customers').insert([starter]),
-                    8000
-                );
-                if(createError){
-                    throw new Error(createError.message || 'Data customer tidak ditemukan dan akun baru gagal dibuat.');
-                }
-                customerData=Array.isArray(created) ? (created[0]||starter) : (created||starter);
-            }
-
-
-            this.customer=customerData;
-
-
-            this.credits =
-                Number(
-                    customerData.spin_credits || 0
-                );
-
-
-            this.progress =
-                Number(
-                    customerData.progress || 0
-                );
+            // Selalu ambil state terbaru dari database.
+            // Jangan gunakan cache this.customer untuk angka dashboard.
+            const customerData=await this.refreshCustomerState();
 
 
             document.getElementById(
@@ -4083,6 +4086,15 @@ const app = {
                     this.credits+1
                 );
 
+            // Sinkronkan object cache juga, tetapi server tetap sumber utama.
+            if(this.customer){
+                this.customer.progress=this.progress;
+                this.customer.spin_credits=this.credits;
+                if(data.total_free_bottles !== undefined){
+                    this.customer.total_free_bottles=Number(data.total_free_bottles||0);
+                }
+            }
+
 
             if(
                 data.unlocked_bottle ||
@@ -4161,43 +4173,9 @@ const app = {
             this.credits=Number(this.customer.spin_credits||0);
         }else try{
 
-            if(
-                this.customer &&
-                this.customer.spin_credits !== undefined
-            ){
-
-                this.credits =
-                    Number(
-                        this.customer.spin_credits || 0
-                    );
-
-            }else{
-
-                const {
-                    data
-                } =
-                    await supabase
-                    .from('customers')
-                    .select(
-                        'spin_credits'
-                    )
-                    .eq(
-                        'phone',
-                        this.userPhone
-                    )
-                    .maybeSingle();
-
-
-                if(data){
-
-                    this.credits =
-                        Number(
-                            data.spin_credits || 0
-                        );
-
-                }
-
-            }
+            // WAJIB baca server setiap masuk halaman Spin.
+            // Ini mencegah credits berbeda antara Home dan Spin.
+            await this.refreshCustomerState();
 
         }catch(e){
 
