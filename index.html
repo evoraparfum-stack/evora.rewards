@@ -2067,6 +2067,135 @@ body{padding-bottom:96px}
 
 </style>
 
+<style>
+#admin-free-rewards{display:grid;gap:10px}
+.admin-free-row{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:10px;
+    align-items:center;
+    padding:13px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:#fffdf9;
+}
+.admin-free-phone{font-size:12px;font-weight:800;color:var(--ink);margin-bottom:5px;word-break:break-word}
+.admin-free-code{font-family:monospace;font-size:13px;font-weight:800;color:#8c671c;word-break:break-all}
+.admin-free-meta{font-size:10px;color:var(--gray);margin-top:5px}
+.admin-free-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.admin-free-badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.7px}
+.admin-free-badge.valid{background:#edf8f1;color:#2f7a50;border:1px solid #b9dec8}
+.admin-free-badge.used{background:#f2efea;color:#81786c;border:1px solid #ddd5c9}
+.admin-free-confirm{width:auto!important;min-height:40px!important;padding:0 13px!important;font-size:10px!important;letter-spacing:.8px!important}
+@media(max-width:520px){
+    .admin-free-row{grid-template-columns:1fr}
+    .admin-free-actions{justify-content:flex-start}
+    .admin-free-confirm{width:100%!important}
+}
+</style>
+
+
+
+<style>
+/* =========================================================
+   EVORA CLEAN UI — CUSTOMER + ADMIN
+========================================================= */
+:root{
+  --section-gap:14px;
+}
+.clean-section-label{
+  font-size:10px;
+  letter-spacing:1.4px;
+  font-weight:800;
+  color:#8c671c;
+  margin:2px 0 8px;
+  text-transform:uppercase;
+}
+.clean-card-title{
+  font-family:var(--heading);
+  font-size:21px;
+  line-height:1.2;
+  margin-bottom:5px;
+}
+.clean-card-sub{
+  color:var(--gray);
+  font-size:11px;
+  line-height:1.5;
+}
+.clean-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:12px;
+}
+.clean-actions .btn{min-height:46px;font-size:10px;letter-spacing:.8px}
+.clean-divider{height:1px;background:#eadfcf;margin:16px 0}
+.clean-stack{display:grid;gap:12px}
+.clean-status-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.clean-status-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 9px;
+  border-radius:999px;
+  background:#fff8e8;
+  border:1px solid #e4cf9f;
+  color:#8c671c;
+  font-size:10px;
+  font-weight:800;
+}
+#view-dashboard .welcome{margin-bottom:14px}
+#view-dashboard .stats-grid{margin-bottom:12px}
+#view-dashboard .progress-card{margin-bottom:12px}
+#view-dashboard .customer-quick-actions{margin-top:10px}
+#view-admin-dashboard .admin-live-grid{margin-bottom:12px}
+#view-admin-dashboard .card{margin-bottom:12px}
+#view-admin-dashboard .admin-section-title{font-size:20px}
+#view-admin-dashboard .admin-muted{margin-bottom:8px}
+#view-admin-dashboard .admin-grid{gap:8px}
+.admin-main-menu{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:10px;
+}
+.admin-main-menu .btn{
+  min-height:48px;
+  font-size:10px;
+  letter-spacing:.7px;
+}
+.admin-priority-card{
+  border:1px solid #d9bd7d!important;
+  background:linear-gradient(145deg,#fffdf8,#fff7e8)!important;
+}
+.admin-priority-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+}
+.admin-priority-head .admin-section-title{margin-bottom:2px}
+.admin-customer-tools{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  margin:10px 0 12px;
+}
+@media(max-width:520px){
+  .clean-actions,
+  .admin-main-menu{grid-template-columns:1fr}
+  .admin-customer-tools{grid-template-columns:1fr}
+  .admin-customer-tools .btn{width:100%!important}
+}
+</style>
+
 </head>
 
 <body>
@@ -2102,7 +2231,7 @@ body{padding-bottom:96px}
 >
 
     <h1 class="login-title">
-        Your rewards are waiting.
+        EVORA REWARDS
     </h1>
 
     <p class="login-sub">
@@ -2220,7 +2349,20 @@ body{padding-bottom:96px}
 
     </div>
 
-    <div id="admin-controls" class="admin-panel hidden">
+    
+    <div class="card customer-quick-actions">
+        <div class="clean-section-label">Akses Cepat</div>
+        <div class="clean-card-title">Apa yang ingin kamu lakukan?</div>
+        <div class="clean-card-sub">Semua fitur utama customer ada di sini.</div>
+        <div class="clean-actions">
+            <button class="btn btn-primary" onclick="app.navigate('claim')">CLAIM KODE</button>
+            <button class="btn btn-outline" onclick="app.navigate('spin')">SPIN REWARD</button>
+            <button class="btn btn-outline" onclick="app.navigate('rewards')">REWARDS</button>
+            <button class="btn btn-outline" onclick="app.navigate('promo')">PROMO</button>
+        </div>
+    </div>
+
+<div id="admin-controls" class="admin-panel hidden">
         <h3>Test Points</h3>
         <div class="admin-note">Tambah kredit spin atau simulasi pembelian sebanyak yang kamu mau untuk pengujian.</div>
         <div class="admin-pill">TEST CUSTOMER • 0812-TEST-EVORA</div>
@@ -2519,12 +2661,11 @@ body{padding-bottom:96px}
 >
 
     <h2 class="page-title">
-        MY REWARDS
+        REWARDS
     </h2>
 
     <p class="page-subtitle">
-        Semua reward yang kamu dapatkan
-        tersimpan di sini.
+        Semua reward aktif dan riwayat reward kamu ada di sini.
     </p>
 
 
@@ -2555,7 +2696,7 @@ body{padding-bottom:96px}
 >
 
     <h2 class="page-title">
-        EVORA PROMO
+        PROMO EVORA
     </h2>
 
     <p class="page-subtitle">
@@ -2607,19 +2748,36 @@ body{padding-bottom:96px}
 ================================================== -->
 <section id="view-admin-dashboard" class="view">
   <h2 class="page-title">ADMIN EVORA</h2>
-  <p class="page-subtitle">Data live customer, kunjungan web, reward dan pengaturan spin.</p>
+  <p class="page-subtitle">Semua kontrol utama admin dalam satu dashboard yang lebih ringkas.</p>
 
   <div class="admin-live-grid">
     <div class="admin-live-stat">Total Buka Web<b id="admin-total-visits">-</b></div>
-    <div class="admin-live-stat">Visitor Unik<b id="admin-unique-visitors">-</b></div>
     <div class="admin-live-stat">Customer WA<b id="admin-total-customers">-</b></div>
-    <div class="admin-live-stat">Total Spin Credit<b id="admin-total-credits">-</b></div>
+    <div class="admin-live-stat">Visitor Unik<b id="admin-unique-visitors">-</b></div>
+    <div class="admin-live-stat">Spin Credit<b id="admin-total-credits">-</b></div>
+  </div>
+
+  <div class="card admin-priority-card" id="admin-free-reward-card">
+    <div class="admin-priority-head">
+      <div>
+        <div class="clean-section-label">Prioritas Admin</div>
+        <div class="admin-section-title">Semua Kode Reward Customer</div>
+        <div class="admin-muted">Semua kode dari Spin Wheel dan reward FREE Parfum otomatis tampil di sini.</div>
+      </div>
+      <button class="btn btn-outline" style="width:auto;min-height:42px;padding:0 14px" onclick="app.loadAdminAllRewardCodes()">REFRESH</button>
+    </div>
+    <div id="admin-free-summary" class="admin-status" style="margin:8px 0 10px"></div>
+    <div id="admin-free-rewards">
+      <div class="loading"><div class="loading-spinner"></div>Memuat semua kode reward...</div>
+    </div>
+    <div id="admin-free-status" class="admin-status"></div>
   </div>
 
   <div class="card">
+    <div class="clean-section-label">Customer</div>
     <div class="admin-section-title">Data Customer</div>
-    <div class="admin-muted">Nomor WA, progress loyalty, kredit spin, free bottle dan reward customer.</div>
-    <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin:12px 0">
+    <div class="admin-muted">Cek nomor WA, progress loyalty, spin credit, dan total free bottle.</div>
+    <div class="admin-customer-tools">
       <input id="admin-customer-search" class="input" style="margin:0;height:44px" placeholder="Cari nomor WA..." oninput="app.renderAdminCustomers()">
       <button class="btn btn-outline" style="width:auto;min-height:44px" onclick="app.loadAdminAnalytics()">REFRESH</button>
     </div>
@@ -2627,40 +2785,31 @@ body{padding-bottom:96px}
   </div>
 
   <div class="card">
-    <div class="admin-section-title">Claim FREE Parfum 30ML</div>
-    <div class="admin-muted">Cek kode loyalty yang valid. Setelah order customer diverifikasi, tekan KONFIRMASI agar kode langsung berstatus USED dan tidak dapat dipakai lagi.</div>
-    <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin:12px 0">
-      <input id="admin-free-search" class="input" style="margin:0;height:44px" placeholder="Cari kode / nomor WA..." oninput="app.renderAdminFreeRewards()">
-      <button class="btn btn-outline" style="width:auto;min-height:44px" onclick="app.loadAdminFreeRewards()">REFRESH</button>
-    </div>
-    <div id="admin-free-rewards"><div class="loading"><div class="loading-spinner"></div>Memuat kode loyalty...</div></div>
-    <div id="admin-free-status" class="admin-status"></div>
-  </div>
-
-  <div class="card">
-    <div class="admin-section-title">Reward Spin & Persentase</div>
-    <div class="admin-muted">Ubah nama reward dan peluang menang. Total persentase harus tepat 100%.</div>
+    <div class="clean-section-label">Reward Spin</div>
+    <div class="admin-section-title">Hadiah & Persentase</div>
+    <div class="admin-muted">Ubah nama reward dan peluang menang. Total persentase harus 100%.</div>
     <div id="admin-spin-total" class="admin-status"></div>
     <div id="admin-spin-rewards" style="margin-top:8px"><div class="loading"><div class="loading-spinner"></div>Memuat reward...</div></div>
-    <button class="btn btn-primary" style="margin-top:12px" onclick="app.saveAllSpinRewards()">SIMPAN SEMUA PERUBAHAN</button>
+    <button class="btn btn-primary" style="margin-top:12px" onclick="app.saveAllSpinRewards()">SIMPAN PERUBAHAN</button>
     <div id="admin-spin-status" class="admin-status"></div>
 
-    <div style="height:1px;background:#eadfcf;margin:18px 0"></div>
-    <div class="admin-section-title" style="font-size:17px">Simulasi Peluang</div>
-    <div class="admin-muted">Menguji distribusi hadiah dari persentase yang sedang tampil. Simulasi tidak mengurangi credit dan tidak membuat reward customer.</div>
-    <div class="admin-grid" style="margin-top:12px">
-      <button class="btn btn-outline" onclick="app.simulateSpinDistribution(100)">SIMULASI 100 SPIN</button>
-      <button class="btn btn-outline" onclick="app.simulateSpinDistribution(1000)">SIMULASI 1.000 SPIN</button>
+    <div class="clean-divider"></div>
+    <div class="clean-card-title" style="font-size:17px">Simulasi Peluang</div>
+    <div class="clean-card-sub">Tes distribusi hadiah tanpa mengurangi credit customer.</div>
+    <div class="clean-actions">
+      <button class="btn btn-outline" onclick="app.simulateSpinDistribution(100)">SIMULASI 100</button>
+      <button class="btn btn-outline" onclick="app.simulateSpinDistribution(1000)">SIMULASI 1.000</button>
     </div>
     <div id="admin-spin-simulation" class="admin-status" style="margin-top:12px"></div>
   </div>
 
   <div class="card">
-    <div class="admin-section-title">Tools Admin</div>
-    <div class="admin-grid">
+    <div class="clean-section-label">Pengelolaan</div>
+    <div class="admin-section-title">Menu Admin</div>
+    <div class="admin-main-menu">
       <button class="btn btn-outline" onclick="app.navigate('admin-promos')">KELOLA PROMO</button>
       <button class="btn btn-outline" onclick="app.navigate('admin-settings')">PENGATURAN PIN</button>
-      <button class="btn btn-outline" onclick="app.enterTestMode()">BUKA TEST LAB</button>
+      <button class="btn btn-outline" onclick="app.enterTestMode()">TEST LAB</button>
       <button class="btn admin-danger" onclick="app.adminLogout()">KELUAR ADMIN</button>
     </div>
   </div>
@@ -3069,7 +3218,7 @@ body{padding-bottom:96px}
             <div class="claim-step"><b>5</b><span>Selesai. Setelah dikonfirmasi, kode berstatus USED dan tidak dapat dipakai kembali.</span></div>
         </div>
 
-        <button class="btn btn-primary" onclick="app.closeModal('modal-free');app.navigate('rewards');">LIHAT MY REWARDS</button>
+        <button class="btn btn-primary" onclick="app.closeModal('modal-free');app.navigate('rewards');">LIHAT REWARDS</button>
 
     </div>
 
@@ -3443,7 +3592,7 @@ const app = {
 
         if(view==='admin-dashboard'){
             await this.loadAdminAnalytics();
-            await this.loadAdminFreeRewards();
+            await this.loadAdminAllRewardCodes();
             await this.loadAdminSpinRewards();
         }
 
@@ -5545,54 +5694,221 @@ const app = {
     },
 
     loadAdminFreeRewards:async function(){
+        // Backward-compatible alias
+        return this.loadAdminAllRewardCodes();
+    },
+
+    loadAdminAllRewardCodes:async function(){
         if(!this.adminMode || !this.adminPin) return;
         const box=document.getElementById('admin-free-rewards');
-        if(box) box.innerHTML='<div class="loading"><div class="loading-spinner"></div>Memuat kode loyalty...</div>';
+        if(box) box.innerHTML='<div class="loading"><div class="loading-spinner"></div>Memuat semua kode reward...</div>';
         try{
-            const {data,error}=await supabase.rpc('evora_admin_free_rewards',{p_pin:this.adminPin});
-            if(error) throw new Error(error.message);
-            this.adminFreeRewards=Array.isArray(data)?data:[];
-            this.renderAdminFreeRewards();
+            // Refresh analytics because spin rewards are already returned per customer there.
+            const analyticsReq=supabase.rpc('evora_admin_analytics',{p_pin:this.adminPin});
+            const freeReq=supabase.rpc('evora_admin_free_rewards',{p_pin:this.adminPin});
+            const [analyticsRes,freeRes]=await Promise.all([analyticsReq,freeReq]);
+
+            if(analyticsRes.error) throw new Error(analyticsRes.error.message);
+            if(freeRes.error) throw new Error(freeRes.error.message);
+
+            const payload=(analyticsRes.data && typeof analyticsRes.data==='object')?analyticsRes.data:{};
+            this.adminCustomers=Array.isArray(payload.customers)?payload.customers:[];
+            this.adminFreeRewards=Array.isArray(freeRes.data)?freeRes.data:[];
+
+            // Keep statistic cards synced.
+            const set=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=Number(val||0).toLocaleString('id-ID');};
+            set('admin-total-visits',payload.total_visits);
+            set('admin-unique-visitors',payload.unique_visitors);
+            set('admin-total-customers',payload.total_customers);
+            set('admin-total-credits',payload.total_spin_credits);
+
+            const all=[];
+            const seen=new Set();
+
+            // Spin Wheel / regular redeem codes from analytics.
+            for(const c of this.adminCustomers){
+                const rewards=Array.isArray(c.rewards)?c.rewards:[];
+                for(const r of rewards){
+                    const code=String(r.code||'').trim();
+                    if(!code) continue;
+                    const key=code.toUpperCase();
+                    if(seen.has(key)) continue;
+                    seen.add(key);
+                    all.push({
+                        source:'spin',
+                        phone:c.phone||'-',
+                        code,
+                        reward:r.reward||r.name||r.title||'Reward Spin',
+                        status:String(r.status||'active').toLowerCase(),
+                        created_at:r.created_at||r.date||null,
+                        used_at:r.redeemed_at||r.used_at||null
+                    });
+                }
+            }
+
+            // Loyalty FREE perfume codes.
+            for(const r of this.adminFreeRewards){
+                const code=String(r.code||'').trim();
+                if(!code) continue;
+                const key=code.toUpperCase();
+                if(seen.has(key)) continue;
+                seen.add(key);
+                all.push({
+                    source:'free',
+                    phone:r.phone||'-',
+                    code,
+                    reward:'FREE Parfum EVORA 30ML',
+                    status:String(r.status||'valid').toLowerCase(),
+                    created_at:r.created_at||null,
+                    used_at:r.used_at||null
+                });
+            }
+
+            all.sort((a,b)=>{
+                const au=['used','redeemed','expired'].includes(a.status);
+                const bu=['used','redeemed','expired'].includes(b.status);
+                if(au!==bu) return au?1:-1;
+                return new Date(b.created_at||0)-new Date(a.created_at||0);
+            });
+
+            this.adminAllRewardCodes=all;
+            this.renderAdminAllRewardCodes();
+            this.renderAdminCustomers();
         }catch(e){
-            if(box) box.innerHTML=`<div class="error" style="display:block">${this.escape(e.message||'Gagal memuat kode loyalty.')}</div>`;
+            if(box) box.innerHTML=`<div class="error" style="display:block">${this.escape(e.message||'Gagal memuat kode reward.')}</div>`;
         }
     },
 
     renderAdminFreeRewards:function(){
-        const box=document.getElementById('admin-free-rewards'); if(!box) return;
-        const q=(document.getElementById('admin-free-search')?.value||'').trim().toLowerCase();
-        const rows=(this.adminFreeRewards||[]).filter(r=>!q || String(r.code||'').toLowerCase().includes(q) || String(r.phone||'').toLowerCase().includes(q));
-        if(!rows.length){ box.innerHTML='<div class="empty" style="padding:25px 10px"><h3>Belum Ada Kode</h3><p>Tidak ada reward loyalty yang cocok.</p></div>'; return; }
+        // Backward-compatible alias
+        return this.renderAdminAllRewardCodes();
+    },
+
+    renderAdminAllRewardCodes:function(){
+        const box=document.getElementById('admin-free-rewards');
+        const summary=document.getElementById('admin-free-summary');
+        if(!box) return;
+
+        const rows=Array.isArray(this.adminAllRewardCodes)?this.adminAllRewardCodes:[];
+        const isDone=s=>['used','redeemed','expired'].includes(String(s||'').toLowerCase());
+        const validCount=rows.filter(r=>!isDone(r.status)).length;
+        const usedCount=rows.length-validCount;
+        const spinCount=rows.filter(r=>r.source==='spin').length;
+        const freeCount=rows.filter(r=>r.source==='free').length;
+
+        if(summary){
+            summary.innerHTML=`<b>${validCount}</b> menunggu konfirmasi • <b>${usedCount}</b> selesai • ${spinCount} Spin • ${freeCount} FREE`;
+        }
+
+        if(rows.length===0){
+            box.innerHTML=`
+                <div class="empty" style="padding:26px 16px">
+                    <div class="empty-icon">✦</div>
+                    <h3>Belum Ada Kode Reward</h3>
+                    <p>Kode yang didapat customer dari Spin Wheel maupun FREE Parfum akan otomatis tampil di sini.</p>
+                </div>`;
+            return;
+        }
+
         box.innerHTML=rows.map(r=>{
-            const status=String(r.status||'valid').toLowerCase();
-            const used=status==='used';
-            const created=r.created_at?new Date(r.created_at).toLocaleString('id-ID'):'-';
-            const usedAt=r.used_at?new Date(r.used_at).toLocaleString('id-ID'):'-';
-            return `<div class="free-reward-admin-row">
-              <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
-                <div><b style="font-family:monospace;font-size:14px;color:#8c671c">${this.escape(r.code||'-')}</b><div style="font-size:11px;margin-top:3px">WA: <b>${this.escape(r.phone||'-')}</b></div></div>
-                <span class="free-reward-status ${used?'used':'valid'}">${used?'USED':'VALID'}</span>
-              </div>
-              <div class="free-reward-admin-meta">Diperoleh: ${created}${used?`<br>Dikonfirmasi: ${usedAt}`:''}</div>
-              ${used?'<button class="btn btn-outline" disabled style="min-height:42px">SUDAH DIGUNAKAN</button>':`<button class="btn btn-primary" style="min-height:42px" onclick="app.adminConfirmFreeReward('${this.escape(r.code||'')}')">KONFIRMASI KODE</button>`}
-            </div>`;
+            const done=isDone(r.status);
+            const expired=String(r.status||'').toLowerCase()==='expired';
+            const created=r.created_at
+                ? new Date(r.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
+                : '-';
+            const usedAt=r.used_at
+                ? new Date(r.used_at).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
+                : '';
+            const statusText=expired?'KADALUARSA':done?'SUDAH DIGUNAKAN':'VALID';
+            const sourceText=r.source==='free'?'LOYALTY':'SPIN WHEEL';
+            return `
+                <div class="admin-free-row">
+                    <div>
+                        <div class="admin-free-phone">WA: ${this.escape(r.phone||'-')}</div>
+                        <div style="font-size:11px;font-weight:800;margin-bottom:4px">${this.escape(r.reward||'Reward')}</div>
+                        <div class="admin-free-code">${this.escape(r.code||'-')}</div>
+                        <div class="admin-free-meta">
+                            ${sourceText} • Didapat: ${this.escape(created)}
+                            ${usedAt?` • Dikonfirmasi: ${this.escape(usedAt)}`:''}
+                        </div>
+                    </div>
+                    <div class="admin-free-actions">
+                        <span class="admin-free-badge ${done?'used':'valid'}">${statusText}</span>
+                        ${done
+                            ? ''
+                            : `<button class="btn btn-primary admin-free-confirm" onclick='app.adminConfirmAnyReward(${JSON.stringify(String(r.code||""))},${JSON.stringify(String(r.source||"spin"))})'>KONFIRMASI</button>`
+                        }
+                    </div>
+                </div>`;
         }).join('');
     },
 
     adminConfirmFreeReward:async function(code){
-        if(!this.adminMode || !this.adminPin || !code) return;
-        if(!confirm(`Konfirmasi kode ${code}? Setelah dikonfirmasi kode tidak dapat dipakai lagi.`)) return;
+        return this.adminConfirmAnyReward(code,'free');
+    },
+
+    adminConfirmAnyReward:async function(code,source){
+        if(!code){
+            alert('Kode reward tidak ditemukan.');
+            return;
+        }
+        if(!this.adminMode || !this.adminPin){
+            alert('Sesi admin tidak aktif. Silakan login admin kembali.');
+            return;
+        }
+
+        const ok=confirm(`Konfirmasi kode ${code}? Setelah dikonfirmasi kode tidak dapat dipakai lagi.`);
+        if(!ok) return;
+
         const status=document.getElementById('admin-free-status');
-        if(status) status.innerHTML='<span style="color:#9b721d">Mengonfirmasi kode...</span>';
+        const buttons=[...document.querySelectorAll('.admin-free-confirm')];
+        const target=buttons.find(b=>(b.getAttribute('onclick')||'').includes(code));
+        if(target){
+            target.disabled=true;
+            target.textContent='MEMPROSES...';
+        }
+        if(status) status.innerHTML='<span style="color:#9b721d">Mengonfirmasi kode '+this.escape(code)+'...</span>';
+
         try{
-            const {data,error}=await supabase.rpc('evora_admin_confirm_free_reward',{p_pin:this.adminPin,p_code:code});
-            if(error) throw new Error(error.message);
-            if(data?.success===false) throw new Error(data.message||'Kode tidak dapat dikonfirmasi.');
-            if(status) status.innerHTML='<span style="color:#2f7a50">✓ Kode berhasil dikonfirmasi dan sekarang berstatus USED.</span>';
-            await this.loadAdminFreeRewards();
-            await this.loadAdminAnalytics();
+            const rpcName=source==='free'
+                ? 'evora_admin_confirm_free_reward'
+                : 'evora_admin_confirm_reward_code';
+
+            const res=await Promise.race([
+                supabase.rpc(rpcName,{p_pin:this.adminPin,p_code:code}),
+                new Promise((_,reject)=>setTimeout(()=>reject(new Error('Server tidak merespons. Coba refresh lalu konfirmasi lagi.')),12000))
+            ]);
+
+            if(!res) throw new Error('Tidak ada respons dari server.');
+            if(res.error) throw new Error(res.error.message||'RPC konfirmasi gagal.');
+
+            const data=res.data;
+            if(data && typeof data==='object' && data.success===false){
+                throw new Error(data.message||'Kode tidak dapat dikonfirmasi.');
+            }
+
+            if(status) status.innerHTML='<span style="color:#2f7a50">✓ '+this.escape(code)+' berhasil dikonfirmasi.</span>';
+
+            // Update UI immediately so user gets visible feedback even before refresh.
+            if(Array.isArray(this.adminAllRewardCodes)){
+                const row=this.adminAllRewardCodes.find(r=>String(r.code||'').toUpperCase()===String(code).toUpperCase());
+                if(row){
+                    row.status=source==='free'?'used':'redeemed';
+                    row.used_at=new Date().toISOString();
+                }
+                this.renderAdminAllRewardCodes();
+            }
+
+            // Then sync latest state from server.
+            try{ await this.loadAdminAllRewardCodes(); }catch(_){}
         }catch(e){
-            if(status) status.innerHTML=`<span style="color:#b45b3c">${this.escape(e.message||'Gagal mengonfirmasi kode.')}</span>`;
+            if(target){
+                target.disabled=false;
+                target.textContent='KONFIRMASI';
+            }
+            const msg=e?.message||'Gagal mengonfirmasi kode.';
+            if(status) status.innerHTML='<span style="color:#b45b3c">✕ '+this.escape(msg)+'</span>';
+            alert(msg);
         }
     },
 
