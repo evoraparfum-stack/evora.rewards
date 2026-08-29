@@ -2268,6 +2268,173 @@ body{padding-bottom:96px}
     box-shadow:inset 0 0 0 1px rgba(184,138,36,.10);
 }
 </style>
+
+<style>
+/* ==================================================
+   FREE REWARD MODAL — MOBILE SAFE
+   Popup harus selalu bisa dibaca sampai tombol terakhir.
+================================================== */
+#modal-free{
+    z-index:3000 !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    align-items:flex-start !important;
+    justify-content:center !important;
+    padding:
+        max(14px, env(safe-area-inset-top))
+        14px
+        max(24px, env(safe-area-inset-bottom)) !important;
+}
+
+#modal-free .modal-box{
+    width:min(100%, 430px) !important;
+    max-width:430px !important;
+    max-height:none !important;
+    overflow:visible !important;
+    margin:auto 0 !important;
+    padding:24px 20px 28px !important;
+    box-sizing:border-box;
+}
+
+#modal-free .loyalty-code{
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+#modal-free .claim-step span{
+    min-width:0;
+    overflow-wrap:anywhere;
+}
+
+/* Saat popup terbuka, bottom navigation jangan menutupi isi popup. */
+body:has(#modal-free.active) #bottom-nav{
+    display:none !important;
+}
+
+@media(max-width:600px){
+    #modal-free{
+        padding:
+            max(10px, env(safe-area-inset-top))
+            10px
+            max(18px, env(safe-area-inset-bottom)) !important;
+    }
+
+    #modal-free .modal-box{
+        border-radius:20px !important;
+        padding:22px 16px 26px !important;
+        margin:0 !important;
+    }
+
+    #modal-free .modal-title{
+        font-size:clamp(28px,9vw,36px) !important;
+    }
+
+    #modal-free .modal-reward{
+        font-size:clamp(23px,7vw,30px) !important;
+        margin-bottom:16px !important;
+    }
+
+    #modal-free .loyalty-code{
+        font-size:clamp(18px,5.8vw,27px) !important;
+        letter-spacing:2px !important;
+    }
+
+    #modal-free .claim-step{
+        grid-template-columns:34px minmax(0,1fr) !important;
+        gap:10px !important;
+        font-size:14px !important;
+        line-height:1.55 !important;
+    }
+
+    #modal-free .claim-step b{
+        width:34px !important;
+        height:34px !important;
+    }
+}
+</style>
+
+<style>
+.free-history-code{
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    font:inherit;
+    color:inherit;
+}
+.free-history-code:focus,
+.free-history-code:focus-visible{
+    outline:none !important;
+    box-shadow:0 0 0 3px rgba(184,138,36,.13);
+}
+</style>
+
+<style>
+/* FIX Tata Cara Claim: nomor dan teks tidak menempel/bertumpuk di mobile */
+#modal-free .claim-steps{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:12px !important;
+    margin:14px 0 18px !important;
+}
+
+#modal-free .claim-step{
+    display:grid !important;
+    grid-template-columns:34px minmax(0,1fr) !important;
+    column-gap:12px !important;
+    align-items:start !important;
+    width:100% !important;
+    text-align:left !important;
+}
+
+#modal-free .claim-number{
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border-radius:50% !important;
+    background:#fff5da !important;
+    border:1px solid #dec17d !important;
+    color:#8c671c !important;
+    font-weight:800 !important;
+    line-height:1 !important;
+    box-sizing:border-box !important;
+}
+
+#modal-free .claim-text{
+    min-width:0 !important;
+    padding-top:6px !important;
+    color:#6f6252 !important;
+    font-size:13px !important;
+    line-height:1.6 !important;
+    overflow-wrap:break-word !important;
+    word-break:normal !important;
+}
+
+#modal-free .claim-text strong{
+    display:inline !important;
+    margin:0 2px !important;
+    color:#51483e !important;
+}
+
+@media(max-width:600px){
+    #modal-free .claim-step{
+        grid-template-columns:32px minmax(0,1fr) !important;
+        column-gap:11px !important;
+    }
+    #modal-free .claim-number{
+        width:32px !important;
+        height:32px !important;
+        min-width:32px !important;
+    }
+    #modal-free .claim-text{
+        padding-top:5px !important;
+        font-size:13px !important;
+        line-height:1.62 !important;
+    }
+}
+</style>
 </head>
 
 <body>
@@ -2871,7 +3038,7 @@ body{padding-bottom:96px}
 ================================================== -->
 <section id="view-admin-dashboard" class="view">
   <h2 class="page-title">ADMIN EVORA</h2>
-  <div style="font-size:9px;color:#9b721d;font-weight:800;letter-spacing:1px;margin:-8px 0 12px">SYSTEM VERSION: PROFILE-NAV-VISUAL-FIX-01</div>
+  <div style="font-size:9px;color:#9b721d;font-weight:800;letter-spacing:1px;margin:-8px 0 12px">SYSTEM VERSION: CLAIM-TEXT-MOBILE-FIX-01</div>
   <p class="page-subtitle">Semua kontrol utama admin dalam satu dashboard yang lebih ringkas.</p>
 
   <div class="admin-live-grid">
@@ -3301,7 +3468,28 @@ body{padding-bottom:96px}
     class="modal"
 >
 
-    <div class="modal-box">
+    <div class="modal-box" style="position:relative">
+
+        <button
+            type="button"
+            aria-label="Tutup"
+            onclick="app.closeModal('modal-free')"
+            style="
+                position:absolute;
+                top:10px;
+                right:10px;
+                width:38px;
+                height:38px;
+                border:0;
+                border-radius:50%;
+                background:rgba(255,255,255,.72);
+                color:#746b60;
+                font-size:22px;
+                line-height:1;
+                cursor:pointer;
+                z-index:2;
+            "
+        >×</button>
 
         <div style="
             font-size:48px;
@@ -3332,18 +3520,18 @@ body{padding-bottom:96px}
         <div class="loyalty-code-box">
             <div class="loyalty-code-label">KODE REWARD FREE PARFUM</div>
             <div id="free-bottle-code" class="loyalty-code">EVORA-FREE</div>
-            <div class="loyalty-code-note">Kode hanya dapat digunakan 1 kali dan harus dikonfirmasi Admin EVORA.</div>
+            <div id="free-bottle-code-note" class="loyalty-code-note">Kode hanya dapat digunakan 1 kali dan harus dikonfirmasi Admin EVORA.</div>
         </div>
 
         <button class="btn btn-outline" style="margin-bottom:12px" onclick="app.copyFreeBottleCode()">SALIN KODE REWARD</button>
 
         <div style="font-family:var(--heading);font-size:18px;text-align:left;margin:6px 0 10px">Tata Cara Claim</div>
         <div class="claim-steps">
-            <div class="claim-step"><b>1</b><span>Order produk EVORA seperti biasa.</span></div>
-            <div class="claim-step"><b>2</b><span>Salin kode reward FREE Parfum 30ML di atas.</span></div>
-            <div class="claim-step"><b>3</b><span>Masukkan kode reward pada <b>Note/Catatan</b> saat checkout. Pesanan akan otomatis diproses dengan tambahan 1 Parfum EVORA 30ML gratis setelah kode dinyatakan valid.</span></div>
-            <div class="claim-step"><b>4</b><span>Admin EVORA akan mengecek dan mengonfirmasi kode reward tersebut.</span></div>
-            <div class="claim-step"><b>5</b><span>Selesai. Setelah dikonfirmasi, kode berstatus USED dan tidak dapat dipakai kembali.</span></div>
+            <div class="claim-step"><div class="claim-number">1</div><div class="claim-text">Order produk EVORA seperti biasa.</div></div>
+            <div class="claim-step"><div class="claim-number">2</div><div class="claim-text">Salin kode reward FREE Parfum 30ML di atas.</div></div>
+            <div class="claim-step"><div class="claim-number">3</div><div class="claim-text">Masukkan kode reward pada <strong>Note/Catatan</strong> saat checkout. Pesanan akan otomatis diproses dengan tambahan 1 Parfum EVORA 30ML gratis setelah kode dinyatakan valid.</div></div>
+            <div class="claim-step"><div class="claim-number">4</div><div class="claim-text">Admin EVORA akan mengecek dan mengonfirmasi kode reward tersebut.</div></div>
+            <div class="claim-step"><div class="claim-number">5</div><div class="claim-text">Selesai. Setelah dikonfirmasi, kode berstatus <strong>USED</strong> dan tidak dapat dipakai kembali.</div></div>
         </div>
 
         <button class="btn btn-primary" onclick="app.closeModal('modal-free');app.navigate('rewards');">LIHAT REWARDS</button>
@@ -4827,6 +5015,28 @@ const app = {
         }
     },
 
+    openFreeRewardGuide:function(code,status='valid'){
+        const value=String(code||'').trim();
+        if(!value) return;
+
+        this.setFreeBottleCode(value);
+
+        const note=document.getElementById('free-bottle-code-note');
+        if(note){
+            note.textContent=
+                String(status).toLowerCase()==='used'
+                ? 'Kode ini sudah dikonfirmasi Admin EVORA dan tidak dapat digunakan kembali. Tata cara claim tetap ditampilkan sebagai riwayat.'
+                : 'Kode hanya dapat digunakan 1 kali dan harus dikonfirmasi Admin EVORA.';
+        }
+
+        const modal=document.getElementById('modal-free');
+        if(modal){
+            modal.scrollTop=0;
+            modal.classList.add('active');
+            requestAnimationFrame(()=>{ modal.scrollTop=0; });
+        }
+    },
+
     copyFreeBottleCode:async function(){
         const code=document.getElementById('free-bottle-code')?.textContent||'';
         const ok=await this.copyText(code);
@@ -4869,16 +5079,59 @@ const app = {
         const status=String(r.status||'valid').toLowerCase();
         const used=status==='used';
         const created=r.created_at?new Date(r.created_at).toLocaleDateString('id-ID'):'-';
+        const safeCode=this.escape(code);
         return `<div class="card free-reward-card">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
                 <div><div class="admin-section-title" style="font-size:20px;margin:0">FREE PARFUM 30ML</div><div class="reward-date">Reward loyalty 10 pembelian • ${created}</div></div>
                 <span class="free-reward-status ${used?'used':'valid'}">${used?'SUDAH DIGUNAKAN':'VALID'}</span>
             </div>
-            <div class="loyalty-code-box" style="margin-bottom:12px"><div class="loyalty-code-label">KODE REWARD</div><div class="loyalty-code">${this.escape(code)}</div></div>
-            ${!used?`<button class="btn btn-outline" style="min-height:44px" onclick="app.copyLoyaltyCode('${this.escape(code)}')">SALIN KODE</button>
-            <div class="admin-muted" style="margin-top:10px"><b>Cara claim:</b> order seperti biasa → salin kode → tulis kode di Note/Catatan checkout → Admin mengonfirmasi → FREE Parfum 30ML ikut dalam pengiriman.</div>`:
-            `<div class="admin-muted">Kode ini sudah dikonfirmasi Admin dan tidak dapat digunakan kembali.</div>`}
+
+            <button
+                type="button"
+                onclick="app.openFreeRewardGuide('${safeCode}','${used?'used':'valid'}')"
+                class="loyalty-code-box free-history-code"
+                style="margin-bottom:12px;width:100%;cursor:pointer;text-align:center"
+                aria-label="Lihat detail dan tata cara claim reward ${safeCode}"
+            >
+                <div class="loyalty-code-label">KODE REWARD — KLIK UNTUK LIHAT DETAIL</div>
+                <div class="loyalty-code">${safeCode}</div>
+            </button>
+
+            ${!used?`<button class="btn btn-outline" style="min-height:44px" onclick="app.copyLoyaltyCode('${safeCode}')">SALIN KODE</button>
+            <div class="admin-muted" style="margin-top:10px"><b>Cara claim:</b> Klik kode di atas untuk melihat kembali tata cara claim lengkap.</div>`:
+            `<button class="btn btn-outline" style="min-height:44px" onclick="app.openFreeRewardGuide('${safeCode}','used')">LIHAT DETAIL REWARD</button>
+            <div class="admin-muted" style="margin-top:10px">Kode sudah dikonfirmasi Admin. Detail reward dan tata cara tetap dapat dilihat kembali.</div>`}
         </div>`;
+    },
+
+    resolveLegacyRewardName:function(reward){
+        if(!reward || typeof reward!=='object') return '';
+
+        const wheelNames=[
+            'Free Pocket 20ML',
+            'Kode Diskon Rp5.000',
+            'Kode Diskon Rp10.000',
+            'Diskon 20%',
+            'Diskon 10%',
+            'Emas 0,0001g',
+            'Parfum 30ML'
+        ];
+
+        const rawIndex=
+            reward.reward_index ??
+            reward.prize_index ??
+            reward.wheel_index ??
+            null;
+
+        if(rawIndex!==null && rawIndex!==undefined && rawIndex!==''){
+            const n=Number(rawIndex);
+            if(Number.isInteger(n)){
+                if(n>=0 && n<wheelNames.length) return wheelNames[n];
+                if(n>=1 && n<=wheelNames.length) return wheelNames[n-1];
+            }
+        }
+
+        return '';
     },
 
     /* ===============================================
@@ -5084,8 +5337,28 @@ const app = {
                         : '-';
 
 
+                    const rewardObject =
+                        reward.reward && typeof reward.reward==='object'
+                        ? reward.reward
+                        : {};
+
                     let title =
-                        'EVORA REWARD';
+                        String(
+                            reward.reward_name ||
+                            reward.prize_name ||
+                            reward.reward_label ||
+                            reward.spin_reward_name ||
+                            reward.spin_reward ||
+                            rewardObject.reward_name ||
+                            rewardObject.name ||
+                            rewardObject.title ||
+                            rewardObject.label ||
+                            (typeof reward.reward==='string' ? reward.reward : '') ||
+                            reward.name ||
+                            reward.title ||
+                            reward.prize ||
+                            ''
+                        ).trim();
 
 
                     if(
@@ -5095,7 +5368,19 @@ const app = {
                     ){
 
                         title =
-                            'FREE EVORA BOTTLE';
+                            'FREE PARFUM 30ML';
+
+                    }
+
+
+                    if(!title){
+                        title=this.resolveLegacyRewardName(reward);
+                    }
+
+                    if(!title){
+
+                        title =
+                            'Nama hadiah belum tersimpan';
 
                     }
 
@@ -5125,8 +5410,22 @@ const app = {
                                             }
                                         </div>
 
-                                        <div class="reward-title">
-                                            ${title}
+                                        <div style="
+                                            color:#918a81;
+                                            font-size:8px;
+                                            font-weight:800;
+                                            letter-spacing:1.8px;
+                                            margin-bottom:5px;
+                                        ">
+                                            HADIAH YANG DIDAPAT
+                                        </div>
+
+                                        <div class="reward-title" style="
+                                            color:#9b741e;
+                                            font-size:22px;
+                                            line-height:1.2;
+                                        ">
+                                            ${this.escape(title)}
                                         </div>
 
                                         <div class="reward-date">
@@ -5150,6 +5449,18 @@ const app = {
 
                                     <div class="reward-code-value">
                                         ${this.escape(code)}
+                                    </div>
+
+                                    <div style="
+                                        margin-top:10px;
+                                        padding-top:10px;
+                                        border-top:1px solid #eee2cf;
+                                        color:#6f6252;
+                                        font-size:11px;
+                                        line-height:1.45;
+                                    ">
+                                        Hadiah kode ini:
+                                        <b style="color:#9b741e">${this.escape(title)}</b>
                                     </div>
 
                                 </div>
