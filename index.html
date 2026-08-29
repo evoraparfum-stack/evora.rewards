@@ -1475,7 +1475,7 @@ select{
     bottom:12px;
     padding:7px;
     border-radius:22px;
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(5,1fr);
     box-shadow:0 12px 35px rgba(73,61,43,.16);
 }
 
@@ -2196,6 +2196,78 @@ body{padding-bottom:96px}
 }
 </style>
 
+
+<style>
+/* FIX PROFIL: hilangkan kotak/highlight biru browser pada input & tap */
+#view-profile input,
+#view-profile button,
+#view-profile .card,
+#view-profile .stat-card{
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+#view-profile .input{
+    appearance:none;
+    -webkit-appearance:none;
+    background:#fff !important;
+    color:var(--ink) !important;
+    border:1px solid var(--border) !important;
+    box-shadow:none;
+}
+
+#view-profile .input:focus{
+    outline:none !important;
+    border-color:#c9a85f !important;
+    box-shadow:0 0 0 4px rgba(201,168,95,.10) !important;
+    background:#fff !important;
+}
+
+/* Chrome / Android autofill biasanya membuat kotak biru.
+   Paksa tetap putih dan mengikuti tema EVORA. */
+#view-profile input:-webkit-autofill,
+#view-profile input:-webkit-autofill:hover,
+#view-profile input:-webkit-autofill:focus,
+#view-profile input:-webkit-autofill:active{
+    -webkit-text-fill-color:var(--ink) !important;
+    -webkit-box-shadow:0 0 0 1000px #fff inset !important;
+    box-shadow:0 0 0 1000px #fff inset !important;
+    transition:background-color 9999s ease-out 0s;
+    caret-color:var(--gold3) !important;
+}
+
+/* Firefox/autofill */
+#view-profile input:autofill{
+    background:#fff !important;
+    color:var(--ink) !important;
+    box-shadow:0 0 0 1000px #fff inset !important;
+}
+
+#view-profile ::selection{
+    background:rgba(201,168,95,.18);
+    color:var(--ink);
+}
+</style>
+
+<style>
+.bottom-nav .nav{
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none;
+    background:transparent;
+    -webkit-tap-highlight-color:transparent !important;
+}
+.bottom-nav .nav:focus,
+.bottom-nav .nav:focus-visible{
+    outline:0 !important;
+}
+.bottom-nav .nav.active{
+    color:var(--gold);
+    background:rgba(184,138,36,.10);
+    box-shadow:inset 0 0 0 1px rgba(184,138,36,.10);
+}
+</style>
 </head>
 
 <body>
@@ -2287,6 +2359,57 @@ body{padding-bottom:96px}
         <input id="admin-pin" class="input" type="password" inputmode="numeric" placeholder="PIN ADMIN" style="margin-bottom:10px" onkeydown="if(event.key==='Enter'){app.adminLogin()}">
         <button id="btn-admin-login" class="btn btn-primary" onclick="app.adminLogin()">MASUK ADMIN</button>
         <div id="admin-login-status" class="admin-status" style="margin-top:10px;min-height:18px"></div>
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     CUSTOMER PROFILE
+================================================== -->
+
+<section id="view-profile" class="view">
+
+    <h1 class="login-title">PROFIL SAYA</h1>
+    <p class="login-sub">Atur data akun EVORA kamu.</p>
+
+    <div class="card">
+        <div class="stat-label" style="margin-bottom:8px">NAMA PANGGILAN</div>
+        <input id="profile-nickname" class="input" type="text" maxlength="30"
+               autocomplete="name" placeholder="Contoh: Farhan">
+
+        <div class="stat-label" style="margin:18px 0 8px">NO. WHATSAPP</div>
+        <input id="profile-phone" class="input" type="tel" inputmode="numeric"
+               maxlength="20" autocomplete="tel" placeholder="0812xxxxxxxx">
+
+        <div id="profile-error" class="error" style="display:none"></div>
+        <div id="profile-success" style="display:none;color:#7c682e;text-align:center;margin-top:12px;font-weight:700"></div>
+
+        <button id="btn-save-profile" class="btn btn-primary"
+                style="margin-top:18px" onclick="app.saveCustomerProfile()">
+            SIMPAN PERUBAHAN
+        </button>
+
+        <button class="btn btn-outline" style="margin-top:10px"
+                onclick="app.navigate('dashboard')">
+            KEMBALI
+        </button>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">SPIN CREDITS</div>
+                <div id="profile-spin" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">LOYALTY</div>
+                <div class="stat-value"><span id="profile-progress">0</span>/10</div>
+            </div>
+        </div>
+        <p style="color:#9b948b;text-align:center;font-size:12px;line-height:1.6;margin-top:12px">
+            Mengganti nomor WhatsApp tidak menghapus Spin Credit, Loyalty, FREE Bottle, atau Rewards.
+        </p>
     </div>
 
 </section>
@@ -2748,7 +2871,7 @@ body{padding-bottom:96px}
 ================================================== -->
 <section id="view-admin-dashboard" class="view">
   <h2 class="page-title">ADMIN EVORA</h2>
-  <div style="font-size:9px;color:#9b721d;font-weight:800;letter-spacing:1px;margin:-8px 0 12px">SYSTEM VERSION: SYNC-HOME-SPIN-01</div>
+  <div style="font-size:9px;color:#9b721d;font-weight:800;letter-spacing:1px;margin:-8px 0 12px">SYSTEM VERSION: PROFILE-NAV-VISUAL-FIX-01</div>
   <p class="page-subtitle">Semua kontrol utama admin dalam satu dashboard yang lebih ringkas.</p>
 
   <div class="admin-live-grid">
@@ -3068,6 +3191,10 @@ body{padding-bottom:96px}
         <span class="nav-icon">◆</span>
         PROMO
     </button>
+            <button class="nav" onclick="app.navigate('profile')">
+                <span class="nav-icon">◇</span>
+                PROFIL
+            </button>
 
 </nav>
 
@@ -3561,6 +3688,12 @@ const app = {
         }
 
 
+        if(view==='profile'){
+
+            await this.loadCustomerProfile();
+
+        }
+
         if(view==='spin'){
 
             await this.loadSpin();
@@ -3788,33 +3921,128 @@ const app = {
         }
 
         const normalizedPhone=String(this.userPhone||'')
-            .trim()
-            .replace(/\s+/g,'')
-            .replace(/[-()]/g,'');
+            .replace(/[^0-9]/g,'');
 
         const {data,error}=await withTimeout(
-            supabase
-                .from('customers')
-                .select('*')
-                .eq('phone',normalizedPhone)
-                .maybeSingle(),
+            supabase.rpc(
+                'evora_customer_state',
+                {p_phone:normalizedPhone}
+            ),
             8000
         );
 
         if(error){
-            throw new Error(error.message||'Gagal membaca data customer terbaru.');
+            throw new Error(error.message||'Gagal membaca state customer.');
         }
 
-        if(!data){
-            throw new Error('Data customer tidak ditemukan.');
+        if(!data || data.success===false){
+            throw new Error(data?.message||'Data customer tidak ditemukan.');
         }
 
-        this.userPhone=normalizedPhone;
-        this.customer=data;
-        this.credits=Number(data.spin_credits||0);
-        this.progress=Number(data.progress||0);
+        const customerData={
+            id:data.customer_id||null,
+            phone:data.phone||normalizedPhone,
+            nickname:data.nickname||'',
+            spin_credits:Number(data.spin_credits||0),
+            progress:Number(data.progress||0),
+            total_free_bottles:Number(data.total_free_bottles||0),
+            updated_at:data.updated_at||null
+        };
 
-        return data;
+        this.userPhone=customerData.phone;
+        localStorage.setItem('evora_phone',customerData.phone);
+
+        this.customer=customerData;
+        this.credits=customerData.spin_credits;
+        this.progress=customerData.progress;
+
+        return customerData;
+    },
+
+
+    /* ===============================================
+       CUSTOMER PROFILE
+    =============================================== */
+
+    loadCustomerProfile:async function(){
+        const err=document.getElementById('profile-error');
+        const ok=document.getElementById('profile-success');
+        if(err) err.style.display='none';
+        if(ok) ok.style.display='none';
+
+        try{
+            const c=await this.refreshCustomerState();
+            document.getElementById('profile-nickname').value=c.nickname||'';
+            document.getElementById('profile-phone').value=c.phone||this.userPhone||'';
+            document.getElementById('profile-spin').textContent=Number(c.spin_credits||0);
+            document.getElementById('profile-progress').textContent=Number(c.progress||0);
+        }catch(e){
+            if(err){
+                err.textContent=e.message||'Gagal memuat profil.';
+                err.style.display='block';
+            }
+        }
+    },
+
+    saveCustomerProfile:async function(){
+        const btn=document.getElementById('btn-save-profile');
+        const err=document.getElementById('profile-error');
+        const ok=document.getElementById('profile-success');
+
+        if(err) err.style.display='none';
+        if(ok) ok.style.display='none';
+
+        const nickname=String(document.getElementById('profile-nickname')?.value||'').trim();
+        const newPhone=String(document.getElementById('profile-phone')?.value||'').replace(/[^0-9]/g,'');
+
+        if(nickname.length>30){
+            err.textContent='Nama panggilan maksimal 30 karakter.';
+            err.style.display='block';
+            return;
+        }
+
+        if(newPhone.length<9 || newPhone.length>15){
+            err.textContent='Nomor WhatsApp tidak valid.';
+            err.style.display='block';
+            return;
+        }
+
+        btn.disabled=true;
+        btn.textContent='MENYIMPAN...';
+
+        try{
+            const currentPhone=String(this.userPhone||'').replace(/[^0-9]/g,'');
+
+            const {data,error}=await withTimeout(
+                supabase.rpc('evora_customer_update_profile',{
+                    p_current_phone:currentPhone,
+                    p_new_phone:newPhone,
+                    p_nickname:nickname
+                }),
+                10000
+            );
+
+            if(error) throw new Error(error.message||'Gagal menyimpan profil.');
+            if(!data || data.success===false) throw new Error(data?.message||'Gagal menyimpan profil.');
+
+            this.userPhone=String(data.phone||newPhone);
+            localStorage.setItem('evora_phone',this.userPhone);
+
+            const c=await this.refreshCustomerState();
+            document.getElementById('profile-nickname').value=c.nickname||'';
+            document.getElementById('profile-phone').value=c.phone||this.userPhone;
+            document.getElementById('profile-spin').textContent=Number(c.spin_credits||0);
+            document.getElementById('profile-progress').textContent=Number(c.progress||0);
+
+            ok.textContent='Profil berhasil diperbarui.';
+            ok.style.display='block';
+        }catch(e){
+            err.textContent=e.message||'Gagal menyimpan profil.';
+            err.style.display='block';
+        }finally{
+            btn.disabled=false;
+            btn.textContent='SIMPAN PERUBAHAN';
+        }
     },
 
 
@@ -3861,7 +4089,7 @@ const app = {
             document.getElementById(
                 'dash-phone'
             ).textContent =
-                customerData.phone || this.userPhone;
+                customerData.nickname || customerData.phone || this.userPhone;
 
 
             document.getElementById(
