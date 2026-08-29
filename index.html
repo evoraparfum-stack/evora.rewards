@@ -2435,6 +2435,131 @@ body:has(#modal-free.active) #bottom-nav{
     }
 }
 </style>
+
+<style>
+/* =========================================================
+   ADMIN FULL AUDIT FIX
+   ========================================================= */
+#view-admin-dashboard,
+#view-admin-promos,
+#view-admin-settings{
+    padding-bottom:36px !important;
+}
+
+#view-admin-dashboard .card,
+#view-admin-promos .card,
+#view-admin-settings .card{
+    overflow:hidden;
+}
+
+#view-admin-dashboard .admin-table-wrap{
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
+
+#view-admin-dashboard .admin-table{
+    min-width:760px;
+}
+
+#view-admin-dashboard .admin-free-row{
+    min-width:0;
+}
+
+#view-admin-dashboard .admin-free-code{
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+#view-admin-dashboard .admin-free-actions .btn{
+    min-height:40px;
+}
+
+#view-admin-promos input,
+#view-admin-promos textarea,
+#view-admin-settings input{
+    max-width:100%;
+    box-sizing:border-box;
+}
+
+#view-admin-promos .promo-image{
+    max-height:280px;
+    object-fit:cover;
+}
+
+@media(max-width:700px){
+    #view-admin-dashboard,
+    #view-admin-promos,
+    #view-admin-settings{
+        padding-left:12px !important;
+        padding-right:12px !important;
+    }
+
+    #view-admin-dashboard .admin-live-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:8px !important;
+    }
+
+    #view-admin-dashboard .admin-live-stat{
+        min-width:0;
+        padding:13px 10px !important;
+    }
+
+    #view-admin-dashboard .admin-live-stat b{
+        overflow-wrap:anywhere;
+    }
+
+    #view-admin-dashboard .admin-priority-head{
+        display:flex !important;
+        flex-direction:column !important;
+        align-items:stretch !important;
+        gap:10px !important;
+    }
+
+    #view-admin-dashboard .admin-priority-head .btn{
+        width:100% !important;
+    }
+
+    #view-admin-dashboard .admin-free-row{
+        display:grid !important;
+        grid-template-columns:minmax(0,1fr) !important;
+        gap:12px !important;
+    }
+
+    #view-admin-dashboard .admin-free-actions{
+        width:100%;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:space-between !important;
+        gap:8px !important;
+    }
+
+    #view-admin-dashboard .admin-free-actions .btn{
+        width:auto !important;
+        flex:1 1 auto;
+    }
+
+    #view-admin-dashboard .admin-customer-tools,
+    #view-admin-dashboard .clean-actions,
+    #view-admin-dashboard .admin-main-menu,
+    #view-admin-promos .admin-grid{
+        grid-template-columns:1fr !important;
+        display:grid !important;
+    }
+
+    #view-admin-dashboard .admin-reward-edit{
+        grid-template-columns:minmax(0,1fr) 94px !important;
+    }
+
+    #view-admin-promos .promo-admin-grid{
+        grid-template-columns:1fr !important;
+    }
+
+    #view-admin-promos .promo-admin-grid > *{
+        grid-column:1 !important;
+    }
+}
+</style>
 </head>
 
 <body>
@@ -3038,7 +3163,7 @@ body:has(#modal-free.active) #bottom-nav{
 ================================================== -->
 <section id="view-admin-dashboard" class="view">
   <h2 class="page-title">ADMIN EVORA</h2>
-  <div style="font-size:9px;color:#9b721d;font-weight:800;letter-spacing:1px;margin:-8px 0 12px">SYSTEM VERSION: CLAIM-TEXT-MOBILE-FIX-01</div>
+  <div style="font-size:9px;color:#9b721d;font-weight:800;letter-spacing:1px;margin:-8px 0 12px">SYSTEM VERSION: ADMIN-FULL-AUDIT-FIX-01</div>
   <p class="page-subtitle">Semua kontrol utama admin dalam satu dashboard yang lebih ringkas.</p>
 
   <div class="admin-live-grid">
@@ -3081,7 +3206,7 @@ body:has(#modal-free.active) #bottom-nav{
     <div class="admin-muted">Ubah nama reward dan peluang menang. Total persentase harus 100%.</div>
     <div id="admin-spin-total" class="admin-status"></div>
     <div id="admin-spin-rewards" style="margin-top:8px"><div class="loading"><div class="loading-spinner"></div>Memuat reward...</div></div>
-    <button class="btn btn-primary" style="margin-top:12px" onclick="app.saveAllSpinRewards()">SIMPAN PERUBAHAN</button>
+    <button id="admin-save-spin-btn" class="btn btn-primary" style="margin-top:12px" onclick="app.saveAllSpinRewards()">SIMPAN PERUBAHAN</button>
     <div id="admin-spin-status" class="admin-status"></div>
 
     <div class="clean-divider"></div>
@@ -3280,6 +3405,7 @@ body:has(#modal-free.active) #bottom-nav{
             >
 
             <button
+                id="admin-change-pin-btn"
                 class="btn btn-primary"
                 style="width:100%;margin-top:14px"
                 onclick="app.changeAdminPin()"
@@ -3792,75 +3918,33 @@ const app = {
     /* ===============================================
        NAVIGATION
     =============================================== */
-
     navigate:async function(view){
+        if(this.isSpinning) return;
 
-        if(this.isSpinning){
-            return;
+        const adminViews=['admin-dashboard','admin-promos','admin-settings'];
+        const isAdminView=adminViews.includes(view);
+
+        if(isAdminView && (!this.adminMode || !this.adminPin)){
+            view='login';
         }
 
-        if(['admin-dashboard','admin-promos','admin-settings'].includes(view) && !this.adminMode){
-            return;
-        }
+        document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
 
-        document
-            .querySelectorAll('.view')
-            .forEach(el=>{
-                el.classList.remove('active');
-            });
-
-
-        const target =
-            document.getElementById(
-                'view-'+view
-            );
-
-        if(!target){
-            return;
-        }
-
+        const target=document.getElementById('view-'+view);
+        if(!target) return;
         target.classList.add('active');
 
+        document.querySelectorAll('.nav').forEach(el=>el.classList.remove('active'));
+        const nav=document.getElementById('nav-'+view);
+        if(nav) nav.classList.add('active');
 
-        document
-            .querySelectorAll('.nav')
-            .forEach(el=>{
-                el.classList.remove('active');
-            });
-
-
-        const nav =
-            document.getElementById(
-                'nav-'+view
-            );
-
-        if(nav){
-            nav.classList.add('active');
+        const bottom=document.getElementById('bottom-nav');
+        if(bottom){
+            // Customer navigation must never cover / interfere with Admin pages.
+            bottom.style.display=(view==='login' || adminViews.includes(view)) ? 'none' : 'grid';
         }
 
-
-        const bottom =
-            document.getElementById(
-                'bottom-nav'
-            );
-
-
-        if(view === 'login'){
-
-            bottom.style.display='none';
-
-        }else{
-
-            bottom.style.display='grid';
-
-        }
-
-
-        window.scrollTo({
-            top:0,
-            behavior:'smooth'
-        });
-
+        window.scrollTo({top:0,behavior:'smooth'});
 
         if(view==='dashboard'){
             try{
@@ -3875,54 +3959,34 @@ const app = {
             }
         }
 
-
-        if(view==='profile'){
-
-            await this.loadCustomerProfile();
-
-        }
-
-        if(view==='spin'){
-
-            await this.loadSpin();
-
-        }
-
+        if(view==='profile') await this.loadCustomerProfile();
+        if(view==='spin') await this.loadSpin();
 
         if(view==='rewards'){
-
             await this.loadFreeLoyaltyRewards();
             await this.loadRewards();
-
         }
 
-
         if(view==='promo'){
-
             this.updatePromoAdminToolbar();
             await this.loadPromos();
-
         }
 
         if(view==='admin-promos'){
-
-            this.loadAdminPromoList();
-
+            await this.loadAdminPromoList();
         }
 
-
         if(view==='admin-settings'){
-
             this.loadAdminPinSettings();
-
         }
 
         if(view==='admin-dashboard'){
-            await this.loadAdminAnalytics();
-            await this.loadAdminAllRewardCodes();
-            await this.loadAdminSpinRewards();
+            // loadAdminAllRewardCodes already refreshes analytics/statistics/customer rows.
+            await Promise.allSettled([
+                this.loadAdminAllRewardCodes(),
+                this.loadAdminSpinRewards()
+            ]);
         }
-
     },
 
 
@@ -5798,21 +5862,54 @@ const app = {
         const status=document.getElementById('admin-pin-status');
         if(status) status.textContent='';
     },
-
     changeAdminPin:async function(){
         const current=(document.getElementById('admin-current-pin')?.value||'').trim();
         const next=(document.getElementById('admin-new-pin')?.value||'').trim();
         const confirmPin=(document.getElementById('admin-confirm-pin')?.value||'').trim();
         const status=document.getElementById('admin-pin-status');
-        if(!/^\d{4,8}$/.test(next)){ if(status) status.innerHTML='<span style="color:#b45b3c">PIN baru harus 4–8 angka.</span>'; return; }
-        if(next!==confirmPin){ if(status) status.innerHTML='<span style="color:#b45b3c">Konfirmasi PIN tidak sama.</span>'; return; }
+        const btn=document.getElementById('admin-change-pin-btn');
+
+        if(!/^\d{4,8}$/.test(current)){
+            if(status) status.innerHTML='<span style="color:#b45b3c">Masukkan PIN saat ini dengan benar.</span>';
+            return;
+        }
+        if(!/^\d{4,8}$/.test(next)){
+            if(status) status.innerHTML='<span style="color:#b45b3c">PIN baru harus 4–8 angka.</span>';
+            return;
+        }
+        if(next!==confirmPin){
+            if(status) status.innerHTML='<span style="color:#b45b3c">Konfirmasi PIN tidak sama.</span>';
+            return;
+        }
+        if(current===next){
+            if(status) status.innerHTML='<span style="color:#b45b3c">PIN baru harus berbeda dari PIN saat ini.</span>';
+            return;
+        }
+
         try{
-            const {data,error}=await supabase.rpc('evora_admin_change_pin',{p_current_pin:current,p_new_pin:next});
-            if(error || data!==true) throw new Error(error?.message||'PIN saat ini salah.');
-            this.adminPin=next; sessionStorage.setItem('evora_admin_session_pin',next);
-            ['admin-current-pin','admin-new-pin','admin-confirm-pin'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-            if(status) status.innerHTML='<span style="color:#2f7a50">✓ PIN admin server berhasil diubah.</span>';
-        }catch(e){ if(status) status.innerHTML=`<span style="color:#b45b3c">${this.escape(e.message||'Gagal mengubah PIN.')}</span>`; }
+            if(btn){btn.disabled=true;btn.textContent='MENYIMPAN...';}
+            if(status) status.innerHTML='<span style="color:#9b721d">Memverifikasi dan menyimpan PIN...</span>';
+
+            const {data,error}=await withTimeout(
+                supabase.rpc('evora_admin_change_pin',{p_current_pin:current,p_new_pin:next}),
+                12000
+            );
+            const ok=data===true || data==='true' || data?.success===true;
+            if(error || !ok) throw new Error(error?.message||data?.message||'PIN saat ini salah.');
+
+            this.adminPin=next;
+            sessionStorage.setItem('evora_admin_session_pin',next);
+            ['admin-current-pin','admin-new-pin','admin-confirm-pin'].forEach(id=>{
+                const el=document.getElementById(id);
+                if(el) el.value='';
+            });
+            if(status) status.innerHTML='<span style="color:#2f7a50">✓ PIN admin berhasil diubah.</span>';
+        }catch(e){
+            console.error('ADMIN PIN CHANGE ERROR:',e);
+            if(status) status.innerHTML=`<span style="color:#b45b3c">${this.escape(e.message||'Gagal mengubah PIN.')}</span>`;
+        }finally{
+            if(btn){btn.disabled=false;btn.textContent='SIMPAN PIN BARU';}
+        }
     },
 
     previewPromoImage:function(event){
@@ -5879,78 +5976,79 @@ const app = {
         if(!el) return;
         el.style.display=this.testMode ? 'block' : 'none';
     },
-
-    loadAdminPromoList:function(){
+    loadAdminPromoList:async function(){
         const box=document.getElementById('admin-promo-list');
         if(!box) return;
 
-        let list=[];
-        try{
-            list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
-        }catch(e){
-            list=[];
-        }
-
-        if(!list.length){
-            box.innerHTML=`
-                <div class="card empty">
-                    <h3>Belum Ada Promo Test</h3>
-                    <p>Promo yang kamu buat dari panel ini akan muncul di sini.</p>
-                </div>
-            `;
+        if(!this.adminMode || !this.adminPin){
+            box.innerHTML='<div class="error" style="display:block">Sesi admin tidak aktif.</div>';
             return;
         }
 
-        box.innerHTML=list.map((promo,index)=>`
-            <div class="card promo-card" style="margin-bottom:12px">
-                ${
-                    promo.image_url
-                    ? `<img class="promo-image" src="${this.escape(promo.image_url)}" loading="lazy">`
-                    : ''
-                }
-                <div class="promo-content">
-                    <div class="promo-title">${this.escape(promo.title||'Promo EVORA')}</div>
-                    <div class="promo-description">${this.escape(promo.description||'')}</div>
-                    <div style="font-size:10px;color:#9a8c78;margin-top:8px">
-                        ${promo.remote_saved ? '✓ Tersimpan di server • tampil untuk customer' : 'Test Lab lokal • belum tersinkron'}
-                    </div>
-                    <button
-                        class="btn btn-outline"
-                        style="margin-top:10px"
-                        onclick="app.adminDeletePromo(${index})"
-                    >
-                        HAPUS
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    },
-
-    adminDeletePromo:async function(index){
-        let list=[];
-        try{
-            list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
-            if(!Array.isArray(list)) list=[];
-        }catch(_){
-            list=[];
-        }
-
-        const promo=list[index];
-        if(!promo) return;
-        if(!confirm('Hapus promo ini?')) return;
+        box.innerHTML='<div class="loading"><div class="loading-spinner"></div>Memuat promo server...</div>';
 
         try{
-            if(promo.remote_saved && promo.id && !String(promo.id).startsWith('local-')){
-                const result=await withTimeout(
-                    supabase.from('promos').delete().eq('id',promo.id),
-                    10000
-                );
-                if(result.error) throw new Error(result.error.message||'Gagal menghapus promo dari server.');
+            const result=await withTimeout(
+                supabase.from('promos').select('*').order('created_at',{ascending:false}),
+                12000
+            );
+            if(result.error) throw new Error(result.error.message||'Gagal membaca promo server.');
+
+            const list=Array.isArray(result.data)?result.data:[];
+            this.adminPromoRows=list;
+
+            if(!list.length){
+                box.innerHTML=`
+                    <div class="card empty">
+                        <h3>Belum Ada Promo</h3>
+                        <p>Promo yang disimpan akan tampil di sini dan di halaman customer.</p>
+                    </div>`;
+                return;
             }
 
-            list.splice(index,1);
-            localStorage.setItem('evora_admin_promos',JSON.stringify(list));
-            this.loadAdminPromoList();
+            box.innerHTML=list.map((promo,index)=>`
+                <div class="card promo-card" style="margin-bottom:12px">
+                    ${promo.image_url
+                        ? `<img class="promo-image" src="${this.escape(promo.image_url)}" loading="lazy" alt="${this.escape(promo.title||'Promo EVORA')}">`
+                        : ''
+                    }
+                    <div class="promo-content">
+                        <div class="promo-title">${this.escape(promo.title||'Promo EVORA')}</div>
+                        <div class="promo-description">${this.escape(promo.description||'')}</div>
+                        <div style="font-size:10px;color:#9a8c78;margin-top:8px">
+                            ${promo.is_active===false?'NONAKTIF':'AKTIF'} • tersimpan di server
+                        </div>
+                        <button
+                            class="btn btn-outline"
+                            style="margin-top:10px"
+                            onclick="app.adminDeletePromo(${index})"
+                        >HAPUS</button>
+                    </div>
+                </div>
+            `).join('');
+        }catch(e){
+            console.error('ADMIN PROMO LOAD ERROR:',e);
+            box.innerHTML=`<div class="error" style="display:block">${this.escape(e.message||'Gagal memuat promo.')}</div>`;
+        }
+    },
+    adminDeletePromo:async function(index){
+        if(!this.adminMode || !this.adminPin) return;
+
+        const list=Array.isArray(this.adminPromoRows)?this.adminPromoRows:[];
+        const promo=list[index];
+        if(!promo) return;
+        if(!confirm(`Hapus promo "${promo.title||'Promo EVORA'}"?`)) return;
+
+        try{
+            if(!promo.id) throw new Error('ID promo tidak ditemukan.');
+
+            const result=await withTimeout(
+                supabase.from('promos').delete().eq('id',promo.id),
+                12000
+            );
+            if(result.error) throw new Error(result.error.message||'Gagal menghapus promo dari server.');
+
+            await this.loadAdminPromoList();
             await this.loadPromos();
         }catch(e){
             console.error('PROMO DELETE ERROR:',e);
@@ -5983,15 +6081,19 @@ const app = {
         const st=document.getElementById('promo-admin-status');
         if(st && !keepStatus) st.textContent='';
     },
-
     adminSavePromo:async function(){
-
-        if(!this.testMode) return;
+        // BUG FIX: normal Admin mode must be allowed to save promo.
+        if(!this.adminMode || !this.adminPin){
+            const status=document.getElementById('promo-admin-status');
+            if(status) status.innerHTML='<span style="color:#b45b3c">Sesi admin tidak aktif. Login ulang.</span>';
+            return;
+        }
 
         const title=(document.getElementById('promo-admin-title')?.value||'').trim();
         const description=(document.getElementById('promo-admin-description')?.value||'').trim();
         const button_text=(document.getElementById('promo-admin-button-text')?.value||'').trim() || 'LIHAT PROMO';
-        const button_url=(document.getElementById('promo-admin-button-url')?.value||'').trim();
+        const rawUrl=(document.getElementById('promo-admin-button-url')?.value||'').trim();
+        const button_url=rawUrl ? this.safeUrl(rawUrl) : '';
         const image_url=this._promoImageData||'';
         const status=document.getElementById('promo-admin-status');
 
@@ -5999,8 +6101,16 @@ const app = {
             if(status) status.innerHTML='<span style="color:#b45b3c">Judul dan deskripsi wajib diisi.</span>';
             return;
         }
+        if(title.length>120){
+            if(status) status.innerHTML='<span style="color:#b45b3c">Judul maksimal 120 karakter.</span>';
+            return;
+        }
         if(!image_url){
             if(status) status.innerHTML='<span style="color:#b45b3c">Silakan upload gambar promo.</span>';
+            return;
+        }
+        if(rawUrl && !button_url){
+            if(status) status.innerHTML='<span style="color:#b45b3c">Link promo harus menggunakan http:// atau https://.</span>';
             return;
         }
 
@@ -6008,29 +6118,21 @@ const app = {
         if(status) status.innerHTML='<span style="color:#9b721d">Menyimpan promo ke server...</span>';
 
         try{
-            const result=await withTimeout(supabase.from('promos').insert([remotePromo]),10000);
+            const result=await withTimeout(
+                supabase.from('promos').insert([remotePromo]),
+                12000
+            );
             if(result.error) throw new Error(result.error.message||'Promo gagal disimpan.');
 
-            const saved=Array.isArray(result.data) ? result.data[0] : result.data;
-            const localCopy={
-                ...(saved||remotePromo),
-                id:(saved&&saved.id)||('local-'+Date.now()),
-                remote_saved:true,
-                created_at:(saved&&saved.created_at)||new Date().toISOString()
-            };
-            const list=JSON.parse(localStorage.getItem('evora_admin_promos')||'[]');
-            list.unshift(localCopy);
-            localStorage.setItem('evora_admin_promos',JSON.stringify(list));
-
             this.adminClearPromoForm(true);
-            if(status) status.innerHTML='<span style="color:#2f7a50">✓ Promo berhasil disimpan ke server. Customer sekarang bisa melihatnya.</span>';
-            this.loadAdminPromoList();
-            await this.loadPromos();
+            if(status) status.innerHTML='<span style="color:#2f7a50">✓ Promo berhasil disimpan dan aktif untuk customer.</span>';
 
+            await this.loadAdminPromoList();
+            await this.loadPromos();
         }catch(e){
             console.error('PROMO SAVE ERROR:',e);
             const msg=e?.message||'Promo gagal disimpan.';
-            if(status) status.innerHTML='<div class="promo-admin-message"><b>Promo belum tersimpan.</b><br>'+this.escape(msg)+'<br><br>Periksa pesan error di atas. Jika muncul <b>permission denied</b>, periksa policy RLS tabel <b>promos</b> di Supabase.</div>';
+            if(status) status.innerHTML='<div class="promo-admin-message"><b>Promo belum tersimpan.</b><br>'+this.escape(msg)+'</div>';
         }
     },
 
@@ -6136,26 +6238,32 @@ const app = {
             if(btn){ btn.disabled=false; btn.textContent='MASUK ADMIN'; }
         }
     },
-
     adminLogout:function(){
         this.adminMode=false;
         this.adminPin='';
         this.testMode=false;
+
         sessionStorage.removeItem('evora_admin_session_pin');
         localStorage.removeItem('evora_test_mode');
-        localStorage.removeItem('evora_phone');
-        this.userPhone=null;
+
+        // Do not destroy a customer's saved login merely because Admin logged out.
+        this.userPhone=localStorage.getItem('evora_phone')||null;
         this.customer=null;
+        this.credits=0;
+        this.progress=0;
+
         this.navigate('login');
     },
-
     enterTestMode:function(){
-        if(!this.adminMode) return;
+        if(!this.adminMode || !this.adminPin) return;
+
+        this._preTestPhone=localStorage.getItem('evora_phone')||this.userPhone||null;
         this.testMode=true;
         this.userPhone='0812-TEST-EVORA';
         this.customer=this.testCustomer();
-        this.credits=this.customer.spin_credits;
-        this.progress=this.customer.progress;
+        this.credits=Number(this.customer.spin_credits||0);
+        this.progress=Number(this.customer.progress||0);
+
         localStorage.setItem('evora_test_mode','1');
         this.navigate('dashboard');
     },
@@ -6174,38 +6282,84 @@ const app = {
             });
         }catch(_){ }
     },
-
     loadAdminAnalytics:async function(){
         if(!this.adminMode || !this.adminPin) return;
+
         const box=document.getElementById('admin-customer-table');
         if(box) box.innerHTML='<div class="loading"><div class="loading-spinner"></div>Memuat data customer...</div>';
+
         try{
-            const {data,error}=await supabase.rpc('evora_admin_analytics',{p_pin:this.adminPin});
-            if(error) throw new Error(error.message);
-            const payload=(data && typeof data==='object')?data:{};
-            document.getElementById('admin-total-visits').textContent=Number(payload.total_visits||0).toLocaleString('id-ID');
-            document.getElementById('admin-unique-visitors').textContent=Number(payload.unique_visitors||0).toLocaleString('id-ID');
-            document.getElementById('admin-total-customers').textContent=Number(payload.total_customers||0).toLocaleString('id-ID');
-            document.getElementById('admin-total-credits').textContent=Number(payload.total_spin_credits||0).toLocaleString('id-ID');
+            const {data,error}=await withTimeout(
+                supabase.rpc('evora_admin_analytics',{p_pin:this.adminPin}),
+                12000
+            );
+            if(error) throw new Error(error.message||'Gagal memuat analytics admin.');
+
+            const payload=(data && typeof data==='object' && !Array.isArray(data))?data:{};
+            const set=(id,value)=>{
+                const el=document.getElementById(id);
+                if(el) el.textContent=Number(value||0).toLocaleString('id-ID');
+            };
+            set('admin-total-visits',payload.total_visits);
+            set('admin-unique-visitors',payload.unique_visitors);
+            set('admin-total-customers',payload.total_customers);
+            set('admin-total-credits',payload.total_spin_credits);
+
             this.adminCustomers=Array.isArray(payload.customers)?payload.customers:[];
             this.renderAdminCustomers();
+            return payload;
         }catch(e){
+            console.error('ADMIN ANALYTICS ERROR:',e);
             if(box) box.innerHTML=`<div class="error" style="display:block">${this.escape(e.message||'Gagal memuat data admin.')}</div>`;
+            return null;
         }
     },
-
     renderAdminCustomers:function(){
-        const box=document.getElementById('admin-customer-table'); if(!box) return;
-        const q=(document.getElementById('admin-customer-search')?.value||'').trim().toLowerCase();
-        const rows=(this.adminCustomers||[]).filter(c=>!q || String(c.phone||'').toLowerCase().includes(q));
-        if(!rows.length){ box.innerHTML='<div class="empty"><h3>Tidak Ada Data</h3><p>Customer belum ditemukan.</p></div>'; return; }
+        const box=document.getElementById('admin-customer-table');
+        if(!box) return;
+
+        const q=(document.getElementById('admin-customer-search')?.value||'')
+            .trim().toLowerCase().replace(/[^0-9a-z]/g,'');
+
+        const rows=(Array.isArray(this.adminCustomers)?this.adminCustomers:[]).filter(c=>{
+            if(!q) return true;
+            const phone=String(c.phone||'').toLowerCase().replace(/[^0-9a-z]/g,'');
+            const nick=String(c.nickname||'').toLowerCase();
+            return phone.includes(q) || nick.includes(q);
+        });
+
+        if(!rows.length){
+            box.innerHTML='<div class="empty"><h3>Tidak Ada Data</h3><p>Customer belum ditemukan.</p></div>';
+            return;
+        }
+
         let html='<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>NO WA</th><th>SPIN</th><th>PROGRESS</th><th>FREE BOTTLE</th><th>REWARD</th><th>TERDAFTAR</th></tr></thead><tbody>';
+
         for(const c of rows){
             const rewards=Array.isArray(c.rewards)?c.rewards:[];
-            const rewardText=rewards.length ? rewards.map(r=>`${r.reward||r.name||r.title||'Reward'}${r.code?' • '+r.code:''}${r.status?' ('+r.status+')':''}`).join('<br>') : '-';
-            const created=c.created_at?new Date(c.created_at).toLocaleDateString('id-ID'):'-';
-            html+=`<tr><td><b>${this.escape(c.phone||'-')}</b></td><td>${Number(c.spin_credits||0)}</td><td>${Number(c.progress||0)}/10</td><td>${Number(c.total_free_bottles||0)}</td><td>${rewardText}</td><td>${created}</td></tr>`;
+            const rewardText=rewards.length
+                ? rewards.map(r=>{
+                    const name=r.reward_name||r.prize_name||r.reward||r.name||r.title||'Reward';
+                    const code=r.code||r.redeem_code||'';
+                    const status=r.status||'';
+                    return `${this.escape(name)}${code?' • '+this.escape(code):''}${status?' ('+this.escape(status)+')':''}`;
+                }).join('<br>')
+                : '-';
+
+            const created=c.created_at
+                ? new Date(c.created_at).toLocaleDateString('id-ID')
+                : '-';
+
+            html+=`<tr>
+                <td><b>${this.escape(c.phone||'-')}</b>${c.nickname?`<br><small>${this.escape(c.nickname)}</small>`:''}</td>
+                <td>${Number(c.spin_credits||0)}</td>
+                <td>${Number(c.progress||0)}/10</td>
+                <td>${Number(c.total_free_bottles||0)}</td>
+                <td>${rewardText}</td>
+                <td>${this.escape(created)}</td>
+            </tr>`;
         }
+
         html+='</tbody></table></div>';
         box.innerHTML=html;
     },
@@ -6214,26 +6368,43 @@ const app = {
         // Backward-compatible alias
         return this.loadAdminAllRewardCodes();
     },
-
     loadAdminAllRewardCodes:async function(){
         if(!this.adminMode || !this.adminPin) return;
+
         const box=document.getElementById('admin-free-rewards');
+        const status=document.getElementById('admin-free-status');
         if(box) box.innerHTML='<div class="loading"><div class="loading-spinner"></div>Memuat semua kode reward...</div>';
+        if(status) status.textContent='';
+
         try{
-            // Refresh analytics because spin rewards are already returned per customer there.
-            const analyticsReq=supabase.rpc('evora_admin_analytics',{p_pin:this.adminPin});
-            const freeReq=supabase.rpc('evora_admin_free_rewards',{p_pin:this.adminPin});
-            const [analyticsRes,freeRes]=await Promise.all([analyticsReq,freeReq]);
+            const [analyticsRes,freeRes]=await Promise.all([
+                withTimeout(supabase.rpc('evora_admin_analytics',{p_pin:this.adminPin}),12000),
+                withTimeout(supabase.rpc('evora_admin_free_rewards',{p_pin:this.adminPin}),12000)
+            ]);
 
-            if(analyticsRes.error) throw new Error(analyticsRes.error.message);
-            if(freeRes.error) throw new Error(freeRes.error.message);
+            if(analyticsRes.error) throw new Error(analyticsRes.error.message||'Analytics admin gagal dimuat.');
 
-            const payload=(analyticsRes.data && typeof analyticsRes.data==='object')?analyticsRes.data:{};
+            // FREE RPC may return either an array or {success,rewards}.
+            const payload=(analyticsRes.data && typeof analyticsRes.data==='object' && !Array.isArray(analyticsRes.data))
+                ? analyticsRes.data
+                : {};
+
             this.adminCustomers=Array.isArray(payload.customers)?payload.customers:[];
-            this.adminFreeRewards=Array.isArray(freeRes.data)?freeRes.data:[];
 
-            // Keep statistic cards synced.
-            const set=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=Number(val||0).toLocaleString('id-ID');};
+            let freeRows=[];
+            if(!freeRes.error){
+                if(Array.isArray(freeRes.data)) freeRows=freeRes.data;
+                else if(Array.isArray(freeRes.data?.rewards)) freeRows=freeRes.data.rewards;
+                else if(Array.isArray(freeRes.data?.data)) freeRows=freeRes.data.data;
+            }else{
+                console.warn('ADMIN FREE REWARDS ERROR:',freeRes.error);
+            }
+            this.adminFreeRewards=freeRows;
+
+            const set=(id,val)=>{
+                const el=document.getElementById(id);
+                if(el) el.textContent=Number(val||0).toLocaleString('id-ID');
+            };
             set('admin-total-visits',payload.total_visits);
             set('admin-unique-visitors',payload.unique_visitors);
             set('admin-total-customers',payload.total_customers);
@@ -6242,20 +6413,20 @@ const app = {
             const all=[];
             const seen=new Set();
 
-            // Spin Wheel / regular redeem codes from analytics.
             for(const c of this.adminCustomers){
                 const rewards=Array.isArray(c.rewards)?c.rewards:[];
                 for(const r of rewards){
-                    const code=String(r.code||'').trim();
+                    const code=String(r.code||r.redeem_code||r.reward_code||'').trim();
                     if(!code) continue;
                     const key=code.toUpperCase();
                     if(seen.has(key)) continue;
                     seen.add(key);
+
                     all.push({
                         source:'spin',
                         phone:c.phone||'-',
                         code,
-                        reward:r.reward||r.name||r.title||'Reward Spin',
+                        reward:r.reward_name||r.prize_name||r.reward_label||r.reward||r.name||r.title||r.prize||'Nama hadiah belum tersimpan',
                         status:String(r.status||'active').toLowerCase(),
                         created_at:r.created_at||r.date||null,
                         used_at:r.redeemed_at||r.used_at||null
@@ -6263,35 +6434,40 @@ const app = {
                 }
             }
 
-            // Loyalty FREE perfume codes.
             for(const r of this.adminFreeRewards){
-                const code=String(r.code||'').trim();
+                const code=String(r.code||r.reward_code||'').trim();
                 if(!code) continue;
                 const key=code.toUpperCase();
                 if(seen.has(key)) continue;
                 seen.add(key);
+
                 all.push({
                     source:'free',
-                    phone:r.phone||'-',
+                    phone:r.phone||r.customer_phone||'-',
                     code,
                     reward:'FREE Parfum EVORA 30ML',
                     status:String(r.status||'valid').toLowerCase(),
                     created_at:r.created_at||null,
-                    used_at:r.used_at||null
+                    used_at:r.used_at||r.redeemed_at||null
                 });
             }
 
+            const done=s=>['used','redeemed','expired'].includes(String(s||'').toLowerCase());
             all.sort((a,b)=>{
-                const au=['used','redeemed','expired'].includes(a.status);
-                const bu=['used','redeemed','expired'].includes(b.status);
-                if(au!==bu) return au?1:-1;
+                const ad=done(a.status), bd=done(b.status);
+                if(ad!==bd) return ad?1:-1;
                 return new Date(b.created_at||0)-new Date(a.created_at||0);
             });
 
             this.adminAllRewardCodes=all;
             this.renderAdminAllRewardCodes();
             this.renderAdminCustomers();
+
+            if(freeRes.error && status){
+                status.innerHTML='<span style="color:#9b721d">Kode Spin tampil. Data FREE loyalty gagal dimuat: '+this.escape(freeRes.error.message||'unknown error')+'</span>';
+            }
         }catch(e){
+            console.error('ADMIN REWARD LIST ERROR:',e);
             if(box) box.innerHTML=`<div class="error" style="display:block">${this.escape(e.message||'Gagal memuat kode reward.')}</div>`;
         }
     },
@@ -6364,25 +6540,19 @@ const app = {
     adminConfirmFreeReward:async function(code){
         return this.adminConfirmAnyReward(code);
     },
-
     adminConfirmAnyReward:async function(code,button){
         code=String(code||'').trim();
-        const btn=button || null;
+        const btn=button||null;
 
         if(!code){
             alert('Kode reward tidak ditemukan.');
             return;
         }
+        if(btn && btn.dataset.processing==='1') return;
 
-        if(btn && btn.dataset.processing==='1'){
-            return;
-        }
-
-        if(!this.adminPin){
-            if(btn){
-                btn.textContent='LOGIN ULANG';
-            }
+        if(!this.adminMode || !this.adminPin){
             alert('Sesi admin tidak aktif. Silakan login admin kembali.');
+            await this.navigate('login');
             return;
         }
 
@@ -6393,86 +6563,102 @@ const app = {
             btn.disabled=true;
             btn.textContent='MEMPROSES...';
         }
-
         if(status){
             status.innerHTML=`<span style="color:#9b721d;font-weight:700">Memproses ${this.escape(code)}...</span>`;
         }
 
         try{
-            const {data,error}=await Promise.race([
+            const {data,error}=await withTimeout(
                 supabase.rpc('evora_admin_confirm_any_reward',{
                     p_pin:this.adminPin,
                     p_code:code
                 }),
-                new Promise((_,reject)=>setTimeout(
-                    ()=>reject(new Error('Server tidak merespons. Pastikan SQL Universal sudah dijalankan.')),
-                    12000
-                ))
-            ]);
+                12000
+            );
 
-            if(error){
-                throw new Error(error.message||'RPC konfirmasi gagal.');
-            }
+            if(error) throw new Error(error.message||'RPC konfirmasi gagal.');
+            if(!data) throw new Error('Server tidak mengembalikan respons.');
+            if(data.success===false) throw new Error(data.message||'Kode tidak dapat dikonfirmasi.');
 
-            if(!data){
-                throw new Error('Server tidak mengembalikan respons.');
-            }
+            const row=Array.isArray(this.adminAllRewardCodes)
+                ? this.adminAllRewardCodes.find(r=>String(r.code||'').toUpperCase()===code.toUpperCase())
+                : null;
 
-            if(data.success===false){
-                throw new Error(data.message||'Kode tidak dapat dikonfirmasi.');
+            if(row){
+                row.status=row.source==='spin'?'redeemed':'used';
+                row.used_at=new Date().toISOString();
             }
-
-            // Update row immediately
-            if(Array.isArray(this.adminAllRewardCodes)){
-                const row=this.adminAllRewardCodes.find(
-                    r=>String(r.code||'').toUpperCase()===code.toUpperCase()
-                );
-                if(row){
-                    row.status='used';
-                    row.used_at=new Date().toISOString();
-                }
-                this.renderAdminAllRewardCodes();
-            }
+            this.renderAdminAllRewardCodes();
 
             if(status){
                 status.innerHTML=`<span style="color:#2f7a50;font-weight:800">✓ ${this.escape(code)} SUDAH DIKONFIRMASI</span>`;
             }
 
-            try{
-                await this.loadAdminAllRewardCodes();
-            }catch(_){}
-
+            // Re-sync with database so local UI cannot lie about final status.
+            await this.loadAdminAllRewardCodes();
         }catch(e){
             const msg=e?.message||'Gagal mengonfirmasi kode.';
+            console.error('ADMIN CONFIRM ERROR:',e);
 
             if(btn){
                 btn.dataset.processing='0';
                 btn.disabled=false;
                 btn.textContent='COBA LAGI';
             }
-
             if(status){
                 status.innerHTML=`<span style="color:#b45b3c;font-weight:800">✕ ${this.escape(msg)}</span>`;
             }
-
             alert(msg);
         }
     },
-
     loadAdminSpinRewards:async function(){
         if(!this.adminMode || !this.adminPin) return;
+
         const box=document.getElementById('admin-spin-rewards');
+        const status=document.getElementById('admin-spin-status');
+        if(!box) return;
+
+        box.innerHTML='<div class="loading"><div class="loading-spinner"></div>Memuat reward Spin...</div>';
+        if(status) status.textContent='';
+
         try{
-            const {data,error}=await supabase.rpc('evora_admin_get_spin_rewards',{p_pin:this.adminPin});
-            if(error) throw new Error(error.message);
-            this.adminSpinRewards=Array.isArray(data)?data:[];
-            if(!this.adminSpinRewards.length){
-                box.innerHTML='<div class="empty"><h3>Reward Spin Belum Ditemukan</h3><p>Pastikan tabel spin_rewards tersedia.</p></div>';
-                this.updateSpinPercentTotal(); return;
+            const {data,error}=await withTimeout(
+                supabase.rpc('evora_admin_get_spin_rewards',{p_pin:this.adminPin}),
+                12000
+            );
+            if(error) throw new Error(error.message||'Gagal memuat reward spin.');
+
+            const rows=Array.isArray(data)
+                ? data
+                : Array.isArray(data?.rewards)
+                    ? data.rewards
+                    : [];
+
+            this.adminSpinRewards=rows;
+
+            if(!rows.length){
+                box.innerHTML='<div class="empty"><h3>Reward Spin Belum Ditemukan</h3><p>Belum ada konfigurasi spin_rewards dari server.</p></div>';
+                this.updateSpinPercentTotal();
+                return;
             }
-            box.innerHTML=this.adminSpinRewards.map((r,i)=>`<div class="admin-reward-edit"><input id="spin-name-${i}" value="${this.escape(r.reward_name||r.name||r.title||'Reward')}" aria-label="Nama reward"><input id="spin-pct-${i}" type="number" min="0" max="100" step="0.01" value="${Number(r.percentage ?? r.chance_percent ?? r.probability ?? r.weight ?? 0)}" oninput="app.updateSpinPercentTotal()" aria-label="Persentase"></div>`).join('');
+
+            box.innerHTML=rows.map((r,i)=>{
+                const name=r.reward_name||r.name||r.title||('Reward '+(i+1));
+                const pct=Number(r.percentage ?? r.chance_percent ?? r.probability ?? r.weight ?? 0);
+                const stock=r.stock===undefined||r.stock===null?'∞':Number(r.stock);
+                const active=r.is_active===false?'NONAKTIF':'AKTIF';
+                return `<div class="admin-reward-edit">
+                    <div>
+                        <input id="spin-name-${i}" value="${this.escape(name)}" aria-label="Nama reward">
+                        <div style="font-size:9px;color:#8f867a;margin-top:4px">Stock: ${this.escape(stock)} • ${active}</div>
+                    </div>
+                    <input id="spin-pct-${i}" type="number" min="0" max="100" step="0.01" value="${Number.isFinite(pct)?pct:0}" oninput="app.updateSpinPercentTotal()" aria-label="Persentase">
+                </div>`;
+            }).join('');
+
             this.updateSpinPercentTotal();
         }catch(e){
+            console.error('ADMIN SPIN LOAD ERROR:',e);
             box.innerHTML=`<div class="error" style="display:block">${this.escape(e.message||'Gagal memuat reward spin.')}</div>`;
         }
     },
@@ -6483,24 +6669,58 @@ const app = {
         if(el) el.innerHTML=`Total peluang: <b style="color:${Math.abs(total-100)<0.001?'#2f7a50':'#b45b3c'}">${total.toFixed(2)}%</b> ${Math.abs(total-100)<0.001?'✓':'• harus 100%'}`;
         return total;
     },
-
     saveAllSpinRewards:async function(){
         const status=document.getElementById('admin-spin-status');
-        if(Math.abs(this.updateSpinPercentTotal()-100)>0.001){ alert('Total persentase harus tepat 100%.'); return; }
+        const btn=document.getElementById('admin-save-spin-btn');
+
+        if(!this.adminMode || !this.adminPin){
+            if(status) status.innerHTML='<span style="color:#b45b3c">Sesi admin tidak aktif.</span>';
+            return;
+        }
+
+        if(!Array.isArray(this.adminSpinRewards) || !this.adminSpinRewards.length){
+            if(status) status.innerHTML='<span style="color:#b45b3c">Tidak ada reward Spin untuk disimpan.</span>';
+            return;
+        }
+
+        if(Math.abs(this.updateSpinPercentTotal()-100)>0.001){
+            if(status) status.innerHTML='<span style="color:#b45b3c">Total persentase harus tepat 100%.</span>';
+            return;
+        }
+
         try{
-            const rows=(this.adminSpinRewards||[]).map((row,i)=>({
+            const rows=this.adminSpinRewards.map((row,i)=>({
                 id:String(row.id ?? row.reward_id ?? i+1),
                 reward_name:(document.getElementById('spin-name-'+i)?.value||'').trim(),
                 percentage:Number(document.getElementById('spin-pct-'+i)?.value||0)
             }));
-            if(rows.some(r=>!r.reward_name || !Number.isFinite(r.percentage) || r.percentage<0 || r.percentage>100)) throw new Error('Ada nama atau persentase reward yang tidak valid.');
-            if(status) status.textContent='Menyimpan perubahan...';
-            const {data,error}=await supabase.rpc('evora_admin_save_spin_rewards',{p_pin:this.adminPin,p_rows:rows});
-            if(error || data!==true) throw new Error(error?.message||'Server menolak perubahan reward.');
-            if(status) status.innerHTML='<span style="color:#2f7a50">✓ Semua reward dan probability berhasil disimpan. Test Lab sekarang mengikuti konfigurasi ini.</span>';
-            const sim=document.getElementById('admin-spin-simulation'); if(sim) sim.innerHTML='';
+
+            if(rows.some(r=>!r.reward_name || !Number.isFinite(r.percentage) || r.percentage<0 || r.percentage>100)){
+                throw new Error('Ada nama atau persentase reward yang tidak valid.');
+            }
+
+            if(btn){btn.disabled=true;btn.textContent='MENYIMPAN...';}
+            if(status) status.innerHTML='<span style="color:#9b721d">Menyimpan perubahan ke server...</span>';
+
+            const {data,error}=await withTimeout(
+                supabase.rpc('evora_admin_save_spin_rewards',{p_pin:this.adminPin,p_rows:rows}),
+                12000
+            );
+
+            const ok=data===true || data==='true' || data?.success===true || data?.saved===true;
+            if(error || !ok) throw new Error(error?.message||data?.message||'Server menolak perubahan reward.');
+
+            if(status) status.innerHTML='<span style="color:#2f7a50">✓ Hadiah dan persentase Spin berhasil disimpan.</span>';
+            const sim=document.getElementById('admin-spin-simulation');
+            if(sim) sim.innerHTML='';
+
             await this.loadAdminSpinRewards();
-        }catch(e){ if(status) status.innerHTML=`<span style="color:#b45b3c">${this.escape(e.message||'Gagal menyimpan.')}</span>`; }
+        }catch(e){
+            console.error('ADMIN SPIN SAVE ERROR:',e);
+            if(status) status.innerHTML=`<span style="color:#b45b3c">${this.escape(e.message||'Gagal menyimpan.')}</span>`;
+        }finally{
+            if(btn){btn.disabled=false;btn.textContent='SIMPAN PERUBAHAN';}
+        }
     },
 
     normalizeSpinRewardRows:function(rows){
@@ -6650,16 +6870,22 @@ const app = {
         this.loadSpin();
         this.loadRewards();
     },
-
     adminExit:function(){
         this.testMode=false;
         localStorage.removeItem('evora_test_mode');
-        localStorage.removeItem('evora_phone');
-        this.userPhone=null;
+
+        this.userPhone=this._preTestPhone || localStorage.getItem('evora_phone') || null;
         this.customer=null;
         this.credits=0;
         this.progress=0;
-        this.navigate('login');
+        this._preTestPhone=null;
+
+        // Test Lab is an Admin tool: return to Admin dashboard, not customer login.
+        if(this.adminMode && this.adminPin){
+            this.navigate('admin-dashboard');
+        }else{
+            this.navigate('login');
+        }
     },
 
     /* ===============================================
